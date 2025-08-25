@@ -33,7 +33,7 @@ Based on PRD: `prd-daily-motivation-voice-app.md`
 - `src/components/AudioPlayer.test.tsx` - Unit tests for AudioPlayer component.
 - `src/components/QuoteCard.test.tsx` - Unit tests for QuoteCard component.
 - `src/lib/supabase.test.ts` - Unit tests for Supabase utilities.
-- `src/app/api/generate-daily-content/route.test.ts` - Unit tests for content generation API.
+- `src/app/api/generate-daily-content/route.test.ts` - Comprehensive unit tests for daily content generation API.
 
 ### Notes
 
