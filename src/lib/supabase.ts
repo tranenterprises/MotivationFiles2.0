@@ -1,12 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
-import { Database, Quote } from './types'
+import { Quote } from './types'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export const supabaseAdmin = createClient<Database>(
+export const supabaseAdmin = createClient(
   supabaseUrl,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
@@ -22,7 +22,7 @@ export async function getTodaysQuote(): Promise<Quote | null> {
   const { data, error } = await supabase
     .from('quotes')
     .select('*')
-    .eq('date', today)
+    .eq('date_created', today)
     .single()
 
   if (error) {
@@ -43,7 +43,7 @@ export async function getAllQuotes(limit?: number, offset?: number): Promise<Quo
   let query = supabase
     .from('quotes')
     .select('*')
-    .order('date', { ascending: false })
+    .order('date_created', { ascending: false })
 
   if (limit) {
     query = query.limit(limit)
@@ -70,7 +70,7 @@ export async function getQuotesByCategory(category: string): Promise<Quote[]> {
     .from('quotes')
     .select('*')
     .eq('category', category)
-    .order('date', { ascending: false })
+    .order('date_created', { ascending: false })
 
   if (error) {
     throw new Error(`Failed to fetch quotes by category: ${error.message}`)
@@ -86,7 +86,7 @@ export async function getQuoteByDate(date: string): Promise<Quote | null> {
   const { data, error } = await supabase
     .from('quotes')
     .select('*')
-    .eq('date', date)
+    .eq('date_created', date)
     .single()
 
   if (error) {
@@ -102,7 +102,7 @@ export async function getQuoteByDate(date: string): Promise<Quote | null> {
 /**
  * Create a new quote (admin only - uses service role)
  */
-export async function createQuote(quote: Omit<Quote, 'id' | 'created_at'>): Promise<Quote> {
+export async function createQuote(quote: Omit<Quote, 'id' | 'created_at' | 'updated_at'>): Promise<Quote> {
   const { data, error } = await supabaseAdmin
     .from('quotes')
     .insert(quote)
@@ -119,7 +119,7 @@ export async function createQuote(quote: Omit<Quote, 'id' | 'created_at'>): Prom
 /**
  * Update an existing quote (admin only - uses service role)
  */
-export async function updateQuote(id: string, updates: Partial<Omit<Quote, 'id' | 'created_at'>>): Promise<Quote> {
+export async function updateQuote(id: string, updates: Partial<Omit<Quote, 'id' | 'created_at' | 'updated_at'>>): Promise<Quote> {
   const { data, error } = await supabaseAdmin
     .from('quotes')
     .update(updates)
@@ -162,7 +162,7 @@ export async function quoteExistsForDate(date: string): Promise<boolean> {
   const { data, error } = await supabase
     .from('quotes')
     .select('id')
-    .eq('date', date)
+    .eq('date_created', date)
     .single()
 
   if (error && error.code === 'PGRST116') {
@@ -198,9 +198,9 @@ export async function getQuotesByDateRange(startDate: string, endDate: string): 
   const { data, error } = await supabase
     .from('quotes')
     .select('*')
-    .gte('date', startDate)
-    .lte('date', endDate)
-    .order('date', { ascending: false })
+    .gte('date_created', startDate)
+    .lte('date_created', endDate)
+    .order('date_created', { ascending: false })
 
   if (error) {
     throw new Error(`Failed to fetch quotes by date range: ${error.message}`)
