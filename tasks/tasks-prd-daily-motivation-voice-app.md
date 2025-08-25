@@ -21,7 +21,9 @@ Based on PRD: `prd-daily-motivation-voice-app.md`
 - `src/components/AudioPlayer.tsx` - Reusable audio player component with controls.
 - `src/components/QuoteCard.tsx` - Component for displaying individual quotes with metadata.
 - `src/lib/supabase.ts` - Supabase client configuration and database utilities.
-- `src/lib/openai.ts` - OpenAI API integration for quote generation.
+- `src/lib/openai.ts` - OpenAI API integration for quote generation with retry logic and validation.
+- `src/lib/prompts.ts` - Configuration file containing prompt templates for all quote categories.
+- `src/lib/openai.test.ts` - Unit tests for OpenAI functionality with comprehensive coverage.
 - `src/lib/elevenlabs.ts` - ElevenLabs API integration for voice synthesis.
 - `src/lib/storage.ts` - Supabase Storage utilities for audio files.
 - `src/lib/types.ts` - TypeScript type definitions for quotes and audio data.
@@ -52,7 +54,7 @@ Based on PRD: `prd-daily-motivation-voice-app.md`
   - [x] 2.3 Set up Row Level Security (RLS) policies for quotes table
   - [x] 2.4 Create Supabase migration files and apply initial schema
   - [x] 2.5 Implement Supabase client and database utility functions for CRUD operations
-- [ ] 3.0 AI Content Generation System
+- [x] 3.0 AI Content Generation System
   - [x] 3.1 Create OpenAI client configuration with API key management
   - [x] 3.2 Implement quote generation function with category-specific prompts
   - [x] 3.3 Create prompt templates for each content category (motivation, wisdom, grindset, reflection, discipline)
