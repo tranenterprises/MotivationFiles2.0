@@ -13,6 +13,9 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "npm run test && npm run test:e2e",
     "db:verify": "node scripts/setup-db.js",
     "db:seed": "node scripts/seed-mock-data.js",
     "db:migrate": "node scripts/run-migration.js"
@@ -29,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
