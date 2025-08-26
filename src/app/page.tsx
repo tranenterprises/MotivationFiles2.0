@@ -1,23 +1,18 @@
-import { getTodaysQuote } from '@/lib/supabase'
+import { getCachedTodaysQuote } from '@/lib/cache'
 import { Quote } from '@/lib/types'
 import QuoteCard from '@/components/QuoteCard'
 import AudioPlayer from '@/components/AudioPlayer'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
+import FallbackContent from '@/components/FallbackContent'
+import { formatDate } from '@/lib/date'
 
 async function TodaysQuote() {
   try {
-    const quote: Quote | null = await getTodaysQuote()
+    const quote: Quote | null = await getCachedTodaysQuote()
     
     if (!quote) {
-      return (
-        <div className="text-center fade-in">
-          <div className="bg-gray-800 border border-gray-600 rounded-lg p-8 max-w-4xl mx-auto">
-            <p className="text-xl text-gray-300 mb-4">No quote available for today.</p>
-            <p className="text-gray-400">Check back later or visit the archive for previous quotes.</p>
-          </div>
-        </div>
-      )
+      return <FallbackContent type="no-today-quote" />
     }
 
     return (
@@ -33,7 +28,7 @@ async function TodaysQuote() {
             </div>
             <AudioPlayer
               audioUrl={quote.audio_url}
-              title={`${quote.category} - ${new Date(quote.date_created).toLocaleDateString()}`}
+              title={`${quote.category} - ${formatDate(quote.date_created, 'title')}`}
               duration={quote.audio_duration}
               size="large"
               preloadStrategy="metadata"
@@ -44,14 +39,8 @@ async function TodaysQuote() {
       </div>
     )
   } catch (error) {
-    return (
-      <div className="text-center fade-in">
-        <div className="bg-gray-800 border border-red-500 rounded-lg p-8 max-w-4xl mx-auto">
-          <p className="text-xl text-red-400 mb-4">Error loading today's quote</p>
-          <p className="text-gray-400">Please try refreshing the page.</p>
-        </div>
-      </div>
-    )
+    console.error('Error fetching today\'s quote:', error)
+    return <FallbackContent type="loading-error" onRetry={() => window.location.reload()} />
   }
 }
 

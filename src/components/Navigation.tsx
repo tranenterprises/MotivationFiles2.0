@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { usePrefetch } from './CacheProvider'
 
 interface NavigationProps {
   title?: string
@@ -12,14 +13,15 @@ interface NavigationProps {
 export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: NavigationProps) {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { prefetchArchivePage, prefetchTodaysQuote } = usePrefetch()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
   const navItems = [
-    { href: '/', label: 'Home', icon: '🏠' },
-    { href: '/archive', label: 'Archive', icon: '📚' },
+    { href: '/', label: 'Home', icon: '🏠', prefetch: prefetchTodaysQuote },
+    { href: '/archive', label: 'Archive', icon: '📚', prefetch: () => prefetchArchivePage(1) },
   ]
 
   const isActive = (href: string) => {
@@ -53,6 +55,8 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
               <Link
                 key={item.href}
                 href={item.href}
+                onMouseEnter={() => item.prefetch()}
+                onFocus={() => item.prefetch()}
                 className={`font-medium transition-all duration-300 flex items-center space-x-2 px-3 py-2 rounded-lg ${
                   isActive(item.href)
                     ? 'text-accent bg-gray-800 border border-accent/30'
@@ -97,6 +101,8 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
+                  onMouseEnter={() => item.prefetch()}
+                  onFocus={() => item.prefetch()}
                   className={`font-medium transition-all duration-300 flex items-center space-x-3 px-4 py-3 rounded-lg ${
                     isActive(item.href)
                       ? 'text-accent bg-gray-800 border border-accent/30'

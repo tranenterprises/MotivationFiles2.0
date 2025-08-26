@@ -156,6 +156,12 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await generateDailyContent();
+    
+    // Invalidate cache after generating new content
+    if (result.success && result.data) {
+      const { invalidateCache } = await import('@/lib/cache');
+      invalidateCache(['today_quote', 'archive', 'quote_count']);
+    }
 
     return NextResponse.json(result, { 
       status: result.success ? 200 : 500 

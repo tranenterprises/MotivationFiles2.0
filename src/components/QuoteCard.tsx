@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Quote } from '@/lib/types'
 import LoadingSpinner from './LoadingSpinner'
+import { formatQuoteDate, formatDuration } from '@/lib/date'
 
 interface QuoteCardProps {
   quote: Quote
@@ -20,14 +21,6 @@ export default function QuoteCard({
   isLoading = false
 }: QuoteCardProps) {
   const [isAudioLoading, setIsAudioLoading] = useState(false)
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: size === 'small' ? undefined : 'long',
-      year: 'numeric',
-      month: size === 'small' ? 'short' : 'long',
-      day: 'numeric'
-    })
-  }
 
   const sizeClasses = {
     small: {
@@ -74,7 +67,7 @@ export default function QuoteCard({
             {quote.category}
           </p>
           <p className={`text-gray-300 ${classes.date}`}>
-            {formatDate(quote.date_created)}
+            {formatQuoteDate(quote.date_created, size)}
           </p>
         </div>
         
@@ -107,7 +100,7 @@ export default function QuoteCard({
 
         {quote.audio_duration && (
           <div className={`text-gray-500 mt-4 ${classes.date}`}>
-            Duration: {Math.floor(quote.audio_duration / 60)}:{String(quote.audio_duration % 60).padStart(2, '0')}
+            Duration: {formatDuration(quote.audio_duration)}
           </div>
         )}
       </div>

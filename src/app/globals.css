@@ -6,6 +6,7 @@
   --foreground: #ffffff;
   --accent: #ff6b35;
   --accent-dark: #e55a2b;
+  --accent-light: #ff8560;
   --gray-800: #1a1a1a;
   --gray-700: #262626;
   --gray-600: #404040;
@@ -17,6 +18,7 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-accent-dark: var(--accent-dark);
+  --color-accent-light: var(--accent-light);
   --color-gray-800: var(--gray-800);
   --color-gray-700: var(--gray-700);
   --color-gray-600: var(--gray-600);

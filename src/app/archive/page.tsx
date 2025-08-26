@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { getAllQuotes } from '@/lib/supabase'
+import { getCachedAllQuotes, getCachedQuotesByCategory } from '@/lib/cache'
 import { Quote } from '@/lib/types'
 import QuoteCard from '@/components/QuoteCard'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
+import FallbackContent from '@/components/FallbackContent'
 
 interface ArchivePageProps {
   searchParams: {
@@ -18,35 +19,26 @@ async function QuoteArchive({ page = 1, category }: { page: number, category?: s
     const offset = (page - 1) * quotesPerPage
     
     let quotes: Quote[] = []
+    let hasNextPage = false
     
     if (category) {
-      // If we add category filtering later, we can use getQuotesByCategory
-      quotes = await getAllQuotes(quotesPerPage, offset)
-      quotes = quotes.filter(quote => quote.category.toLowerCase() === category.toLowerCase())
+      // Use cached category-specific quotes
+      const categoryQuotes = await getCachedQuotesByCategory(category)
+      // Apply pagination to category results
+      quotes = categoryQuotes.slice(offset, offset + quotesPerPage)
+      hasNextPage = offset + quotesPerPage < categoryQuotes.length
     } else {
-      quotes = await getAllQuotes(quotesPerPage, offset)
+      quotes = await getCachedAllQuotes(quotesPerPage, offset)
+      hasNextPage = quotes.length === quotesPerPage
     }
 
     if (quotes.length === 0 && page === 1) {
-      return (
-        <div className="text-center py-16">
-          <div className="bg-gray-800 border border-gray-600 rounded-lg p-8 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-4">No Quotes Yet</h2>
-            <p className="text-gray-300 mb-6">
-              The archive is empty. Check back once the daily quote generation starts.
-            </p>
-            <Link 
-              href="/" 
-              className="inline-block bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300"
-            >
-              Back to Home
-            </Link>
-          </div>
-        </div>
-      )
+      if (category) {
+        return <FallbackContent type="no-category-quotes" category={category} />
+      }
+      return <FallbackContent type="empty-archive" />
     }
 
-    const hasNextPage = quotes.length === quotesPerPage
 
     return (
       <div className="space-y-8">
@@ -114,20 +106,10 @@ async function QuoteArchive({ page = 1, category }: { page: number, category?: s
     )
   } catch (error) {
     return (
-      <div className="text-center py-16">
-        <div className="bg-gray-800 border border-red-500 rounded-lg p-8 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-red-400 mb-4">Error Loading Archive</h2>
-          <p className="text-gray-300 mb-6">
-            Failed to load quotes. Please try refreshing the page.
-          </p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300"
-          >
-            Refresh Page
-          </button>
-        </div>
-      </div>
+      <FallbackContent 
+        type="loading-error" 
+        onRetry={() => window.location.reload()} 
+      />
     )
   }
 }
