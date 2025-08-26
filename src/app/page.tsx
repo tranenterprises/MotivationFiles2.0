@@ -1,6 +1,7 @@
 import { getTodaysQuote } from '@/lib/supabase'
 import { Quote } from '@/lib/types'
 import QuoteCard from '@/components/QuoteCard'
+import AudioPlayer from '@/components/AudioPlayer'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 
@@ -20,8 +21,26 @@ async function TodaysQuote() {
     }
 
     return (
-      <div className="max-w-4xl mx-auto">
-        <QuoteCard quote={quote} size="large" />
+      <div className="max-w-4xl mx-auto space-y-6">
+        <QuoteCard quote={quote} size="large" showAudio={false} />
+        
+        {/* Dedicated Audio Player */}
+        {quote.audio_url && (
+          <div className="bg-gray-800 border border-gray-600 rounded-lg p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-3 h-3 bg-accent rounded-full animate-pulse"></div>
+              <h4 className="text-white font-semibold text-lg">Audio Playback</h4>
+            </div>
+            <AudioPlayer
+              audioUrl={quote.audio_url}
+              title={`${quote.category} - ${new Date(quote.date_created).toLocaleDateString()}`}
+              duration={quote.audio_duration}
+              size="large"
+              preloadStrategy="metadata"
+              className="w-full"
+            />
+          </div>
+        )}
       </div>
     )
   } catch (error) {
