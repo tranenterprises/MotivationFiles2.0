@@ -1,11 +1,11 @@
-import { getCachedTodaysQuote } from '@/lib/cache'
-import { Quote } from '@/lib/types'
-import QuoteCard from '@/components/QuoteCard'
-import AudioPlayer from '@/components/AudioPlayer'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import FallbackContent from '@/components/FallbackContent'
-import { formatDate } from '@/lib/date'
+import { getCachedTodaysQuote } from '@/lib/utils/cache'
+import { Quote } from '@/lib/types/types'
+import QuoteCard from '@/components/content/QuoteCard'
+import AudioPlayer from '@/components/media/AudioPlayer'
+import Navigation from '@/components/layout/Navigation'
+import Footer from '@/components/layout/Footer'
+import FallbackContent from '@/components/content/FallbackContent'
+import { formatDate } from '@/lib/utils/date'
 
 async function TodaysQuote() {
   try {

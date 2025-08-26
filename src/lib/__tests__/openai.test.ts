@@ -18,8 +18,8 @@ jest.mock('openai', () => {
 const openAIModule = jest.requireMock('openai');
 const mockCreate = openAIModule.mockCreate;
 
-import { generateQuote, QUOTE_GENERATION_CONFIG, type QuoteCategory } from './openai';
-import { PROMPT_TEMPLATES, SYSTEM_PROMPT } from './prompts';
+import { generateQuote, QUOTE_GENERATION_CONFIG, type QuoteCategory } from '../api/openai';
+import { PROMPT_TEMPLATES, SYSTEM_PROMPT } from '../config/prompts';
 
 // Mock console methods to avoid noise in tests
 const consoleSpy = {

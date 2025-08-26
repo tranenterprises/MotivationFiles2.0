@@ -5,15 +5,15 @@ import { NextRequest } from 'next/server';
 import { POST, GET } from './route';
 
 // Mock all the dependencies
-jest.mock('@/lib/openai', () => ({
+jest.mock('@/lib/api/openai', () => ({
   generateQuote: jest.fn(),
 }));
 
-jest.mock('@/lib/elevenlabs', () => ({
+jest.mock('@/lib/api/elevenlabs', () => ({
   generateVoiceWithFallbacksAndUpload: jest.fn(),
 }));
 
-jest.mock('@/lib/supabase', () => ({
+jest.mock('@/lib/api/supabase', () => ({
   createQuote: jest.fn(),
   getTodaysQuote: jest.fn(),
   getQuotesByCategory: jest.fn(),
@@ -29,14 +29,14 @@ const mockEnv = {
 Object.assign(process.env, mockEnv);
 
 // Import mocked modules
-import { generateQuote } from '@/lib/openai';
-import { generateVoiceWithFallbacksAndUpload } from '@/lib/elevenlabs';
+import { generateQuote } from '@/lib/api/openai';
+import { generateVoiceWithFallbacksAndUpload } from '@/lib/api/elevenlabs';
 import { 
   createQuote, 
   getTodaysQuote, 
   getQuotesByCategory,
   updateQuoteAudioUrl 
-} from '@/lib/supabase';
+} from '@/lib/api/supabase';
 
 const mockGenerateQuote = generateQuote as jest.MockedFunction<typeof generateQuote>;
 const mockGenerateVoice = generateVoiceWithFallbacksAndUpload as jest.MockedFunction<typeof generateVoiceWithFallbacksAndUpload>;

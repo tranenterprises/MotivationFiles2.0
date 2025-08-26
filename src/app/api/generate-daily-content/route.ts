@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateQuote, type QuoteCategory } from '@/lib/openai';
-import { generateVoiceWithFallbacksAndUpload } from '@/lib/elevenlabs';
+import { generateQuote, type QuoteCategory } from '@/lib/api/openai';
+import { generateVoiceWithFallbacksAndUpload } from '@/lib/api/elevenlabs';
 import { 
   createQuote, 
   getTodaysQuote,
   getQuotesByCategory 
-} from '@/lib/supabase';
+} from '@/lib/api/supabase';
 
 const QUOTE_CATEGORIES: QuoteCategory[] = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
 
@@ -103,7 +103,7 @@ async function generateDailyContent() {
 
     // Update quote with audio URL
     console.log('Updating quote with audio URL...');
-    const { updateQuoteAudioUrl } = await import('@/lib/supabase');
+    const { updateQuoteAudioUrl } = await import('@/lib/api/supabase');
     const finalQuote = await updateQuoteAudioUrl(createdQuote.id, voiceResult.upload.url);
 
     console.log('Daily content generation completed successfully');
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     
     // Invalidate cache after generating new content
     if (result.success && result.data) {
-      const { invalidateCache } = await import('@/lib/cache');
+      const { invalidateCache } = await import('@/lib/utils/cache');
       invalidateCache(['today_quote', 'archive', 'quote_count']);
     }
 

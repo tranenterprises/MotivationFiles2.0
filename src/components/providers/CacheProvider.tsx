@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, ReactNode } from 'react'
-import { preloadCache, getCacheStats } from '@/lib/cache'
+import { preloadCache, getCacheStats } from '@/lib/utils/cache'
 
 interface CacheContextType {
   preload: () => Promise<void>
@@ -50,7 +50,7 @@ export function useCache() {
 export function usePrefetch() {
   const prefetchArchivePage = async (page: number = 1, category?: string) => {
     try {
-      const { getCachedAllQuotes, getCachedQuotesByCategory } = await import('@/lib/cache')
+      const { getCachedAllQuotes, getCachedQuotesByCategory } = await import('@/lib/utils/cache')
       const quotesPerPage = 12
       const offset = (page - 1) * quotesPerPage
 
@@ -66,7 +66,7 @@ export function usePrefetch() {
 
   const prefetchTodaysQuote = async () => {
     try {
-      const { getCachedTodaysQuote } = await import('@/lib/cache')
+      const { getCachedTodaysQuote } = await import('@/lib/utils/cache')
       await getCachedTodaysQuote()
     } catch (error) {
       console.warn('Prefetch failed:', error)

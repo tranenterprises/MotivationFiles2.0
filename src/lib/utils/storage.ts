@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabase';
+import { supabaseAdmin } from '../api/supabase';
 
 const AUDIO_BUCKET = 'audio';
 const MAX_RETRIES = 3;

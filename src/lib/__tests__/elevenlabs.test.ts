@@ -24,7 +24,7 @@ describe('ElevenLabs Voice Generation - Simple Tests', () => {
       }))
     }));
 
-    jest.doMock('./storage', () => ({
+    jest.doMock('../utils/storage', () => ({
       uploadQuoteAudio: jest.fn()
     }));
 
@@ -53,7 +53,7 @@ describe('ElevenLabs Voice Generation - Simple Tests', () => {
       }))
     }));
 
-    jest.doMock('./storage', () => ({
+    jest.doMock('../utils/storage', () => ({
       uploadQuoteAudio: jest.fn()
     }));
 
@@ -77,7 +77,7 @@ describe('ElevenLabs Voice Generation - Simple Tests', () => {
       }))
     }));
 
-    jest.doMock('./storage', () => ({
+    jest.doMock('../utils/storage', () => ({
       uploadQuoteAudio: jest.fn()
     }));
 
@@ -110,7 +110,7 @@ describe('ElevenLabs Voice Generation - Simple Tests', () => {
       }))
     }));
 
-    jest.doMock('./storage', () => ({
+    jest.doMock('../utils/storage', () => ({
       uploadQuoteAudio: jest.fn()
     }));
 
@@ -153,7 +153,7 @@ describe('ElevenLabs Voice Generation - Simple Tests', () => {
       }))
     }));
 
-    jest.doMock('./storage', () => ({
+    jest.doMock('../utils/storage', () => ({
       uploadQuoteAudio: jest.fn()
     }));
 
@@ -192,7 +192,7 @@ describe('ElevenLabs Voice Generation - Simple Tests', () => {
       }))
     }));
 
-    jest.doMock('./storage', () => ({
+    jest.doMock('../utils/storage', () => ({
       uploadQuoteAudio: jest.fn()
     }));
 

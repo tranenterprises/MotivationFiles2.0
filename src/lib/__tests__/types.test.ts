@@ -1,4 +1,4 @@
-import { Quote, Database } from './types';
+import { Quote, Database } from '../types/types';
 
 describe('Types', () => {
   describe('Quote interface', () => {

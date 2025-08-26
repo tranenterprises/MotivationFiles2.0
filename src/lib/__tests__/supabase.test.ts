@@ -1,4 +1,4 @@
-import { Quote } from './types'
+import { Quote } from '../types/types'
 
 // Mock data for testing
 const mockQuote: Quote = {
@@ -63,7 +63,7 @@ const createMockSupabaseClient = () => {
 }
 
 // Mock the supabase module
-jest.mock('./supabase', () => {
+jest.mock('../api/supabase', () => {
   const mockClient = createMockSupabaseClient()
   const mockAdminClient = createMockSupabaseClient()
   
@@ -170,7 +170,7 @@ describe('Supabase Utilities', () => {
 
   describe('Mock Functions Setup', () => {
     it('should have mock functions available', () => {
-      const supabaseModule = require('./supabase')
+      const supabaseModule = require('../api/supabase')
       
       expect(supabaseModule.getTodaysQuote).toBeDefined()
       expect(supabaseModule.getAllQuotes).toBeDefined()

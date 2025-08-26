@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { usePathname } from 'next/navigation'
-import Navigation from './Navigation'
+import Navigation from '../layout/Navigation'
 
 // Mock Next.js navigation hooks
 jest.mock('next/navigation', () => ({

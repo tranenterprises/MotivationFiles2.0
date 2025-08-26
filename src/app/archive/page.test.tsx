@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react'
-import { getAllQuotes } from '@/lib/supabase'
+import { getAllQuotes } from '@/lib/api/supabase'
 import { mockQuotes } from '@/__mocks__/supabase'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import QuoteCard from '@/components/QuoteCard'
+import Navigation from '@/components/layout/Navigation'
+import Footer from '@/components/layout/Footer'
+import QuoteCard from '@/components/content/QuoteCard'
 
 // Mock the supabase module
-jest.mock('@/lib/supabase', () => ({
+jest.mock('@/lib/api/supabase', () => ({
   getAllQuotes: jest.fn()
 }))
 

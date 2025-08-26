@@ -2,7 +2,7 @@
  * Client-side caching utilities for better performance
  */
 
-import { Quote } from './types'
+import { Quote } from '../types/types'
 
 export interface CacheEntry<T> {
   data: T
@@ -188,7 +188,7 @@ export async function withCache<T>(
  * Cached version of getTodaysQuote
  */
 export async function getCachedTodaysQuote(): Promise<Quote | null> {
-  const { getTodaysQuote } = await import('./supabase')
+  const { getTodaysQuote } = await import('../api/supabase')
   
   return withCache(
     generateTodayQuoteCacheKey(),
@@ -204,7 +204,7 @@ export async function getCachedTodaysQuote(): Promise<Quote | null> {
  * Cached version of getAllQuotes with pagination
  */
 export async function getCachedAllQuotes(limit?: number, offset?: number): Promise<Quote[]> {
-  const { getAllQuotes } = await import('./supabase')
+  const { getAllQuotes } = await import('../api/supabase')
   
   const page = offset ? Math.floor(offset / (limit || 12)) + 1 : 1
   const cacheKey = generateArchiveCacheKey(page, undefined, limit)
@@ -223,7 +223,7 @@ export async function getCachedAllQuotes(limit?: number, offset?: number): Promi
  * Cached version of getQuotesByCategory
  */
 export async function getCachedQuotesByCategory(category: string): Promise<Quote[]> {
-  const { getQuotesByCategory } = await import('./supabase')
+  const { getQuotesByCategory } = await import('../api/supabase')
   
   return withCache(
     `cache:category_${category}`,
@@ -239,7 +239,7 @@ export async function getCachedQuotesByCategory(category: string): Promise<Quote
  * Cached version of getQuoteCount
  */
 export async function getCachedQuoteCount(): Promise<number> {
-  const { getQuoteCount } = await import('./supabase')
+  const { getQuoteCount } = await import('../api/supabase')
   
   return withCache(
     generateQuoteCountCacheKey(),

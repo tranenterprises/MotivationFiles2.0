@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import ErrorBoundary, { useErrorHandler } from './ErrorBoundary'
+import ErrorBoundary, { useErrorHandler } from '../providers/ErrorBoundary'
 import { ReactNode } from 'react'
 
 // Test component that throws an error

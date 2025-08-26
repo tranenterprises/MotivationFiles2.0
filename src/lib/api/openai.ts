@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { PROMPT_TEMPLATES, SYSTEM_PROMPT, type QuoteCategory } from './prompts';
+import { PROMPT_TEMPLATES, SYSTEM_PROMPT, type QuoteCategory } from '../config/prompts';
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY environment variable is required');

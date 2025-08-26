@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { getCachedAllQuotes, getCachedQuotesByCategory } from '@/lib/cache'
-import { Quote } from '@/lib/types'
-import QuoteCard from '@/components/QuoteCard'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import FallbackContent from '@/components/FallbackContent'
+import { getCachedAllQuotes, getCachedQuotesByCategory } from '@/lib/utils/cache'
+import { Quote } from '@/lib/types/types'
+import QuoteCard from '@/components/content/QuoteCard'
+import Navigation from '@/components/layout/Navigation'
+import Footer from '@/components/layout/Footer'
+import FallbackContent from '@/components/content/FallbackContent'
 
 interface ArchivePageProps {
   searchParams: {

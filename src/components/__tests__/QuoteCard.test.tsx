@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import QuoteCard from './QuoteCard'
-import { Quote } from '@/lib/types'
+import QuoteCard from '../content/QuoteCard'
+import { Quote } from '@/lib/types/types'
 
 // Mock the LoadingSpinner component
-jest.mock('./LoadingSpinner', () => {
+jest.mock('../ui/LoadingSpinner', () => {
   return function MockLoadingSpinner() {
     return <div data-testid="loading-spinner">Loading...</div>
   }

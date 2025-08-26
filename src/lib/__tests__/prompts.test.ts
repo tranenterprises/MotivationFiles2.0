@@ -1,4 +1,4 @@
-import { PROMPT_TEMPLATES, SYSTEM_PROMPT, QuoteCategory } from './prompts';
+import { PROMPT_TEMPLATES, SYSTEM_PROMPT, QuoteCategory } from '../config/prompts';
 
 describe('Prompts', () => {
   describe('PROMPT_TEMPLATES', () => {

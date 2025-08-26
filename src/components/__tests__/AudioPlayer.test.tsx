@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import AudioPlayer from './AudioPlayer'
+import AudioPlayer from '../media/AudioPlayer'
 
 // Mock the LoadingSpinner component
-jest.mock('./LoadingSpinner', () => {
+jest.mock('../ui/LoadingSpinner', () => {
   return function MockLoadingSpinner({ className }: { className?: string }) {
     return <div data-testid="loading-spinner" className={className}>Loading...</div>
   }

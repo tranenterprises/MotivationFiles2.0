@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Quote } from '@/lib/types'
-import LoadingSpinner from './LoadingSpinner'
-import { formatQuoteDate, formatDuration } from '@/lib/date'
+import { Quote } from '@/lib/types/types'
+import LoadingSpinner from '../ui/LoadingSpinner'
+import { formatQuoteDate, formatDuration } from '@/lib/utils/date'
 
 interface QuoteCardProps {
   quote: Quote

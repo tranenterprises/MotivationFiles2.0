@@ -1,5 +1,5 @@
 // Mock Supabase before any imports
-jest.mock('./supabase', () => ({
+jest.mock('../api/supabase', () => ({
   supabaseAdmin: {
     storage: {
       from: jest.fn(),
@@ -19,7 +19,7 @@ import {
   ensureAudioBucketExists,
   getAudioUrl,
   AUDIO_BUCKET
-} from './storage';
+} from '../utils/storage';
 
 describe('Storage Module', () => {
   const mockStorageChain = {

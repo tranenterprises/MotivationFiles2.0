@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import LoadingSkeleton from './LoadingSkeleton'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 
 describe('LoadingSkeleton Component', () => {
   describe('Text Variant', () => {

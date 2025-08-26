@@ -1,5 +1,5 @@
 import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
-import { uploadQuoteAudio, type AudioUploadResult } from './storage';
+import { uploadQuoteAudio, type AudioUploadResult } from '../utils/storage';
 
 if (!process.env.ELEVENLABS_API_KEY) {
   throw new Error('ELEVENLABS_API_KEY environment variable is required');

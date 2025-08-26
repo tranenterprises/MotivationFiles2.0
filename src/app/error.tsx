@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+import Navigation from '@/components/layout/Navigation'
+import Footer from '@/components/layout/Footer'
 
 interface ErrorPageProps {
   error: Error & { digest?: string }

@@ -10,7 +10,7 @@ import {
   getRelativeTime,
   isToday,
   formatDateRange
-} from './date'
+} from '../utils/date'
 
 describe('Date Utilities', () => {
   // Use actual current date for consistent testing

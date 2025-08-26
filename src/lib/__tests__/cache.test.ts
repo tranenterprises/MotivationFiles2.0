@@ -19,12 +19,12 @@ import {
   preloadCache,
   getCacheStats,
   CACHE_TTL
-} from './cache'
+} from '../utils/cache'
 
-import type { Quote } from './types'
+import type { Quote } from '../types/types'
 
 // Mock the supabase module
-jest.mock('./supabase', () => ({
+jest.mock('../api/supabase', () => ({
   getTodaysQuote: jest.fn(),
   getAllQuotes: jest.fn(),
   getQuotesByCategory: jest.fn(),

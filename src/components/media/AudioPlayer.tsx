@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import LoadingSpinner from './LoadingSpinner'
+import LoadingSpinner from '../ui/LoadingSpinner'
 
 interface AudioPlayerProps {
   audioUrl: string | null

@@ -1,6 +1,6 @@
-import LoadingSkeleton from '@/components/LoadingSkeleton'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton'
+import Navigation from '@/components/layout/Navigation'
+import Footer from '@/components/layout/Footer'
 
 export default function Loading() {
   return (

@@ -1,4 +1,4 @@
-import { Quote } from '@/lib/types'
+import { Quote } from '@/lib/types/types'
 
 // Mock quote data
 export const mockQuotes: Quote[] = [
