@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import { getAllQuotes } from '@/lib/api/supabase'
 import { mockQuotes } from '@/__mocks__/supabase'
 import Navigation from '@/components/layout/Navigation'
-import Footer from '@/components/layout/Footer'
 import QuoteCard from '@/components/content/QuoteCard'
 
 // Mock the supabase module
@@ -15,32 +14,43 @@ const mockGetAllQuotes = getAllQuotes as jest.MockedFunction<typeof getAllQuotes
 // Simple Archive page component for testing
 function TestArchivePage() {
   return (
-    <div className="min-h-screen bg-black">
-      <Navigation subtitle="Archive" />
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-radial from-gray-900/50 via-black/80 to-black pointer-events-none gpu-accelerated" />
+      
+      <Navigation title="ARCHIVE" subtitle="Archive" />
 
-      <section className="py-12 px-4">
-        <div className="max-w-6xl mx-auto text-center mb-12">
-          <h2 className="hero-text text-3xl md:text-5xl text-white mb-4 leading-tight">
+      <section className="relative z-10 py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center mb-12 fade-in">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-6 leading-tight scale-in-bounce">
             EVERY WORD OF
             <span className="text-accent block">MOTIVATION</span>
           </h2>
         </div>
 
+        {/* Category Filter */}
+        <div className="max-w-6xl mx-auto mb-12 slide-up stagger-2">
+          <div className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-xl p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-white text-center mb-6">FILTER BY CATEGORY</h3>
+          </div>
+        </div>
+
         {/* Statistics */}
-        <div className="max-w-6xl mx-auto mb-8">
-          <div className="bg-gray-800 border border-gray-600 rounded-lg p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+        <div className="max-w-6xl mx-auto mb-12">
+          <div className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-xl p-8 shadow-2xl">
+            <h3 className="text-lg font-bold text-white text-center mb-8">ARCHIVE STATISTICS</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-2xl font-bold text-accent">3</div>
-                <div className="text-sm text-gray-300">Quotes This Page</div>
+                <div className="text-2xl font-bold text-accent mb-2">3</div>
+                <div className="text-sm text-gray-300 font-bold uppercase tracking-wider">Quotes This Page</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-accent">3</div>
-                <div className="text-sm text-gray-300">Categories</div>
+                <div className="text-2xl font-bold text-accent mb-2">3</div>
+                <div className="text-sm text-gray-300 font-bold uppercase tracking-wider">Categories</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-accent">2</div>
-                <div className="text-sm text-gray-300">With Audio</div>
+                <div className="text-2xl font-bold text-accent mb-2">2</div>
+                <div className="text-sm text-gray-300 font-bold uppercase tracking-wider">With Audio</div>
               </div>
             </div>
           </div>
@@ -48,7 +58,7 @@ function TestArchivePage() {
 
         {/* Quote Grid */}
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {mockQuotes.map((quote) => (
               <QuoteCard
                 key={quote.id}
@@ -61,7 +71,6 @@ function TestArchivePage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   )
 }

@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import Navigation from '@/components/layout/Navigation'
-import Footer from '@/components/layout/Footer'
 
 interface ErrorPageProps {
   error: Error & { digest?: string }
@@ -87,7 +86,6 @@ export default function Error({ error, reset }: ErrorPageProps) {
         </div>
       </section>
 
-      <Footer />
     </div>
   )
 }

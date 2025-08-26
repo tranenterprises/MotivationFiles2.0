@@ -1,6 +1,5 @@
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton'
 import Navigation from '@/components/layout/Navigation'
-import Footer from '@/components/layout/Footer'
 
 export default function Loading() {
   return (
@@ -27,7 +26,6 @@ export default function Loading() {
         </div>
       </section>
 
-      <Footer />
     </div>
   )
 }

@@ -10,7 +10,7 @@ interface NavigationProps {
   subtitle?: string
 }
 
-export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: NavigationProps) {
+export default function Navigation({ title = "MOTIVE FILES", subtitle }: NavigationProps) {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { prefetchArchivePage, prefetchTodaysQuote } = usePrefetch()
@@ -20,8 +20,8 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
   }
 
   const navItems = [
-    { href: '/', label: 'Home', icon: '🏠', prefetch: prefetchTodaysQuote },
-    { href: '/archive', label: 'Archive', icon: '📚', prefetch: () => prefetchArchivePage(1) },
+    { href: '/', label: 'TODAY', prefetch: prefetchTodaysQuote },
+    { href: '/archive', label: 'ARCHIVE', prefetch: () => prefetchArchivePage(1) },
   ]
 
   const isActive = (href: string) => {
@@ -32,39 +32,54 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
   }
 
   return (
-    <header className="border-b border-gray-800 bg-black/50 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-6">
+    <header className="relative border-b border-accent/20 bg-black/90 backdrop-blur-sm sticky top-0 z-50 overflow-hidden">
+      {/* Background gradient overlay - matching hero section */}
+      <div className="absolute inset-0 bg-gradient-radial from-gray-900/40 via-black/80 to-black pointer-events-none gpu-accelerated" />
+      
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo/Title */}
-          <div className="flex items-center space-x-2">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div className="text-2xl font-bold text-white group-hover:text-accent transition-colors duration-300">
-                <span className="text-accent">DAILY</span> MOTIVATION
+          <div className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-3 group touch-target focus-ring">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-accent rounded-full animate-pulse" />
+                <div className="text-lg font-bold text-white group-hover:text-accent transition-all duration-500">
+                  MOTIVE FILES
+                </div>
               </div>
             </Link>
             {subtitle && (
-              <span className="hidden sm:block text-gray-400 text-sm font-medium">
-                / {subtitle}
-              </span>
+              <div className="hidden sm:flex items-center space-x-2">
+                <span className="text-accent/60">•</span>
+                <span className="body-small text-gray-400 font-bold uppercase tracking-wider">
+                  {subtitle}
+                </span>
+              </div>
             )}
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+          <nav className="hidden md:flex items-center space-x-2">
+            {navItems.map((item, index) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onMouseEnter={() => item.prefetch()}
                 onFocus={() => item.prefetch()}
-                className={`font-medium transition-all duration-300 flex items-center space-x-2 px-3 py-2 rounded-lg ${
-                  isActive(item.href)
-                    ? 'text-accent bg-gray-800 border border-accent/30'
-                    : 'text-gray-300 hover:text-accent hover:bg-gray-800/50'
-                }`}
+                className={`
+                  font-bold transition-all duration-500 flex items-center space-x-3 
+                  px-6 py-3 rounded-lg border backdrop-blur-sm touch-target focus-ring
+                  hover-lift hover-glow layout-transition
+                  ${isActive(item.href)
+                    ? 'text-white bg-accent/20 border-accent/50 glow-text scale-105 gpu-accelerated' 
+                    : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
+                  }
+                `}
               >
-                <span className="text-sm">{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="body-small font-bold uppercase tracking-widest">{item.label}</span>
+                {isActive(item.href) && (
+                  <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                )}
               </Link>
             ))}
           </nav>
@@ -72,12 +87,12 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-lg text-gray-300 hover:text-accent hover:bg-gray-800 transition-colors duration-300"
+            className="md:hidden p-3 rounded-lg text-gray-300 hover:text-accent hover:bg-accent/10 border border-gray-700/50 hover:border-accent/30 transition-all duration-300 touch-target focus-ring hover-lift"
             aria-label="Toggle mobile menu"
           >
             <svg
-              className={`w-6 h-6 transform transition-transform duration-300 ${
-                isMobileMenuOpen ? 'rotate-90' : ''
+              className={`w-6 h-6 transform transition-transform duration-500 ${
+                isMobileMenuOpen ? 'rotate-180 scale-110' : ''
               }`}
               fill="none"
               stroke="currentColor"
@@ -94,25 +109,32 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-800">
-            <nav className="flex flex-col space-y-2 pt-4">
-              {navItems.map((item) => (
+          <div className="md:hidden mt-6 pb-4 border-t border-gray-700/50 slide-down">
+            <nav className="flex flex-col space-y-3 pt-6">
+              {navItems.map((item, index) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   onMouseEnter={() => item.prefetch()}
                   onFocus={() => item.prefetch()}
-                  className={`font-medium transition-all duration-300 flex items-center space-x-3 px-4 py-3 rounded-lg ${
-                    isActive(item.href)
-                      ? 'text-accent bg-gray-800 border border-accent/30'
-                      : 'text-gray-300 hover:text-accent hover:bg-gray-800/50'
-                  }`}
+                  className={`
+                    font-bold transition-all duration-500 flex items-center space-x-4 
+                    px-6 py-4 rounded-lg border backdrop-blur-sm touch-target focus-ring
+                    hover-lift layout-transition scale-in-bounce
+                    ${isActive(item.href)
+                      ? 'text-white bg-accent/20 border-accent/50 glow-text gpu-accelerated' 
+                      : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
+                    }
+                  `}
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
+                  <span className="body-text font-bold uppercase tracking-widest flex-1">{item.label}</span>
                   {isActive(item.href) && (
-                    <span className="ml-auto text-xs text-accent">●</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                      <span className="body-small text-accent font-bold uppercase tracking-widest">ACTIVE</span>
+                    </div>
                   )}
                 </Link>
               ))}
@@ -120,6 +142,9 @@ export default function Navigation({ title = "DAILY MOTIVATION", subtitle }: Nav
           </div>
         )}
       </div>
+      
+      {/* Bottom accent glow */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
     </header>
   )
 }

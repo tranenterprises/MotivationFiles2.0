@@ -15,6 +15,8 @@ interface AudioPlayerProps {
   onEnded?: () => void
   onError?: (error: string) => void
   onLoadProgress?: (loaded: number, total: number) => void
+  onTimeUpdate?: (currentTime: number) => void
+  audioRef?: React.MutableRefObject<HTMLAudioElement | null>
 }
 
 export default function AudioPlayer({
@@ -28,7 +30,9 @@ export default function AudioPlayer({
   onPause,
   onEnded,
   onError,
-  onLoadProgress
+  onLoadProgress,
+  onTimeUpdate,
+  audioRef: externalAudioRef
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -78,6 +82,11 @@ export default function AudioPlayer({
 
     const audio = new Audio()
     audioRef.current = audio
+    
+    // Also set external ref if provided
+    if (externalAudioRef) {
+      externalAudioRef.current = audio
+    }
 
     // Cross-browser compatibility and preload settings
     audio.preload = preloadStrategy
@@ -127,7 +136,9 @@ export default function AudioPlayer({
     }
 
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime)
+      const currentAudioTime = audio.currentTime
+      setCurrentTime(currentAudioTime)
+      onTimeUpdate?.(currentAudioTime)
     }
 
     const handleEnded = () => {
@@ -181,7 +192,7 @@ export default function AudioPlayer({
       }
       audio.src = ''
     }
-  }, [audioUrl, preloadStrategy, onEnded, onError, onLoadProgress])
+  }, [audioUrl, preloadStrategy, onEnded, onError, onLoadProgress, onTimeUpdate, externalAudioRef])
 
   const togglePlayPause = async () => {
     if (!audioRef.current || hasError) return
@@ -300,12 +311,16 @@ export default function AudioPlayer({
           className={`
             ${config.button} 
             flex items-center justify-center
-            bg-gray-700 hover:bg-accent
-            rounded-full transition-all duration-300
+            bg-gradient-to-br from-gray-700 to-gray-800 hover:from-accent hover:to-accent-dark
+            rounded-full transition-all duration-300 ease-out
             disabled:opacity-50 disabled:cursor-not-allowed
-            focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-50
-            transform hover:scale-105
-            ${isPreloaded ? 'ring-1 ring-green-400 ring-opacity-50' : ''}
+            focus:outline-none focus:ring-4 focus:ring-accent/30
+            transform hover:scale-110 active:scale-95
+            shadow-lg hover:shadow-xl hover:shadow-accent/25
+            border-2 border-transparent hover:border-accent/50
+            ${isPreloaded ? 'ring-2 ring-green-400/40 shadow-green-400/20' : ''}
+            ${isPlaying ? 'bg-gradient-to-br from-accent to-accent-dark shadow-accent/30' : ''}
+            touch-target
           `}
           aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
           title={isPreloaded ? 'Audio ready for fast playback' : 'Audio loading...'}
@@ -336,9 +351,12 @@ export default function AudioPlayer({
           onTouchStart={handleProgressTouch}
           className={`
             ${config.progress}
-            bg-gray-600 rounded-full cursor-pointer
-            hover:bg-gray-500 transition-colors duration-200
+            bg-gray-700 rounded-full cursor-pointer group
+            hover:bg-gray-600 transition-all duration-300 ease-out
             relative overflow-hidden touch-manipulation
+            shadow-inner hover:shadow-lg
+            border border-gray-600 hover:border-accent/50
+            transform hover:scale-[1.02]
           `}
           role="progressbar"
           aria-valuenow={currentTime}
@@ -346,32 +364,92 @@ export default function AudioPlayer({
           aria-valuemax={audioDuration}
           aria-label="Audio progress"
         >
+          {/* Background glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Progress fill */}
           <div
-            className={`${config.progress} bg-accent rounded-full transition-all duration-300`}
+            className={`
+              ${config.progress} 
+              bg-gradient-to-r from-accent via-accent-light to-accent
+              rounded-full transition-all duration-300 ease-out
+              shadow-sm
+              relative overflow-hidden
+            `}
             style={{ width: `${progressPercentage}%` }}
-          />
+          >
+            {/* Animated shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+          </div>
+          
+          {/* Progress indicator dot */}
+          {progressPercentage > 0 && (
+            <div 
+              className={`
+                absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2
+                w-3 h-3 md:w-4 md:h-4 bg-white rounded-full shadow-lg
+                border-2 border-accent
+                opacity-0 group-hover:opacity-100 transition-all duration-300
+                pointer-events-none
+              `}
+              style={{ left: `${progressPercentage}%` }}
+            />
+          )}
         </div>
         
         {/* Time Display */}
-        <div className={`flex justify-between mt-1 ${config.time} text-gray-400`}>
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(audioDuration)}</span>
+        <div className={`flex justify-between items-center mt-2 ${config.time}`}>
+          <span className="text-gray-300 font-mono tabular-nums bg-gray-800/50 px-2 py-1 rounded backdrop-blur-sm">
+            {formatTime(currentTime)}
+          </span>
+          <div className="flex items-center space-x-2">
+            {isPlaying && (
+              <div className="flex space-x-1">
+                <div className="w-1 h-3 bg-accent rounded-full animate-pulse"></div>
+                <div className="w-1 h-4 bg-accent-light rounded-full animate-pulse" style={{animationDelay: '0.1s'}}></div>
+                <div className="w-1 h-2 bg-accent rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+              </div>
+            )}
+            <span className="text-gray-400 font-mono tabular-nums bg-gray-800/30 px-2 py-1 rounded backdrop-blur-sm">
+              {formatTime(audioDuration)}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Title (optional) */}
-      {title && (
-        <div className={`${config.time} text-gray-300 truncate max-w-32`}>
-          {title}
-        </div>
-      )}
+      {/* Title and Status */}
+      <div className="flex flex-col items-end space-y-2">
+        {title && (
+          <div className={`${config.time} text-gray-300 truncate max-w-32 bg-gray-800/30 px-2 py-1 rounded backdrop-blur-sm font-medium`}>
+            {title}
+          </div>
+        )}
 
-      {/* Error Display */}
-      {hasError && (
-        <div className={`${config.time} text-red-400 truncate`}>
-          {errorMessage}
-        </div>
-      )}
+        {/* Error Display */}
+        {hasError && (
+          <div className={`${config.time} text-red-400 truncate bg-red-900/20 px-2 py-1 rounded border border-red-500/30 backdrop-blur-sm`}>
+            <div className="flex items-center space-x-1">
+              <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span>{errorMessage}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Preload Status */}
+        {!hasError && loadProgress > 0 && loadProgress < 100 && (
+          <div className={`${config.time} text-blue-400 bg-blue-900/20 px-2 py-1 rounded border border-blue-500/30 backdrop-blur-sm`}>
+            <div className="flex items-center space-x-1">
+              <svg className="w-3 h-3 fill-current animate-spin" viewBox="0 0 24 24">
+                <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+                <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
+              </svg>
+              <span>Loading {Math.round(loadProgress)}%</span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

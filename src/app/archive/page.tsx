@@ -3,7 +3,6 @@ import { getCachedAllQuotes, getCachedQuotesByCategory } from '@/lib/utils/cache
 import { Quote } from '@/lib/types/types'
 import QuoteCard from '@/components/content/QuoteCard'
 import Navigation from '@/components/layout/Navigation'
-import Footer from '@/components/layout/Footer'
 import FallbackContent from '@/components/content/FallbackContent'
 
 interface ArchivePageProps {
@@ -41,63 +40,69 @@ async function QuoteArchive({ page = 1, category }: { page: number, category?: s
 
 
     return (
-      <div className="space-y-8">
+      <div className="space-y-12">
         {/* Stats */}
-        <div className="bg-gray-800 border border-gray-600 rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-accent">{quotes.length}</div>
-              <div className="text-sm text-gray-300">Quotes This Page</div>
+        <div className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-xl p-8 shadow-2xl hover-lift hover-glow layout-transition fade-in">
+          <h3 className="text-lg font-bold text-white text-center mb-8 scale-in">
+            ARCHIVE STATISTICS
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="slide-up stagger-1">
+              <div className="text-2xl font-bold text-accent mb-2">{quotes.length}</div>
+              <div className="body-small text-gray-300 font-bold uppercase tracking-wider">Quotes This Page</div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-accent">
+            <div className="slide-up stagger-2">
+              <div className="text-2xl font-bold text-accent mb-2">
                 {new Set(quotes.map(q => q.category)).size}
               </div>
-              <div className="text-sm text-gray-300">Categories</div>
+              <div className="body-small text-gray-300 font-bold uppercase tracking-wider">Categories</div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-accent">
+            <div className="slide-up stagger-3">
+              <div className="text-2xl font-bold text-accent mb-2">
                 {quotes.filter(q => q.audio_url).length}
               </div>
-              <div className="text-sm text-gray-300">With Audio</div>
+              <div className="body-small text-gray-300 font-bold uppercase tracking-wider">With Audio</div>
             </div>
           </div>
         </div>
 
         {/* Quote Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {quotes.map((quote) => (
-            <QuoteCard
-              key={quote.id}
-              quote={quote}
-              size="medium"
-              showAudio={true}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in stagger-2">
+          {quotes.map((quote, index) => (
+            <div key={quote.id} className="scale-in-bounce" style={{ animationDelay: `${index * 50}ms` }}>
+              <QuoteCard
+                quote={quote}
+                size="medium"
+                showAudio={true}
+              />
+            </div>
           ))}
         </div>
 
         {/* Pagination */}
         {(page > 1 || hasNextPage) && (
-          <div className="flex justify-center items-center space-x-4 py-8">
+          <div className="flex justify-center items-center space-x-6 py-12 slide-up stagger-4">
             {page > 1 && (
               <Link
                 href={`/archive?page=${page - 1}${category ? `&category=${category}` : ''}`}
-                className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 hover:border-accent transition-colors duration-300"
+                className="px-8 py-4 rounded-lg font-bold uppercase tracking-widest transition-all duration-500 border backdrop-blur-sm touch-target focus-ring hover-lift layout-transition text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30"
               >
-                ← Previous
+                ← PREVIOUS
               </Link>
             )}
             
-            <span className="text-gray-300 font-medium">
-              Page {page}
-            </span>
+            <div className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-lg px-6 py-4">
+              <span className="text-sm text-accent font-bold uppercase tracking-wider">
+                PAGE {page}
+              </span>
+            </div>
             
             {hasNextPage && (
               <Link
                 href={`/archive?page=${page + 1}${category ? `&category=${category}` : ''}`}
-                className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 hover:border-accent transition-colors duration-300"
+                className="px-8 py-4 rounded-lg font-bold uppercase tracking-widest transition-all duration-500 border backdrop-blur-sm touch-target focus-ring hover-lift layout-transition text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30"
               >
-                Next →
+                NEXT →
               </Link>
             )}
           </div>
@@ -119,45 +124,55 @@ export default function ArchivePage({ searchParams }: ArchivePageProps) {
   const category = searchParams.category
 
   return (
-    <div className="min-h-screen bg-black">
-      <Navigation title="QUOTE ARCHIVE" subtitle="Archive" />
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Background gradient overlay - matching hero section */}
+      <div className="absolute inset-0 bg-gradient-radial from-gray-900/50 via-black/80 to-black pointer-events-none gpu-accelerated" />
+      
+      <Navigation title="ARCHIVE" subtitle="Archive" />
 
       {/* Hero Section */}
-      <section className="py-12 px-4">
-        <div className="max-w-6xl mx-auto text-center mb-12">
-          <h2 className="hero-text text-3xl md:text-5xl text-white mb-4 leading-tight">
+      <section className="relative z-10 py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center mb-12 fade-in">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-6 leading-tight scale-in-bounce">
             EVERY WORD OF
             <span className="text-accent block">MOTIVATION</span>
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-gray-300 max-w-4xl mx-auto leading-relaxed slide-up stagger-1">
             Browse through our complete collection of daily motivation quotes, 
             organized chronologically with the latest inspiration first.
           </p>
+          
+          {/* Accent line */}
+          <div className="w-32 h-1 bg-gradient-to-r from-transparent via-accent to-transparent mx-auto mt-8 fade-in stagger-2" />
         </div>
 
         {/* Category Filter */}
-        <div className="max-w-6xl mx-auto mb-8">
-          <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
-            <div className="flex flex-wrap gap-2 justify-center">
+        <div className="max-w-6xl mx-auto mb-12 slide-up stagger-2">
+          <div className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-xl p-6 shadow-2xl hover-lift hover-glow layout-transition">
+            <h3 className="text-lg font-bold text-white text-center mb-6 scale-in stagger-3">
+              FILTER BY CATEGORY
+            </h3>
+            <div className="flex flex-wrap gap-3 justify-center">
               <Link
                 href="/archive"
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${
+                className={`px-6 py-3 rounded-lg font-bold uppercase tracking-widest transition-all duration-500 border backdrop-blur-sm touch-target focus-ring hover-lift layout-transition ${
                   !category 
-                    ? 'bg-accent text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'text-white bg-accent/20 border-accent/50 scale-105' 
+                    : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
                 }`}
               >
                 All Categories
               </Link>
-              {['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'].map((cat) => (
+              {['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'].map((cat, index) => (
                 <Link
                   key={cat}
                   href={`/archive?category=${cat}`}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 capitalize ${
+                  className={`px-6 py-3 rounded-lg font-bold uppercase tracking-widest transition-all duration-500 border backdrop-blur-sm touch-target focus-ring hover-lift layout-transition scale-in-bounce ${
                     category === cat 
-                      ? 'bg-accent text-white' 
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'text-white bg-accent/20 border-accent/50 scale-105' 
+                      : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
                   }`}
+                  style={{ animationDelay: `${(index + 1) * 100}ms` }}
                 >
                   {cat}
                 </Link>
@@ -167,12 +182,11 @@ export default function ArchivePage({ searchParams }: ArchivePageProps) {
         </div>
 
         {/* Quote Archive */}
-        <div className="max-w-6xl mx-auto">
-          <QuoteArchive page={page} category={category} />
+        <div className="max-w-6xl mx-auto slide-up stagger-3">
+          <QuoteArchive page={page} category={category || undefined} />
         </div>
       </section>
 
-      <Footer />
     </div>
   )
 }
