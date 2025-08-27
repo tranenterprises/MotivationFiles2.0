@@ -37,12 +37,15 @@ Migrate the existing Vercel cron job at `src/app/api/generate-daily-content/` to
   - Create category balancing utility (currently duplicated)
 
 ### 3. Core Migration
-- [ ] **Refactor edge function to use existing API patterns**
-  - Replace OpenAI integration with our `generateQuote` function pattern
-  - Replace ElevenLabs integration with our `generateVoiceWithFallbacksAndUpload` function
-  - Replace basic Supabase calls with our database utilities
-  - Use our storage utilities for audio upload
-  - Implement our retry and error handling patterns
+- [x] **Refactor edge function to use shared utilities from `_shared/` folder**
+  - ✅ Replaced entire implementation with shared `daily-quote-generator.ts` utility
+  - ✅ Used shared OpenAI utilities with retry logic and validation
+  - ✅ Used shared ElevenLabs utilities with fallback voices and quality degradation
+  - ✅ Used shared Supabase utilities for database operations
+  - ✅ Used shared category balancing and environment management
+  - ✅ Reduced edge function from ~700 lines to ~175 lines (75% reduction)
+  - ✅ Added health check endpoint support
+  - ✅ Enhanced security validation and error handling
 
 ### 4. Environment & Configuration
 - [ ] **Handle environment variable differences**

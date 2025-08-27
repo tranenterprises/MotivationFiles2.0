@@ -1,382 +1,174 @@
 // Supabase Edge Function for Daily Quote Generation
+// Uses shared utilities for consistency and maintainability
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import OpenAI from 'https://esm.sh/openai@4.28.0';
-import { ElevenLabsClient } from 'https://esm.sh/@elevenlabs/elevenlabs-js@0.8.0';
+import {
+  generateDailyQuote,
+  performHealthCheck,
+  loadEdgeFunctionEnv,
+  type DailyQuoteGenerationResult,
+} from '../_shared/daily-quote-generator.ts';
 
-// Types
-interface Quote {
-  id: string;
-  date_created: string;
-  content: string;
-  category: string;
-  audio_url: string | null;
-  audio_duration: number | null;
-  created_at: string;
-  updated_at: string;
-}
-
-type QuoteCategory =
-  | 'motivation'
-  | 'wisdom'
-  | 'grindset'
-  | 'reflection'
-  | 'discipline';
-
-// Configuration
-const QUOTE_CATEGORIES: QuoteCategory[] = [
-  'motivation',
-  'wisdom',
-  'grindset',
-  'reflection',
-  'discipline',
-];
-
-// Prompt templates (simplified version of your prompts)
-const PROMPT_TEMPLATES: Record<QuoteCategory, string> = {
-  motivation:
-    'Generate an original, powerful motivational quote that inspires action and perseverance. Focus on themes like overcoming obstacles, pushing through challenges, and achieving greatness. Make it impactful and memorable.',
-  wisdom:
-    'Generate an original, thoughtful wisdom quote that provides deep insight about life, success, or human nature. Focus on timeless truths and practical wisdom that guides decision-making.',
-  grindset:
-    'Generate an original, intense grindset quote that embodies the mentality of relentless work ethic, discipline, and never giving up. Focus on themes like outworking competition, embracing the struggle, and dominating your goals.',
-  reflection:
-    'Generate an original, introspective quote that encourages self-reflection and personal growth. Focus on themes like learning from experiences, understanding yourself better, and continuous improvement.',
-  discipline:
-    'Generate an original, powerful discipline quote that emphasizes self-control, consistency, and doing what needs to be done. Focus on themes like building habits, staying committed, and mastering yourself.',
-};
-
-const SYSTEM_PROMPT = `You are a motivational quote generator. Generate original, impactful quotes that inspire and motivate people to take action and achieve their goals.
-
-Requirements:
-- Generate only ONE original quote
-- Keep it under 50 words
-- Make it powerful and actionable
-- Avoid clichés or overused phrases
-- Focus on the specific theme requested
-- Return ONLY the quote text, no quotation marks or attribution`;
-
-// Helper functions
-async function getNextCategory(supabase: any): Promise<QuoteCategory> {
-  try {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const startDate = thirtyDaysAgo.toISOString().split('T')[0];
-
-    const categoryCounts: Record<QuoteCategory, number> = {
-      motivation: 0,
-      wisdom: 0,
-      grindset: 0,
-      reflection: 0,
-      discipline: 0,
-    };
-
-    // Count quotes by category in the last 30 days
-    for (const category of QUOTE_CATEGORIES) {
-      const { data: quotes } = await supabase
-        .from('quotes')
-        .select('*')
-        .eq('category', category)
-        .gte('date_created', startDate);
-
-      categoryCounts[category] = quotes?.length || 0;
-    }
-
-    // Find category with least usage
-    const sortedCategories = QUOTE_CATEGORIES.sort(
-      (a, b) => categoryCounts[a] - categoryCounts[b]
-    );
-
-    console.log('Category usage in last 30 days:', categoryCounts);
-    console.log('Selected category:', sortedCategories[0]);
-
-    return sortedCategories[0];
-  } catch (error) {
-    console.error(
-      'Error determining next category, using random fallback:',
-      error
-    );
-    return QUOTE_CATEGORIES[
-      Math.floor(Math.random() * QUOTE_CATEGORIES.length)
-    ];
+// Enhanced security validation
+function validateAuthorization(req: Request, cronSecret?: string): boolean {
+  if (!cronSecret) {
+    console.log('No CRON_SECRET configured - allowing request');
+    return true; // Allow if no secret is configured
   }
-}
 
-async function generateQuote(
-  openai: OpenAI,
-  category: QuoteCategory
-): Promise<{ content: string; category: QuoteCategory }> {
-  const prompt = PROMPT_TEMPLATES[category];
-
-  try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      temperature: 0.8,
-      max_tokens: 300,
-      messages: [
-        {
-          role: 'system',
-          content: SYSTEM_PROMPT,
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
-
-    const rawContent = completion.choices[0]?.message?.content?.trim();
-
-    if (!rawContent) {
-      throw new Error('Failed to generate quote content');
-    }
-
-    // Basic content filtering
-    const filteredContent = rawContent
-      .replace(/^["']|["']$/g, '') // Remove surrounding quotes
-      .replace(/\s+/g, ' ') // Normalize whitespace
-      .trim();
-
-    return {
-      content: filteredContent,
-      category,
-    };
-  } catch (error: any) {
-    throw new Error(`Failed to generate quote: ${error.message}`);
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    return false;
   }
+
+  // Support multiple auth formats
+  return (
+    authHeader.includes(cronSecret) ||
+    authHeader === `Bearer ${cronSecret}` ||
+    authHeader === cronSecret
+  );
 }
 
-async function generateVoiceAndUpload(
-  elevenlabs: ElevenLabsClient,
-  text: string,
-  quoteId: string,
-  supabase: any
-): Promise<string> {
+// Main edge function handler
+Deno.serve(async (req: Request) => {
+  const startTime = Date.now();
+  const requestId = crypto.randomUUID().substring(0, 8);
+  const method = req.method;
+  const url = new URL(req.url);
+
+  console.log(`[${requestId}] ${method} ${url.pathname} - Edge function triggered`);
+
   try {
-    // Generate voice using ElevenLabs
-    const audioResponse = await elevenlabs.textToSpeech.convert(
-      'pNInz6obpgDQGcFmaJgB', // Adam voice ID
-      {
-        text,
-        modelId: 'eleven_monolingual_v1',
-        voiceSettings: {
-          stability: 0.75,
-          similarityBoost: 0.75,
-          style: 0.5,
-          useSpeakerBoost: true,
+    // Handle different HTTP methods
+    if (method === 'GET' && url.pathname.includes('/health')) {
+      // Health check endpoint
+      console.log(`[${requestId}] Performing health check`);
+      const healthResult = await performHealthCheck();
+      
+      const statusCode = healthResult.status === 'healthy' ? 200 :
+                        healthResult.status === 'degraded' ? 200 : 503;
+      
+      return new Response(JSON.stringify({
+        ...healthResult,
+        requestId,
+        timestamp: new Date().toISOString(),
+      }), {
+        status: statusCode,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+          'X-Request-ID': requestId,
         },
-        outputFormat: 'mp3_44100_192' as any,
-      }
-    );
-
-    if (!audioResponse) {
-      throw new Error('Failed to generate voice audio');
-    }
-
-    // Convert stream to buffer
-    const reader = audioResponse.getReader();
-    const chunks: Uint8Array[] = [];
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-      }
-    } finally {
-      reader.releaseLock();
-    }
-
-    const audioBuffer = new Uint8Array(
-      chunks.reduce((acc, chunk) => acc + chunk.length, 0)
-    );
-    let offset = 0;
-    for (const chunk of chunks) {
-      audioBuffer.set(chunk, offset);
-      offset += chunk.length;
-    }
-
-    if (audioBuffer.length === 0) {
-      throw new Error('Generated audio buffer is empty');
-    }
-
-    // Upload to Supabase Storage
-    const fileName = `${quoteId}-${Date.now()}.mp3`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('quote-audio')
-      .upload(fileName, audioBuffer, {
-        contentType: 'audio/mpeg',
-        cacheControl: '31536000', // 1 year cache
       });
-
-    if (uploadError) {
-      throw new Error(`Failed to upload audio: ${uploadError.message}`);
     }
 
-    // Get public URL
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('quote-audio').getPublicUrl(fileName);
-
-    return publicUrl;
-  } catch (error: any) {
-    console.error('Voice generation failed:', error.message);
-    throw error;
-  }
-}
-
-async function generateDailyContent() {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
-  const elevenlabsApiKey = Deno.env.get('ELEVENLABS_API_KEY')!;
-
-  // Initialize clients
-  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
-  const openai = new OpenAI({ apiKey: openaiApiKey });
-  const elevenlabs = new ElevenLabsClient({ apiKey: elevenlabsApiKey });
-
-  const today = new Date().toISOString().split('T')[0];
-
-  // Check if quote already exists for today
-  const { data: existingQuote } = await supabase
-    .from('quotes')
-    .select('*')
-    .eq('date_created', today)
-    .single();
-
-  if (existingQuote) {
-    console.log('Quote already exists for today:', today);
-    return {
-      success: true,
-      message: 'Quote already exists for today',
-      quote: existingQuote,
-      skipReason: 'already_exists',
-    };
-  }
-
-  console.log('Generating new daily content for:', today);
-
-  // Get the next category to ensure balanced distribution
-  const category = await getNextCategory(supabase);
-  console.log('Selected category:', category);
-
-  // Generate the quote
-  console.log('Generating quote...');
-  const generatedQuote = await generateQuote(openai, category);
-
-  // Create the quote in database first (without audio_url)
-  console.log('Creating quote in database...');
-  const { data: createdQuote, error: createError } = await supabase
-    .from('quotes')
-    .insert({
-      content: generatedQuote.content,
-      category: generatedQuote.category,
-      date_created: today,
-      audio_url: null,
-      audio_duration: null,
-    })
-    .select()
-    .single();
-
-  if (createError || !createdQuote) {
-    throw new Error(`Failed to create quote: ${createError?.message}`);
-  }
-
-  console.log('Quote created with ID:', createdQuote.id);
-
-  try {
-    // Generate voice with upload
-    console.log('Generating voice audio...');
-    const audioUrl = await generateVoiceWithFallbacksAndUpload(
-      elevenlabs,
-      generatedQuote.content,
-      createdQuote.id,
-      supabase
-    );
-
-    // Update quote with audio URL
-    console.log('Updating quote with audio URL...');
-    const { data: finalQuote, error: updateError } = await supabase
-      .from('quotes')
-      .update({ audio_url: audioUrl })
-      .eq('id', createdQuote.id)
-      .select()
-      .single();
-
-    if (updateError) {
-      throw new Error(
-        `Failed to update quote with audio URL: ${updateError.message}`
-      );
-    }
-
-    console.log('Daily content generation completed successfully');
-
-    return {
-      success: true,
-      message: 'Daily content generated successfully',
-      quote: finalQuote,
-      voiceGenerated: true,
-      audioUrl: audioUrl,
-      category: generatedQuote.category,
-    };
-  } catch (voiceError: any) {
-    console.error('Voice generation failed:', voiceError.message);
-
-    // Quote was created successfully, but voice failed
-    return {
-      success: true,
-      message: 'Quote generated but voice generation failed',
-      quote: createdQuote,
-      voiceGenerated: false,
-      voiceError: voiceError.message,
-      category: generatedQuote.category,
-    };
-  }
-}
-
-// Edge Function handler
-Deno.serve(async req => {
-  try {
-    console.log('Daily content generation triggered via Edge Function');
-
-    // Basic security check - verify this is being called by pg_cron or authorized request
-    const authHeader = req.headers.get('authorization');
-    const cronSecret = Deno.env.get('CRON_SECRET');
-
-    if (!authHeader || !authHeader.includes(cronSecret || '')) {
-      console.log('Unauthorized request to Edge Function');
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Unauthorized',
-        }),
-        {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    const result = await generateDailyContent();
-
-    return new Response(JSON.stringify(result), {
-      status: result.success ? 200 : 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error: any) {
-    console.error('Daily content generation failed:', error);
-
-    return new Response(
-      JSON.stringify({
+    // Main generation endpoint (POST or cron trigger)
+    if (method !== 'POST' && method !== 'GET') {
+      return new Response(JSON.stringify({
         success: false,
-        error: 'Failed to generate daily content',
-        details: error.message,
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        error: 'Method not allowed',
+        requestId,
+      }), {
+        status: 405,
+        headers: {
+          'Content-Type': 'application/json',
+          'Allow': 'GET, POST',
+          'X-Request-ID': requestId,
+        },
+      });
+    }
+
+    // Enhanced security check
+    const env = loadEdgeFunctionEnv();
+    const isAuthorized = validateAuthorization(req, env.cronSecret);
+    
+    if (!isAuthorized) {
+      console.log(`[${requestId}] Unauthorized request - invalid or missing credentials`);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Unauthorized',
+        requestId,
+      }), {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+          'X-Request-ID': requestId,
+        },
+      });
+    }
+
+    // Parse request body for options (if POST)
+    let options = {};
+    if (method === 'POST' && req.body) {
+      try {
+        const body = await req.text();
+        if (body.trim()) {
+          options = JSON.parse(body);
+        }
+      } catch (error) {
+        console.warn(`[${requestId}] Failed to parse request body:`, error);
+        // Continue with empty options
       }
-    );
+    }
+
+    // Generate daily quote using shared utilities
+    console.log(`[${requestId}] Starting daily quote generation...`);
+    const result: DailyQuoteGenerationResult = await generateDailyQuote(options);
+    
+    const duration = Date.now() - startTime;
+    console.log(`[${requestId}] Daily quote generation completed in ${duration}ms`);
+
+    // Build response with metadata
+    const response = {
+      ...result,
+      requestId,
+      duration,
+      timestamp: new Date().toISOString(),
+      method,
+    };
+
+    return new Response(JSON.stringify(response), {
+      status: result.success ? 200 : 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+        'X-Request-ID': requestId,
+      },
+    });
+
+  } catch (error: any) {
+    const duration = Date.now() - startTime;
+    console.error(`[${requestId}] Edge function failed after ${duration}ms:`, {
+      error: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+
+    // Determine if this is a retryable error
+    const isRetryable = 
+      error.message?.includes('timeout') ||
+      error.message?.includes('network') ||
+      error.message?.includes('connection') ||
+      error.message?.includes('503') ||
+      error.message?.includes('502') ||
+      error.message?.includes('500');
+
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Internal server error',
+      details: error.message,
+      retryable: isRetryable,
+      requestId,
+      duration,
+      timestamp: new Date().toISOString(),
+    }), {
+      status: isRetryable ? 503 : 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+        'X-Request-ID': requestId,
+        ...(isRetryable && { 'Retry-After': '300' }), // Suggest retry after 5 minutes
+      },
+    });
   }
 });
