@@ -6,11 +6,39 @@ export interface EdgeFunctionEnvConfig {
   supabaseServiceRoleKey: string;
   openaiApiKey: string;
   elevenlabsApiKey: string;
-  cronSecret?: string;
+  cronSecret: string | undefined;
+}
+
+/**
+ * Environment variable mapping between Next.js and Supabase Edge Functions:
+ * 
+ * Next.js (process.env)          -> Edge Function (Deno.env)
+ * NEXT_PUBLIC_SUPABASE_URL      -> SUPABASE_URL (preferred) or NEXT_PUBLIC_SUPABASE_URL (fallback)
+ * SUPABASE_SERVICE_ROLE_KEY     -> SUPABASE_SERVICE_ROLE_KEY (same)
+ * OPENAI_API_KEY                -> OPENAI_API_KEY (same)
+ * ELEVENLABS_API_KEY            -> ELEVENLABS_API_KEY (same)
+ * CRON_SECRET                   -> CRON_SECRET (same)
+ */
+
+// Environment-aware functions that work in both Deno and Node.js
+function getEnvValue(key: string): string | undefined {
+  let value: string | undefined;
+  
+  // In Deno environment (edge functions)
+  if (typeof Deno !== 'undefined' && Deno.env) {
+    value = Deno.env.get(key);
+  }
+  // In Node.js environment (tests)
+  else if (typeof process !== 'undefined' && process.env) {
+    value = process.env[key];
+  }
+  
+  // Treat empty strings and undefined as the same (no value)
+  return value && value.trim() !== '' ? value : undefined;
 }
 
 export function getRequiredEnv(key: string): string {
-  const value = Deno.env.get(key);
+  const value = getEnvValue(key);
   if (!value) {
     throw new Error(`${key} environment variable is required`);
   }
@@ -21,12 +49,22 @@ export function getOptionalEnv(
   key: string,
   defaultValue?: string
 ): string | undefined {
-  return Deno.env.get(key) || defaultValue;
+  return getEnvValue(key) || defaultValue;
 }
 
 export function loadEdgeFunctionEnv(): EdgeFunctionEnvConfig {
+  // Map Next.js environment variables to Supabase Edge Function environment variables
+  // Next.js uses NEXT_PUBLIC_SUPABASE_URL, but edge functions use SUPABASE_URL
+  // Try both patterns for flexibility
+  const supabaseUrl = getOptionalEnv('SUPABASE_URL') || 
+                     getOptionalEnv('NEXT_PUBLIC_SUPABASE_URL');
+  
+  if (!supabaseUrl) {
+    throw new Error('SUPABASE_URL environment variable is required (or NEXT_PUBLIC_SUPABASE_URL as fallback)');
+  }
+
   return {
-    supabaseUrl: getRequiredEnv('SUPABASE_URL'),
+    supabaseUrl,
     supabaseServiceRoleKey: getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
     openaiApiKey: getRequiredEnv('OPENAI_API_KEY'),
     elevenlabsApiKey: getRequiredEnv('ELEVENLABS_API_KEY'),
@@ -48,4 +86,53 @@ export function validateEdgeFunctionEnv(env: EdgeFunctionEnvConfig): void {
       throw new Error(`Missing required environment variable: ${key}`);
     }
   }
+}
+
+/**
+ * Debug function to log environment variable status (without exposing secrets)
+ * Useful for troubleshooting edge function deployment issues
+ */
+export function logEnvironmentStatus(): void {
+  const vars = [
+    'SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_URL', 
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'OPENAI_API_KEY',
+    'ELEVENLABS_API_KEY',
+    'CRON_SECRET',
+  ];
+
+  console.log('Environment variable status:');
+  for (const varName of vars) {
+    const value = getEnvValue(varName);
+    const status = value ? 
+      `✓ Set (${value.substring(0, 10)}...)` : 
+      '✗ Not set';
+    console.log(`  ${varName}: ${status}`);
+  }
+}
+
+/**
+ * Creates secure response headers for edge functions
+ * Includes CORS, security headers, and cache control
+ */
+export function createSecureHeaders(additionalHeaders: Record<string, string> = {}): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-store, no-cache, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    // CORS headers (restrict in production)
+    'Access-Control-Allow-Origin': '*', // Consider restricting in production
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
+    'Access-Control-Max-Age': '86400',
+    // Security headers
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Content-Security-Policy': "default-src 'none'; script-src 'none'; object-src 'none';",
+    ...additionalHeaders,
+  };
 }

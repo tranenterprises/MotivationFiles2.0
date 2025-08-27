@@ -10,16 +10,32 @@ import {
 
 describe('Environment Utilities', () => {
   beforeEach(() => {
-    // Clear any existing environment
+    // Clear any existing environment variables by setting to undefined
+    // The mock Deno.env doesn't have delete method, so we use undefined
     if (globalThis.Deno?.env) {
       [
         'SUPABASE_URL',
+        'NEXT_PUBLIC_SUPABASE_URL',
         'SUPABASE_SERVICE_ROLE_KEY',
         'OPENAI_API_KEY',
         'ELEVENLABS_API_KEY',
         'CRON_SECRET',
       ].forEach(key => {
-        globalThis.Deno.env.set(key, '');
+        (globalThis.Deno.env as any).set(key, undefined);
+      });
+    }
+    
+    // Also clear process.env for Node.js environment
+    if (typeof process !== 'undefined' && process.env) {
+      [
+        'SUPABASE_URL',
+        'NEXT_PUBLIC_SUPABASE_URL',
+        'SUPABASE_SERVICE_ROLE_KEY',
+        'OPENAI_API_KEY',
+        'ELEVENLABS_API_KEY',
+        'CRON_SECRET',
+      ].forEach(key => {
+        delete process.env[key];
       });
     }
   });

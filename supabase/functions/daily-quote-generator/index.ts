@@ -4,9 +4,12 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import {
   generateDailyQuote,
   performHealthCheck,
-  loadEdgeFunctionEnv,
   type DailyQuoteGenerationResult,
 } from '../_shared/daily-quote-generator.ts';
+import { 
+  loadEdgeFunctionEnv, 
+  createSecureHeaders 
+} from '../_shared/env.ts';
 
 // Enhanced security validation
 function validateAuthorization(req: Request, cronSecret?: string): boolean {
@@ -38,6 +41,14 @@ Deno.serve(async (req: Request) => {
   console.log(`[${requestId}] ${method} ${url.pathname} - Edge function triggered`);
 
   try {
+    // Handle CORS preflight requests
+    if (method === 'OPTIONS') {
+      return new Response(null, {
+        status: 200,
+        headers: createSecureHeaders(),
+      });
+    }
+
     // Handle different HTTP methods
     if (method === 'GET' && url.pathname.includes('/health')) {
       // Health check endpoint
@@ -53,11 +64,9 @@ Deno.serve(async (req: Request) => {
         timestamp: new Date().toISOString(),
       }), {
         status: statusCode,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store',
+        headers: createSecureHeaders({
           'X-Request-ID': requestId,
-        },
+        }),
       });
     }
 
@@ -69,11 +78,10 @@ Deno.serve(async (req: Request) => {
         requestId,
       }), {
         status: 405,
-        headers: {
-          'Content-Type': 'application/json',
-          'Allow': 'GET, POST',
+        headers: createSecureHeaders({
+          'Allow': 'GET, POST, OPTIONS',
           'X-Request-ID': requestId,
-        },
+        }),
       });
     }
 
@@ -89,11 +97,9 @@ Deno.serve(async (req: Request) => {
         requestId,
       }), {
         status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store',
+        headers: createSecureHeaders({
           'X-Request-ID': requestId,
-        },
+        }),
       });
     }
 
@@ -129,11 +135,9 @@ Deno.serve(async (req: Request) => {
 
     return new Response(JSON.stringify(response), {
       status: result.success ? 200 : 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
+      headers: createSecureHeaders({
         'X-Request-ID': requestId,
-      },
+      }),
     });
 
   } catch (error: any) {
@@ -163,12 +167,10 @@ Deno.serve(async (req: Request) => {
       timestamp: new Date().toISOString(),
     }), {
       status: isRetryable ? 503 : 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
+      headers: createSecureHeaders({
         'X-Request-ID': requestId,
         ...(isRetryable && { 'Retry-After': '300' }), // Suggest retry after 5 minutes
-      },
+      }),
     });
   }
 });
