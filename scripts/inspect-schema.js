@@ -30,7 +30,7 @@ async function inspectSchema() {
       const sample = sampleData[0];
       console.log(JSON.stringify(sample, null, 2));
       console.log();
-      
+
       console.log('📋 Available columns:');
       Object.keys(sample).forEach(key => {
         console.log(`- ${key}: ${typeof sample[key]} = ${sample[key]}`);
@@ -38,7 +38,6 @@ async function inspectSchema() {
     } else {
       console.log('📭 No data found in quotes table');
     }
-
   } catch (error) {
     console.error('❌ Schema inspection failed:', error);
   }

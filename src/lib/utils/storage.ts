@@ -24,13 +24,22 @@ async function sleep(ms: number): Promise<void> {
 
 function isRetryableError(error: any): boolean {
   if (!error) return false;
-  
+
   const status = error?.status || error?.response?.status;
-  
-  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+
+  return (
+    status === 429 ||
+    status === 500 ||
+    status === 502 ||
+    status === 503 ||
+    status === 504
+  );
 }
 
-function generateAudioFileName(quoteId: string, format: string = 'mp3'): string {
+function generateAudioFileName(
+  quoteId: string,
+  format: string = 'mp3'
+): string {
   const timestamp = new Date().toISOString().split('T')[0];
   return `quotes/${timestamp}-${quoteId}.${format}`;
 }
@@ -51,7 +60,7 @@ async function uploadAudioWithRetry(
   const {
     contentType = 'audio/mpeg',
     cacheControl = '3600',
-    upsert = true
+    upsert = true,
   } = options;
 
   try {
@@ -87,15 +96,17 @@ async function uploadAudioWithRetry(
     };
   } catch (error: any) {
     console.error(`Audio upload attempt ${attempt} failed:`, error.message);
-    
+
     if (attempt < MAX_RETRIES && isRetryableError(error)) {
       const delay = RETRY_DELAY_MS * Math.pow(2, attempt - 1);
       console.log(`Retrying audio upload in ${delay}ms...`);
       await sleep(delay);
       return uploadAudioWithRetry(audioBuffer, filePath, options, attempt + 1);
     }
-    
-    throw new Error(`Failed to upload audio after ${attempt} attempts: ${error.message}`);
+
+    throw new Error(
+      `Failed to upload audio after ${attempt} attempts: ${error.message}`
+    );
   }
 }
 
@@ -113,9 +124,9 @@ export async function uploadQuoteAudio(
   }
 
   const { fileName, ...uploadOptions } = options;
-  const filePath = fileName ? 
-    `quotes/${sanitizeFileName(fileName)}` : 
-    generateAudioFileName(quoteId);
+  const filePath = fileName
+    ? `quotes/${sanitizeFileName(fileName)}`
+    : generateAudioFileName(quoteId);
 
   return uploadAudioWithRetry(audioBuffer, filePath, uploadOptions);
 }
@@ -135,7 +146,9 @@ export async function deleteAudioFile(filePath: string): Promise<void> {
   }
 }
 
-export async function getAudioFileInfo(filePath: string): Promise<{ size: number; lastModified: Date } | null> {
+export async function getAudioFileInfo(
+  filePath: string
+): Promise<{ size: number; lastModified: Date } | null> {
   try {
     const fileName = filePath.split('/').pop();
     if (!fileName) {
@@ -145,7 +158,7 @@ export async function getAudioFileInfo(filePath: string): Promise<{ size: number
     const { data, error } = await supabaseAdmin.storage
       .from(AUDIO_BUCKET)
       .list(filePath.split('/').slice(0, -1).join('/'), {
-        search: fileName
+        search: fileName,
       });
 
     if (error) {
@@ -153,40 +166,54 @@ export async function getAudioFileInfo(filePath: string): Promise<{ size: number
     }
 
     const file = data?.find(f => f.name === fileName);
-    
+
     if (!file) {
       return null;
     }
 
     return {
       size: file.metadata?.size || 0,
-      lastModified: new Date(file.updated_at || file.created_at)
+      lastModified: new Date(file.updated_at || file.created_at),
     };
   } catch (error: any) {
-    console.error(`Failed to get audio file info for ${filePath}:`, error.message);
+    console.error(
+      `Failed to get audio file info for ${filePath}:`,
+      error.message
+    );
     return null;
   }
 }
 
 export async function ensureAudioBucketExists(): Promise<void> {
   try {
-    const { data: buckets, error: listError } = await supabaseAdmin.storage.listBuckets();
-    
+    const { data: buckets, error: listError } =
+      await supabaseAdmin.storage.listBuckets();
+
     if (listError) {
       throw new Error(`Failed to list buckets: ${listError.message}`);
     }
 
     const bucketExists = buckets?.some(bucket => bucket.name === AUDIO_BUCKET);
-    
+
     if (!bucketExists) {
-      const { error: createError } = await supabaseAdmin.storage.createBucket(AUDIO_BUCKET, {
-        public: true,
-        allowedMimeTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'],
-        fileSizeLimit: 50 * 1024 * 1024, // 50MB limit
-      });
+      const { error: createError } = await supabaseAdmin.storage.createBucket(
+        AUDIO_BUCKET,
+        {
+          public: true,
+          allowedMimeTypes: [
+            'audio/mpeg',
+            'audio/mp3',
+            'audio/wav',
+            'audio/ogg',
+          ],
+          fileSizeLimit: 50 * 1024 * 1024, // 50MB limit
+        }
+      );
 
       if (createError) {
-        throw new Error(`Failed to create audio bucket: ${createError.message}`);
+        throw new Error(
+          `Failed to create audio bucket: ${createError.message}`
+        );
       }
 
       console.log(`Audio bucket '${AUDIO_BUCKET}' created successfully`);

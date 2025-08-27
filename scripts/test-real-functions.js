@@ -21,7 +21,7 @@ async function testRealFunctions() {
     const { count, error: countError } = await supabase
       .from('quotes')
       .select('*', { count: 'exact', head: true });
-    
+
     if (countError) {
       throw new Error(`Count failed: ${countError.message}`);
     }
@@ -34,28 +34,30 @@ async function testRealFunctions() {
       .select('*')
       .order('date_created', { ascending: false })
       .limit(5);
-    
+
     if (allError) {
       throw new Error(`Get all failed: ${allError.message}`);
     }
-    
+
     console.log(`✅ Retrieved ${allQuotes.length} quotes:`);
     allQuotes.forEach((quote, index) => {
-      console.log(`   ${index + 1}. ${quote.date_created}: ${quote.category} - ${quote.content.substring(0, 40)}...`);
+      console.log(
+        `   ${index + 1}. ${quote.date_created}: ${quote.category} - ${quote.content.substring(0, 40)}...`
+      );
     });
     console.log();
 
     // Test 3: Get quotes by category
     console.log('🎯 Testing getQuotesByCategory equivalent...');
     const categories = ['motivation', 'discipline', 'grindset'];
-    
+
     for (const category of categories) {
       const { data: categoryQuotes, error: catError } = await supabase
         .from('quotes')
         .select('*')
         .eq('category', category)
         .order('date_created', { ascending: false });
-        
+
       if (catError) {
         throw new Error(`Category ${category} failed: ${catError.message}`);
       }
@@ -77,7 +79,9 @@ async function testRealFunctions() {
     }
 
     if (todayQuote) {
-      console.log(`✅ Found today's quote: ${todayQuote.content.substring(0, 50)}...`);
+      console.log(
+        `✅ Found today's quote: ${todayQuote.content.substring(0, 50)}...`
+      );
       console.log(`   Category: ${todayQuote.category}`);
       console.log(`   Has audio: ${todayQuote.audio_url ? 'Yes' : 'No'}`);
     } else {
@@ -90,13 +94,14 @@ async function testRealFunctions() {
     const testDate = new Date();
     testDate.setDate(testDate.getDate() + 200);
     const futureDate = testDate.toISOString().split('T')[0];
-    
+
     const testQuote = {
       date_created: futureDate,
-      content: 'This is a comprehensive test quote to verify all our database operations work correctly.',
+      content:
+        'This is a comprehensive test quote to verify all our database operations work correctly.',
       category: 'test',
       audio_url: null,
-      audio_duration: null
+      audio_duration: null,
     };
 
     try {
@@ -106,59 +111,62 @@ async function testRealFunctions() {
         .insert(testQuote)
         .select()
         .single();
-      
+
       if (createError) {
         throw new Error(`Create failed: ${createError.message}`);
       }
-      
+
       console.log(`   ✅ Created quote with ID: ${createdQuote.id}`);
-      
+
       // Verify it exists
       const { data: verifyQuote, error: verifyError } = await supabase
         .from('quotes')
         .select('id')
         .eq('date_created', futureDate)
         .single();
-      
+
       if (!verifyError) {
         console.log('   ✅ Verified quote exists in database');
       }
-      
+
       // Test update
       console.log('   📝 Testing update...');
       const { data: updatedQuote, error: updateError } = await supabaseAdmin
         .from('quotes')
-        .update({ 
+        .update({
           content: 'This test quote has been successfully updated!',
-          audio_url: 'https://example.com/test-audio.mp3'
+          audio_url: 'https://example.com/test-audio.mp3',
         })
         .eq('id', createdQuote.id)
         .select()
         .single();
-      
+
       if (updateError) {
         throw new Error(`Update failed: ${updateError.message}`);
       }
-      
+
       console.log('   ✅ Successfully updated quote');
-      console.log(`   New content: ${updatedQuote.content.substring(0, 40)}...`);
-      
+      console.log(
+        `   New content: ${updatedQuote.content.substring(0, 40)}...`
+      );
+
       // Clean up
       console.log('   🗑️  Deleting test quote...');
       const { error: deleteError } = await supabaseAdmin
         .from('quotes')
         .delete()
         .eq('id', createdQuote.id);
-      
+
       if (deleteError) {
         throw new Error(`Delete failed: ${deleteError.message}`);
       }
-      
+
       console.log('   ✅ Successfully deleted test quote');
-      
     } catch (adminError) {
       console.log(`   ⚠️  Admin operations failed: ${adminError.message}`);
-      console.log('   This might be expected if service role permissions need configuration');
+      console.log(
+        '   This might be expected if service role permissions need configuration'
+      );
     }
 
     console.log();
@@ -167,7 +175,6 @@ async function testRealFunctions() {
     console.log('✅ Schema matches our updated types');
     console.log('✅ All CRUD operations functional');
     console.log('✅ Ready for production use!');
-
   } catch (error) {
     console.error('❌ Real function test failed:', error.message);
     console.error('Stack:', error.stack);

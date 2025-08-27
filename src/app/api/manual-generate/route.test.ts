@@ -18,8 +18,8 @@ jest.mock('@/lib/api/supabase', () => ({
 }));
 
 jest.mock('@/lib/utils/rate-limit', () => ({
-  withRateLimit: jest.fn((handler) => handler),
-  addSecurityHeaders: jest.fn((response) => response),
+  withRateLimit: jest.fn(handler => handler),
+  addSecurityHeaders: jest.fn(response => response),
 }));
 
 jest.mock('@/lib/utils/cache', () => ({
@@ -36,13 +36,26 @@ import {
 } from '@/lib/api/supabase';
 import { invalidateCache } from '@/lib/utils/cache';
 
-const mockGenerateQuote = generateQuote as jest.MockedFunction<typeof generateQuote>;
-const mockGenerateVoice = generateVoiceWithFallbacksAndUpload as jest.MockedFunction<typeof generateVoiceWithFallbacksAndUpload>;
+const mockGenerateQuote = generateQuote as jest.MockedFunction<
+  typeof generateQuote
+>;
+const mockGenerateVoice =
+  generateVoiceWithFallbacksAndUpload as jest.MockedFunction<
+    typeof generateVoiceWithFallbacksAndUpload
+  >;
 const mockCreateQuote = createQuote as jest.MockedFunction<typeof createQuote>;
-const mockGetTodaysQuote = getTodaysQuote as jest.MockedFunction<typeof getTodaysQuote>;
-const mockUpdateQuoteAudioUrl = updateQuoteAudioUrl as jest.MockedFunction<typeof updateQuoteAudioUrl>;
-const mockGetQuotesByCategory = getQuotesByCategory as jest.MockedFunction<typeof getQuotesByCategory>;
-const mockInvalidateCache = invalidateCache as jest.MockedFunction<typeof invalidateCache>;
+const mockGetTodaysQuote = getTodaysQuote as jest.MockedFunction<
+  typeof getTodaysQuote
+>;
+const mockUpdateQuoteAudioUrl = updateQuoteAudioUrl as jest.MockedFunction<
+  typeof updateQuoteAudioUrl
+>;
+const mockGetQuotesByCategory = getQuotesByCategory as jest.MockedFunction<
+  typeof getQuotesByCategory
+>;
+const mockInvalidateCache = invalidateCache as jest.MockedFunction<
+  typeof invalidateCache
+>;
 
 const mockQuote = {
   id: '1',
@@ -94,16 +107,22 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
-
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
         });
+
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -117,15 +136,21 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
-
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ adminKey: 'test-admin-secret' }),
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
         });
+
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ adminKey: 'test-admin-secret' }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -138,20 +163,25 @@ describe('Manual Generate API Route', () => {
         const oldEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'production';
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
 
         expect(response.status).toBe(401);
         expect(data.success).toBe(false);
-        expect(data.error).toBe('Unauthorized. Please provide valid authorization.');
+        expect(data.error).toBe(
+          'Unauthorized. Please provide valid authorization.'
+        );
 
         process.env.NODE_ENV = oldEnv;
       });
@@ -161,15 +191,21 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
-
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
         });
+
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -186,46 +222,69 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
+        });
       });
 
       it('should reject invalid category', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ category: 'invalid' }),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ category: 'invalid' }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
 
         expect(response.status).toBe(400);
         expect(data.success).toBe(false);
-        expect(data.error).toBe('Invalid category. Must be one of: motivation, wisdom, grindset, reflection, discipline');
+        expect(data.error).toBe(
+          'Invalid category. Must be one of: motivation, wisdom, grindset, reflection, discipline'
+        );
       });
 
       it('should accept valid categories', async () => {
-        const validCategories = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
+        const validCategories = [
+          'motivation',
+          'wisdom',
+          'grindset',
+          'reflection',
+          'discipline',
+        ];
 
         for (const category of validCategories) {
           jest.clearAllMocks();
           mockGetTodaysQuote.mockResolvedValue(null);
-          mockGenerateQuote.mockResolvedValue({ ...mockGeneratedQuote, category: category as any });
+          mockGenerateQuote.mockResolvedValue({
+            ...mockGeneratedQuote,
+            category: category as any,
+          });
           mockCreateQuote.mockResolvedValue(mockQuote);
           mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-          mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
-
-          const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-            method: 'POST',
-            headers: {
-              'authorization': 'Bearer test-cron-secret',
-              'content-type': 'application/json',
-            },
-            body: JSON.stringify({ category }),
+          mockUpdateQuoteAudioUrl.mockResolvedValue({
+            ...mockQuote,
+            audio_url: mockVoiceResult.upload.url,
           });
+
+          const request = new NextRequest(
+            'http://localhost:3000/api/manual-generate',
+            {
+              method: 'POST',
+              headers: {
+                authorization: 'Bearer test-cron-secret',
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify({ category }),
+            }
+          );
 
           const response = await POST(request);
           const data = await response.json();
@@ -236,14 +295,17 @@ describe('Manual Generate API Route', () => {
       });
 
       it('should reject invalid target date format', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ targetDate: '01-01-2024' }),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ targetDate: '01-01-2024' }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -254,14 +316,17 @@ describe('Manual Generate API Route', () => {
       });
 
       it('should accept valid target date format', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ targetDate: '2024-01-01' }),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ targetDate: '2024-01-01' }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -277,20 +342,26 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
+        });
       });
 
       it('should skip generation if quote exists and force is false', async () => {
         mockGetTodaysQuote.mockResolvedValue(mockQuote);
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ force: false }),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ force: false }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -299,21 +370,26 @@ describe('Manual Generate API Route', () => {
         expect(data.success).toBe(true);
         expect(data.generated).toBe(false);
         expect(data.skipReason).toBe('already_exists');
-        expect(data.message).toBe('Quote already exists for today. Use force=true to regenerate.');
+        expect(data.message).toBe(
+          'Quote already exists for today. Use force=true to regenerate.'
+        );
         expect(mockGenerateQuote).not.toHaveBeenCalled();
       });
 
       it('should force generation if quote exists and force is true', async () => {
         mockGetTodaysQuote.mockResolvedValue(mockQuote);
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ force: true }),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ force: true }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -330,17 +406,20 @@ describe('Manual Generate API Route', () => {
       it('should generate content successfully with all features', async () => {
         mockGetTodaysQuote.mockResolvedValue(null);
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            category: 'motivation',
-            targetDate: '2024-01-01'
-          }),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              category: 'motivation',
+              targetDate: '2024-01-01',
+            }),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -352,7 +431,7 @@ describe('Manual Generate API Route', () => {
         expect(data.category).toBe('motivation');
         expect(data.targetDate).toBe('2024-01-01');
         expect(data.message).toBe('Content generated successfully');
-        
+
         expect(mockGenerateQuote).toHaveBeenCalledWith('motivation');
         expect(mockCreateQuote).toHaveBeenCalledWith({
           content: mockGeneratedQuote.content,
@@ -361,23 +440,38 @@ describe('Manual Generate API Route', () => {
           audio_url: null,
           audio_duration: null,
         });
-        expect(mockGenerateVoice).toHaveBeenCalledWith(mockGeneratedQuote.content, mockQuote.id);
-        expect(mockUpdateQuoteAudioUrl).toHaveBeenCalledWith(mockQuote.id, mockVoiceResult.upload.url);
-        expect(mockInvalidateCache).toHaveBeenCalledWith(['today_quote', 'archive', 'quote_count']);
+        expect(mockGenerateVoice).toHaveBeenCalledWith(
+          mockGeneratedQuote.content,
+          mockQuote.id
+        );
+        expect(mockUpdateQuoteAudioUrl).toHaveBeenCalledWith(
+          mockQuote.id,
+          mockVoiceResult.upload.url
+        );
+        expect(mockInvalidateCache).toHaveBeenCalledWith([
+          'today_quote',
+          'archive',
+          'quote_count',
+        ]);
       });
 
       it('should handle voice generation failure gracefully', async () => {
         mockGetTodaysQuote.mockResolvedValue(null);
-        mockGenerateVoice.mockRejectedValue(new Error('Voice generation failed'));
+        mockGenerateVoice.mockRejectedValue(
+          new Error('Voice generation failed')
+        );
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -387,8 +481,10 @@ describe('Manual Generate API Route', () => {
         expect(data.generated).toBe(true);
         expect(data.voiceGenerated).toBe(false);
         expect(data.voiceError).toBe('Voice generation failed');
-        expect(data.message).toBe('Quote generated but voice generation failed');
-        
+        expect(data.message).toBe(
+          'Quote generated but voice generation failed'
+        );
+
         expect(mockCreateQuote).toHaveBeenCalled();
         expect(mockGenerateVoice).toHaveBeenCalled();
         expect(mockUpdateQuoteAudioUrl).not.toHaveBeenCalled();
@@ -398,14 +494,17 @@ describe('Manual Generate API Route', () => {
         mockGetTodaysQuote.mockResolvedValue(null);
         mockGetQuotesByCategory.mockResolvedValue([]);
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -414,7 +513,7 @@ describe('Manual Generate API Route', () => {
         expect(data.success).toBe(true);
         expect(data.generated).toBe(true);
         expect(mockGenerateQuote).toHaveBeenCalled();
-        
+
         // Should have called getQuotesByCategory to determine next category
         expect(mockGetQuotesByCategory).toHaveBeenCalled();
       });
@@ -425,14 +524,17 @@ describe('Manual Generate API Route', () => {
         mockGetTodaysQuote.mockResolvedValue(null);
         mockGenerateQuote.mockRejectedValue(new Error('OpenAI quota exceeded'));
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -445,16 +547,21 @@ describe('Manual Generate API Route', () => {
       it('should handle database errors', async () => {
         mockGetTodaysQuote.mockResolvedValue(null);
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
-        mockCreateQuote.mockRejectedValue(new Error('Failed to create quote in database'));
+        mockCreateQuote.mockRejectedValue(
+          new Error('Failed to create quote in database')
+        );
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -467,14 +574,17 @@ describe('Manual Generate API Route', () => {
       it('should handle general errors', async () => {
         mockGetTodaysQuote.mockRejectedValue(new Error('Unexpected error'));
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         const response = await POST(request);
         const data = await response.json();
@@ -485,14 +595,17 @@ describe('Manual Generate API Route', () => {
       });
 
       it('should handle malformed JSON in request body', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-            'content-type': 'application/json',
-          },
-          body: 'invalid json',
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            method: 'POST',
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+              'content-type': 'application/json',
+            },
+            body: 'invalid json',
+          }
+        );
 
         // Should not throw but use default options
         const response = await POST(request);
@@ -504,14 +617,18 @@ describe('Manual Generate API Route', () => {
   describe('GET Method', () => {
     describe('Authentication', () => {
       it('should require valid authorization header', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate');
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate'
+        );
 
         const response = await GET(request);
         const data = await response.json();
 
         expect(response.status).toBe(401);
         expect(data.success).toBe(false);
-        expect(data.error).toBe('Unauthorized. Please provide valid authorization header.');
+        expect(data.error).toBe(
+          'Unauthorized. Please provide valid authorization header.'
+        );
       });
 
       it('should accept valid authorization header', async () => {
@@ -519,14 +636,20 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
+        });
         mockGetQuotesByCategory.mockResolvedValue([]);
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-          },
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+            },
+          }
+        );
 
         const response = await GET(request);
         const data = await response.json();
@@ -542,16 +665,22 @@ describe('Manual Generate API Route', () => {
         mockGenerateQuote.mockResolvedValue(mockGeneratedQuote);
         mockCreateQuote.mockResolvedValue(mockQuote);
         mockGenerateVoice.mockResolvedValue(mockVoiceResult);
-        mockUpdateQuoteAudioUrl.mockResolvedValue({ ...mockQuote, audio_url: mockVoiceResult.upload.url });
+        mockUpdateQuoteAudioUrl.mockResolvedValue({
+          ...mockQuote,
+          audio_url: mockVoiceResult.upload.url,
+        });
         mockGetQuotesByCategory.mockResolvedValue([]);
       });
 
       it('should accept category parameter', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate?category=wisdom', {
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-          },
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate?category=wisdom',
+          {
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+            },
+          }
+        );
 
         const response = await GET(request);
         const data = await response.json();
@@ -564,11 +693,14 @@ describe('Manual Generate API Route', () => {
       it('should accept force parameter', async () => {
         mockGetTodaysQuote.mockResolvedValue(mockQuote);
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate?force=true', {
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-          },
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate?force=true',
+          {
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+            },
+          }
+        );
 
         const response = await GET(request);
         const data = await response.json();
@@ -580,11 +712,14 @@ describe('Manual Generate API Route', () => {
       });
 
       it('should accept target_date parameter', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate?target_date=2024-01-01', {
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-          },
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate?target_date=2024-01-01',
+          {
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+            },
+          }
+        );
 
         const response = await GET(request);
         const data = await response.json();
@@ -595,18 +730,23 @@ describe('Manual Generate API Route', () => {
       });
 
       it('should reject invalid category via query parameter', async () => {
-        const request = new NextRequest('http://localhost:3000/api/manual-generate?category=invalid', {
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-          },
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate?category=invalid',
+          {
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+            },
+          }
+        );
 
         const response = await GET(request);
         const data = await response.json();
 
         expect(response.status).toBe(400);
         expect(data.success).toBe(false);
-        expect(data.error).toBe('Invalid category. Must be one of: motivation, wisdom, grindset, reflection, discipline');
+        expect(data.error).toBe(
+          'Invalid category. Must be one of: motivation, wisdom, grindset, reflection, discipline'
+        );
       });
     });
 
@@ -614,11 +754,14 @@ describe('Manual Generate API Route', () => {
       it('should handle errors in GET method', async () => {
         mockGetTodaysQuote.mockRejectedValue(new Error('Database error'));
 
-        const request = new NextRequest('http://localhost:3000/api/manual-generate', {
-          headers: {
-            'authorization': 'Bearer test-cron-secret',
-          },
-        });
+        const request = new NextRequest(
+          'http://localhost:3000/api/manual-generate',
+          {
+            headers: {
+              authorization: 'Bearer test-cron-secret',
+            },
+          }
+        );
 
         const response = await GET(request);
         const data = await response.json();

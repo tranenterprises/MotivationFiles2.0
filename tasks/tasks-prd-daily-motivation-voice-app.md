@@ -78,12 +78,12 @@ Based on PRD: `prd-daily-motivation-voice-app.md`
   - [x] 5.3 Add category rotation logic to ensure equal distribution
   - [x] 5.4 Implement duplicate content prevention and validation
   - [x] 5.5 Set up logging and monitoring for scheduled jobs
-- [X] 6.0 Frontend Components and Pages
-  - [X] 6.1 Create homepage layout with today's quote display
-  - [X] 6.2 Build QuoteCard component for displaying quote content and metadata
-  - [X] 6.3 Implement archive page with chronological quote listing
-  - [X] 6.4 Create responsive navigation between home and archive pages
-  - [X] 6.5 Add loading states and error boundaries for better UX
+- [x] 6.0 Frontend Components and Pages
+  - [x] 6.1 Create homepage layout with today's quote display
+  - [x] 6.2 Build QuoteCard component for displaying quote content and metadata
+  - [x] 6.3 Implement archive page with chronological quote listing
+  - [x] 6.4 Create responsive navigation between home and archive pages
+  - [x] 6.5 Add loading states and error boundaries for better UX
 - [x] 7.0 Audio Playback System
   - [x] 7.1 Build AudioPlayer component with play/pause controls
   - [x] 7.2 Implement audio progress bar and duration display

@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Bebas+Neue:wght@400&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #000000;
@@ -38,7 +38,11 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-weight: 400;
   line-height: 1.6;
   margin: 0;
@@ -61,12 +65,16 @@ body {
 
 /* Cinematic text for motivational speeches */
 .cinematic-text {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-weight: 700;
   font-size: clamp(1.75rem, 5vw, 4rem);
   line-height: 1.2;
   letter-spacing: -0.025em;
-  text-shadow: 
+  text-shadow:
     0 0 10px rgba(255, 255, 255, 0.1),
     0 0 20px rgba(255, 107, 53, 0.1),
     2px 2px 8px rgba(0, 0, 0, 0.8);
@@ -74,7 +82,7 @@ body {
 
 /* Glowing text effect for highlighted words */
 .glow-text {
-  text-shadow: 
+  text-shadow:
     0 0 5px rgba(255, 255, 255, 0.8),
     0 0 10px rgba(255, 107, 53, 0.6),
     0 0 15px rgba(255, 107, 53, 0.4),
@@ -85,7 +93,7 @@ body {
 
 @keyframes textPulse {
   0% {
-    text-shadow: 
+    text-shadow:
       0 0 5px rgba(255, 255, 255, 0.8),
       0 0 10px rgba(255, 107, 53, 0.6),
       0 0 15px rgba(255, 107, 53, 0.4),
@@ -93,7 +101,7 @@ body {
       2px 2px 8px rgba(0, 0, 0, 0.8);
   }
   100% {
-    text-shadow: 
+    text-shadow:
       0 0 8px rgba(255, 255, 255, 1),
       0 0 15px rgba(255, 107, 53, 0.8),
       0 0 25px rgba(255, 107, 53, 0.6),
@@ -109,8 +117,14 @@ body {
 
 /* Enhanced animations and loading states */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .fade-in {
@@ -118,8 +132,14 @@ body {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .slide-up {
@@ -127,8 +147,14 @@ body {
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .slide-down {
@@ -136,8 +162,14 @@ body {
 }
 
 @keyframes slideLeft {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .slide-left {
@@ -145,8 +177,14 @@ body {
 }
 
 @keyframes slideRight {
-  from { opacity: 0; transform: translateX(-40px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .slide-right {
@@ -154,8 +192,14 @@ body {
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .scale-in {
@@ -163,9 +207,18 @@ body {
 }
 
 @keyframes scaleInBounce {
-  0% { opacity: 0; transform: scale(0.8); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .scale-in-bounce {
@@ -174,8 +227,12 @@ body {
 
 /* Loading spinner animations */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spin {
@@ -183,8 +240,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .pulse {
@@ -192,8 +254,13 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-25%); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-25%);
+  }
 }
 
 .bounce {
@@ -202,27 +269,54 @@ body {
 
 /* Skeleton loading animation */
 @keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--gray-700) 0%, var(--gray-600) 50%, var(--gray-700) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--gray-700) 0%,
+    var(--gray-600) 50%,
+    var(--gray-700) 100%
+  );
   background-size: 200px 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
 /* Staggered animations */
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
-.stagger-5 { animation-delay: 0.5s; }
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+.stagger-5 {
+  animation-delay: 0.5s;
+}
 
 /* Loading dots animation */
 @keyframes loading-dots {
-  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-  40% { transform: scale(1.2); opacity: 1; }
+  0%,
+  80%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 .loading-dots {
@@ -239,15 +333,30 @@ body {
   animation: loading-dots 1.4s ease-in-out infinite both;
 }
 
-.loading-dots > div:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots > div:nth-child(2) { animation-delay: -0.16s; }
-.loading-dots > div:nth-child(3) { animation-delay: 0s; }
+.loading-dots > div:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.loading-dots > div:nth-child(2) {
+  animation-delay: -0.16s;
+}
+.loading-dots > div:nth-child(3) {
+  animation-delay: 0s;
+}
 
 /* Progress bar animation */
 @keyframes progress-indeterminate {
-  0% { left: -35%; right: 100%; }
-  60% { left: 100%; right: -90%; }
-  100% { left: 100%; right: -90%; }
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
 }
 
 .progress-indeterminate {
@@ -263,12 +372,15 @@ body {
   left: -35%;
   right: 100%;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  animation: progress-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+  animation: progress-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395)
+    infinite;
 }
 
 /* Hover and interaction enhancements */
 .hover-lift {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-lift:hover {
@@ -281,7 +393,9 @@ body {
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(255, 107, 53, 0.4), 0 0 40px rgba(255, 107, 53, 0.2);
+  box-shadow:
+    0 0 20px rgba(255, 107, 53, 0.4),
+    0 0 40px rgba(255, 107, 53, 0.2);
 }
 
 /* Content loading states */
@@ -316,7 +430,9 @@ body {
 .page-enter-active {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page-exit {
@@ -327,7 +443,9 @@ body {
 .page-exit-active {
   opacity: 0;
   transform: translateY(-20px);
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Mobile-first responsive typography */
@@ -517,12 +635,12 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
+
   .glow-text {
     animation: none !important;
     text-shadow: none !important;
   }
-  
+
   .animate-pulse {
     animation: none !important;
   }

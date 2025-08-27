@@ -1,0 +1,72 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+          - generic [ref=e11]:
+            - generic [ref=e12]: •
+            - generic [ref=e13]: Archive
+        - navigation [ref=e14]:
+          - link "TODAY" [ref=e15] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e16] [cursor=pointer]: TODAY
+          - link "ARCHIVE" [ref=e17] [cursor=pointer]:
+            - /url: /archive
+            - generic [ref=e18] [cursor=pointer]: ARCHIVE
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - heading "EVERY WORD OF MOTIVATION" [level=2] [ref=e23]:
+          - text: EVERY WORD OF
+          - generic [ref=e24]: MOTIVATION
+        - paragraph [ref=e25]: Browse through our complete collection of daily motivation quotes, organized chronologically with the latest inspiration first.
+      - generic [ref=e28]:
+        - heading "FILTER BY CATEGORY" [level=3] [ref=e29]
+        - generic [ref=e30]:
+          - link "All Categories" [ref=e31] [cursor=pointer]:
+            - /url: /archive
+          - link "motivation" [active] [ref=e32] [cursor=pointer]:
+            - /url: /archive?category=motivation
+          - link "wisdom" [ref=e33] [cursor=pointer]:
+            - /url: /archive?category=wisdom
+          - link "grindset" [ref=e34] [cursor=pointer]:
+            - /url: /archive?category=grindset
+          - link "reflection" [ref=e35] [cursor=pointer]:
+            - /url: /archive?category=reflection
+          - link "discipline" [ref=e36] [cursor=pointer]:
+            - /url: /archive?category=discipline
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - heading "ARCHIVE STATISTICS" [level=3] [ref=e40]
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: "2"
+              - generic [ref=e44]: Quotes This Page
+            - generic [ref=e45]:
+              - generic [ref=e46]: "1"
+              - generic [ref=e47]: Categories
+            - generic [ref=e48]:
+              - generic [ref=e49]: "0"
+              - generic [ref=e50]: With Audio
+        - generic [ref=e51]:
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - paragraph [ref=e56]: motivation
+              - paragraph [ref=e57]: Saturday, August 23, 2025
+            - blockquote [ref=e58]: "\"Stop making excuses. Start making moves. Every second you hesitate is another second closer to mediocrity.\""
+            - generic [ref=e60]: "#DE9EBE"
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - paragraph [ref=e65]: motivation
+              - paragraph [ref=e66]: Friday, August 22, 2025
+            - blockquote [ref=e67]: "\"You are in control of your life. Stop waiting for permission to become the person you were meant to be.\""
+            - generic [ref=e69]: "#8515B1"
+  - button "Open Next.js Dev Tools" [ref=e75] [cursor=pointer]:
+    - img [ref=e76] [cursor=pointer]
+  - alert [ref=e80]
+```

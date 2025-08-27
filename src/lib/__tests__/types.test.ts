@@ -11,7 +11,7 @@ describe('Types', () => {
         audio_url: 'https://example.com/audio.mp3',
         audio_duration: 30,
         created_at: '2023-12-01T00:00:00Z',
-        updated_at: '2023-12-01T00:00:00Z'
+        updated_at: '2023-12-01T00:00:00Z',
       };
 
       expect(mockQuote.id).toBe('test-id');
@@ -33,7 +33,7 @@ describe('Types', () => {
         audio_url: null,
         audio_duration: null,
         created_at: '2023-12-01T00:00:00Z',
-        updated_at: '2023-12-01T00:00:00Z'
+        updated_at: '2023-12-01T00:00:00Z',
       };
 
       expect(mockQuote.audio_url).toBeNull();
@@ -44,7 +44,7 @@ describe('Types', () => {
   describe('Database type', () => {
     it('should have correct table structure for quotes', () => {
       type QuotesTable = Database['public']['Tables']['quotes'];
-      
+
       // Test that the Row type matches Quote interface
       const mockRow: QuotesTable['Row'] = {
         id: 'test-id',
@@ -54,7 +54,7 @@ describe('Types', () => {
         audio_url: null,
         audio_duration: null,
         created_at: '2023-12-01T00:00:00Z',
-        updated_at: '2023-12-01T00:00:00Z'
+        updated_at: '2023-12-01T00:00:00Z',
       };
 
       expect(mockRow).toBeDefined();
@@ -62,13 +62,13 @@ describe('Types', () => {
 
     it('should have correct Insert type (omits id, created_at, updated_at)', () => {
       type QuotesInsert = Database['public']['Tables']['quotes']['Insert'];
-      
+
       const mockInsert: QuotesInsert = {
         date_created: '2023-12-01',
         content: 'Test content',
         category: 'motivation',
         audio_url: null,
-        audio_duration: null
+        audio_duration: null,
       };
 
       expect(mockInsert).toBeDefined();
@@ -77,24 +77,24 @@ describe('Types', () => {
 
     it('should have correct Update type (partial omits id, created_at, updated_at)', () => {
       type QuotesUpdate = Database['public']['Tables']['quotes']['Update'];
-      
+
       const mockUpdate: QuotesUpdate = {
-        content: 'Updated content'
+        content: 'Updated content',
       };
 
       expect(mockUpdate).toBeDefined();
-      
+
       // Test that all fields are optional
       const emptyUpdate: QuotesUpdate = {};
       expect(emptyUpdate).toBeDefined();
-      
+
       // Test that we can update any field except the omitted ones
       const fullUpdate: QuotesUpdate = {
         date_created: '2023-12-02',
         content: 'Updated content',
         category: 'wisdom',
         audio_url: 'new-url',
-        audio_duration: 45
+        audio_duration: 45,
       };
       expect(fullUpdate).toBeDefined();
     });

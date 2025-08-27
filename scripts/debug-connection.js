@@ -25,7 +25,7 @@ async function debugConnection() {
       .from('quotes')
       .select('id')
       .limit(1);
-    
+
     console.log('Simple select result:');
     console.log('Data:', simpleData);
     console.log('Error:', simpleError);
@@ -33,10 +33,14 @@ async function debugConnection() {
 
     // Test 2: Count with different syntax
     console.log('2️⃣  Testing count with different approach...');
-    const { data: countData, error: countError, count } = await supabase
+    const {
+      data: countData,
+      error: countError,
+      count,
+    } = await supabase
       .from('quotes')
       .select('*', { count: 'exact', head: true });
-    
+
     console.log('Count result:');
     console.log('Count:', count);
     console.log('Data:', countData);
@@ -49,13 +53,12 @@ async function debugConnection() {
       .from('quotes')
       .select('date, content, category')
       .limit(2);
-    
+
     console.log('Regular select result:');
     console.log('Data length:', regularData?.length);
     console.log('Data sample:', regularData);
     console.log('Error:', regularError);
     console.log();
-
   } catch (error) {
     console.error('❌ Debug failed:', error);
   }

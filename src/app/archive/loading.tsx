@@ -1,11 +1,11 @@
-import Navigation from '@/components/layout/Navigation'
+import Navigation from '@/components/layout/Navigation';
 
 export default function ArchiveLoading() {
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background gradient overlay - matching hero section */}
       <div className="absolute inset-0 bg-gradient-radial from-gray-900/50 via-black/80 to-black pointer-events-none gpu-accelerated" />
-      
+
       <Navigation title="ARCHIVE" subtitle="Archive" />
 
       {/* Hero Section */}
@@ -24,7 +24,10 @@ export default function ArchiveLoading() {
             <div className="h-8 bg-gray-700/50 rounded-lg w-48 mx-auto mb-6"></div>
             <div className="flex flex-wrap gap-3 justify-center">
               {Array.from({ length: 6 }, (_, i) => (
-                <div key={i} className="h-12 bg-gray-700/50 rounded-lg w-32 backdrop-blur-sm"></div>
+                <div
+                  key={i}
+                  className="h-12 bg-gray-700/50 rounded-lg w-32 backdrop-blur-sm"
+                ></div>
               ))}
             </div>
           </div>
@@ -49,7 +52,10 @@ export default function ArchiveLoading() {
         <div className="max-w-6xl mx-auto slide-up stagger-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {Array.from({ length: 6 }, (_, i) => (
-              <div key={i} className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-xl p-6 shadow-2xl animate-pulse">
+              <div
+                key={i}
+                className="bg-black/60 backdrop-blur-sm border border-accent/20 rounded-xl p-6 shadow-2xl animate-pulse"
+              >
                 <div className="space-y-4">
                   <div className="h-4 bg-gray-700/50 rounded w-20"></div>
                   <div className="space-y-3">
@@ -76,7 +82,6 @@ export default function ArchiveLoading() {
           </div>
         </div>
       </section>
-
     </div>
-  )
+  );
 }

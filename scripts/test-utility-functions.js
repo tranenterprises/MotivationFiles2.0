@@ -22,7 +22,7 @@ const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 // Implement utility functions for testing
 async function getTodaysQuote() {
   const today = new Date().toISOString().split('T')[0];
-  
+
   const { data, error } = await supabase
     .from('quotes')
     .select('*')
@@ -121,10 +121,7 @@ async function createQuote(quote) {
 }
 
 async function deleteQuote(id) {
-  const { error } = await supabaseAdmin
-    .from('quotes')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabaseAdmin.from('quotes').delete().eq('id', id);
 
   if (error) {
     throw new Error(`Failed to delete quote: ${error.message}`);
@@ -145,14 +142,22 @@ async function testUtilityFunctions() {
     const allQuotes = await getAllQuotes(5);
     console.log(`✅ Retrieved ${allQuotes.length} quotes:`);
     allQuotes.forEach((quote, index) => {
-      console.log(`   ${index + 1}. ${quote.date}: ${quote.category} - ${quote.content.substring(0, 40)}...`);
+      console.log(
+        `   ${index + 1}. ${quote.date}: ${quote.category} - ${quote.content.substring(0, 40)}...`
+      );
     });
     console.log();
 
     // Test 3: Get quotes by category
     console.log('🎯 Testing getQuotesByCategory()...');
-    const categories = ['motivation', 'discipline', 'grindset', 'reflection', 'wisdom'];
-    
+    const categories = [
+      'motivation',
+      'discipline',
+      'grindset',
+      'reflection',
+      'wisdom',
+    ];
+
     for (const category of categories) {
       const categoryQuotes = await getQuotesByCategory(category);
       console.log(`   ${category}: ${categoryQuotes.length} quotes`);
@@ -163,7 +168,9 @@ async function testUtilityFunctions() {
     console.log('📅 Testing getTodaysQuote()...');
     const todaysQuote = await getTodaysQuote();
     if (todaysQuote) {
-      console.log(`✅ Found today's quote: ${todaysQuote.content.substring(0, 50)}...`);
+      console.log(
+        `✅ Found today's quote: ${todaysQuote.content.substring(0, 50)}...`
+      );
       console.log(`   Category: ${todaysQuote.category}`);
       console.log(`   Has audio: ${todaysQuote.audio_url ? 'Yes' : 'No'}`);
     } else {
@@ -177,12 +184,14 @@ async function testUtilityFunctions() {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split('T')[0];
-    
+
     const existsToday = await quoteExistsForDate(today);
     const existsYesterday = await quoteExistsForDate(yesterdayStr);
-    
+
     console.log(`   Today (${today}): ${existsToday ? 'EXISTS' : 'NOT FOUND'}`);
-    console.log(`   Yesterday (${yesterdayStr}): ${existsYesterday ? 'EXISTS' : 'NOT FOUND'}`);
+    console.log(
+      `   Yesterday (${yesterdayStr}): ${existsYesterday ? 'EXISTS' : 'NOT FOUND'}`
+    );
     console.log();
 
     // Test 6: Create and delete test quote (admin functions)
@@ -190,41 +199,42 @@ async function testUtilityFunctions() {
     const testDate = new Date();
     testDate.setDate(testDate.getDate() + 100); // Far in the future
     const futureDate = testDate.toISOString().split('T')[0];
-    
+
     const testQuote = {
       date: futureDate,
-      content: 'This is a test quote to verify our create and delete functions work correctly with the live database.',
+      content:
+        'This is a test quote to verify our create and delete functions work correctly with the live database.',
       category: 'test',
-      audio_url: null
+      audio_url: null,
     };
 
     try {
       console.log(`   Creating test quote for ${futureDate}...`);
       const createdQuote = await createQuote(testQuote);
       console.log(`   ✅ Created quote with ID: ${createdQuote.id}`);
-      
+
       // Verify it exists
       const exists = await quoteExistsForDate(futureDate);
       console.log(`   ✅ Verified quote exists: ${exists}`);
-      
+
       // Clean up
       console.log(`   🗑️  Deleting test quote...`);
       await deleteQuote(createdQuote.id);
-      
+
       // Verify deletion
       const stillExists = await quoteExistsForDate(futureDate);
       console.log(`   ✅ Verified quote deleted: ${!stillExists}`);
-      
     } catch (createError) {
       console.log(`   ⚠️  Create/Delete test failed: ${createError.message}`);
-      console.log('   This might be expected if service role permissions are not configured');
+      console.log(
+        '   This might be expected if service role permissions are not configured'
+      );
     }
-    
+
     console.log();
     console.log('🎉 All utility function tests completed!');
     console.log('✅ Database operations are working correctly');
     console.log('✅ All core functionality has been verified');
-    
   } catch (error) {
     console.error('❌ Utility function test failed:', error.message);
     console.error('Stack:', error.stack);

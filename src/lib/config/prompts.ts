@@ -1,4 +1,9 @@
-export type QuoteCategory = 'motivation' | 'wisdom' | 'grindset' | 'reflection' | 'discipline';
+export type QuoteCategory =
+  | 'motivation'
+  | 'wisdom'
+  | 'grindset'
+  | 'reflection'
+  | 'discipline';
 
 export const PROMPT_TEMPLATES: Record<QuoteCategory, string> = {
   motivation: `Generate a powerful, motivational quote in the style of David Goggins. The quote should be:
@@ -44,7 +49,8 @@ Generate ONLY the quote text, no attribution or extra formatting.`,
 - Uncompromising stance on personal standards
 - Under 200 characters, direct and powerful
 
-Generate ONLY the quote text, no attribution or extra formatting.`
+Generate ONLY the quote text, no attribution or extra formatting.`,
 };
 
-export const SYSTEM_PROMPT = 'You are generating quotes in the exact style of David Goggins. Be authentic to his voice - raw, unfiltered, intense, and focused on mental toughness and accountability.';
+export const SYSTEM_PROMPT =
+  'You are generating quotes in the exact style of David Goggins. Be authentic to his voice - raw, unfiltered, intense, and focused on mental toughness and accountability.';

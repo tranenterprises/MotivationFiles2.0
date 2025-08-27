@@ -1,5 +1,9 @@
 import OpenAI from 'openai';
-import { PROMPT_TEMPLATES, SYSTEM_PROMPT, type QuoteCategory } from '../config/prompts';
+import {
+  PROMPT_TEMPLATES,
+  SYSTEM_PROMPT,
+  type QuoteCategory,
+} from '../config/prompts';
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY environment variable is required');
@@ -25,7 +29,6 @@ export interface GeneratedQuote {
   category: QuoteCategory;
 }
 
-
 function validateQuoteContent(content: string): boolean {
   if (!content || content.length < 10 || content.length > 300) {
     return false;
@@ -33,7 +36,7 @@ function validateQuoteContent(content: string): boolean {
 
   const forbiddenWords = ['hate', 'kill', 'die', 'suicide', 'violence'];
   const lowerContent = content.toLowerCase();
-  
+
   if (forbiddenWords.some(word => lowerContent.includes(word))) {
     return false;
   }
@@ -46,7 +49,9 @@ function validateQuoteContent(content: string): boolean {
     return false;
   }
 
-  const sentenceCount = content.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+  const sentenceCount = content
+    .split(/[.!?]+/)
+    .filter(s => s.trim().length > 0).length;
   if (sentenceCount > 4) {
     return false;
   }
@@ -56,13 +61,13 @@ function validateQuoteContent(content: string): boolean {
 
 function filterQuoteContent(content: string): string {
   let filtered = content.trim();
-  
+
   filtered = filtered.replace(/^["']|["']$/g, '');
-  
+
   filtered = filtered.replace(/\s+/g, ' ');
-  
+
   filtered = filtered.replace(/[^\w\s.,!?'-]/g, '');
-  
+
   return filtered.trim();
 }
 
@@ -72,66 +77,82 @@ async function sleep(ms: number): Promise<void> {
 
 function isRetryableError(error: any): boolean {
   if (!error) return false;
-  
+
   const status = error?.status || error?.response?.status;
-  
-  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+
+  return (
+    status === 429 ||
+    status === 500 ||
+    status === 502 ||
+    status === 503 ||
+    status === 504
+  );
 }
 
-async function generateQuoteWithRetry(category: QuoteCategory, attempt: number = 1): Promise<GeneratedQuote> {
+async function generateQuoteWithRetry(
+  category: QuoteCategory,
+  attempt: number = 1
+): Promise<GeneratedQuote> {
   const prompt = PROMPT_TEMPLATES[category];
-  
+
   try {
     const completion = await openai.chat.completions.create({
       ...QUOTE_GENERATION_CONFIG,
       messages: [
         {
           role: 'system',
-          content: SYSTEM_PROMPT
+          content: SYSTEM_PROMPT,
         },
         {
           role: 'user',
-          content: prompt
-        }
+          content: prompt,
+        },
       ],
     });
 
     const rawContent = completion.choices[0]?.message?.content?.trim();
-    
+
     if (!rawContent) {
       throw new Error('Failed to generate quote content');
     }
 
     const filteredContent = filterQuoteContent(rawContent);
-    
+
     if (!validateQuoteContent(filteredContent)) {
       throw new Error('Generated quote failed quality validation');
     }
 
     return {
       content: filteredContent,
-      category
+      category,
     };
   } catch (error: any) {
     console.error(`Quote generation attempt ${attempt} failed:`, error.message);
-    
+
     if (attempt < MAX_RETRIES && isRetryableError(error)) {
       const delay = RETRY_DELAY_MS * Math.pow(2, attempt - 1);
       console.log(`Retrying in ${delay}ms...`);
       await sleep(delay);
       return generateQuoteWithRetry(category, attempt + 1);
     }
-    
-    if (error.message === 'Generated quote failed quality validation' && attempt < MAX_RETRIES) {
+
+    if (
+      error.message === 'Generated quote failed quality validation' &&
+      attempt < MAX_RETRIES
+    ) {
       console.log(`Quality validation failed, retrying...`);
       await sleep(RETRY_DELAY_MS);
       return generateQuoteWithRetry(category, attempt + 1);
     }
-    
-    throw new Error(`Failed to generate quote after ${attempt} attempts: ${error.message}`);
+
+    throw new Error(
+      `Failed to generate quote after ${attempt} attempts: ${error.message}`
+    );
   }
 }
 
-export async function generateQuote(category: QuoteCategory): Promise<GeneratedQuote> {
+export async function generateQuote(
+  category: QuoteCategory
+): Promise<GeneratedQuote> {
   return generateQuoteWithRetry(category);
 }

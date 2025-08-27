@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e6] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+      - img [ref=e8] [cursor=pointer]
+    - generic [ref=e11] [cursor=pointer]:
+      - button "Open issues overlay" [ref=e12] [cursor=pointer]:
+        - generic [ref=e13] [cursor=pointer]:
+          - generic [ref=e14] [cursor=pointer]: "0"
+          - generic [ref=e15] [cursor=pointer]: "1"
+        - generic [ref=e16] [cursor=pointer]: Issue
+      - button "Collapse issues badge" [ref=e17] [cursor=pointer]:
+        - img [ref=e18] [cursor=pointer]
+  - alert [ref=e20]
+  - generic [ref=e21]:
+    - banner [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - link "MOTIVE FILES" [ref=e26] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e29] [cursor=pointer]: MOTIVE FILES
+          - button "Toggle mobile menu" [active] [ref=e30]:
+            - img [ref=e31]
+        - navigation [ref=e34]:
+          - link "TODAY ACTIVE" [ref=e35] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e36] [cursor=pointer]: TODAY
+            - generic [ref=e39] [cursor=pointer]: ACTIVE
+          - link "ARCHIVE" [ref=e40] [cursor=pointer]:
+            - /url: /archive
+            - generic [ref=e41] [cursor=pointer]: ARCHIVE
+    - main [ref=e43]:
+      - generic [ref=e47]: wisdom
+      - generic [ref=e48]:
+        - generic [ref=e50]: Tuesday, August 26, 2025
+        - blockquote [ref=e51]:
+          - generic [ref=e52]: THE
+          - generic [ref=e53]: ONLY
+          - generic [ref=e54]: IMPOSSIBLE
+          - generic [ref=e55]: JOURNEY
+          - generic [ref=e56]: IS
+          - generic [ref=e57]: THE
+          - generic [ref=e58]: ONE
+          - generic [ref=e59]: YOU
+          - generic [ref=e60]: NEVER
+          - generic [ref=e61]: BEGIN
+        - generic [ref=e63]: "#CK-002"
+      - generic [ref=e66]:
+        - heading "Today's Quote is Coming" [level=3] [ref=e67]
+        - paragraph [ref=e68]: We're preparing today's daily motivation with full audio experience
+        - generic [ref=e69]:
+          - button "Check Again" [ref=e70]
+          - link "Browse Archive" [ref=e71] [cursor=pointer]:
+            - /url: /archive
+      - generic [ref=e72]:
+        - paragraph [ref=e73]: In the meantime, enjoy this inspirational quote
+        - link "View Archive" [ref=e74] [cursor=pointer]:
+          - /url: /archive
+          - text: View Archive
+          - img [ref=e75] [cursor=pointer]
+```

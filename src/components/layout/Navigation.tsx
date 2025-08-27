@@ -1,46 +1,56 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import { usePrefetch } from '../providers/CacheProvider'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { usePrefetch } from '../providers/CacheProvider';
 
 interface NavigationProps {
-  title?: string
-  subtitle?: string
+  title?: string;
+  subtitle?: string;
 }
 
-export default function Navigation({ title = "MOTIVE FILES", subtitle }: NavigationProps) {
-  const pathname = usePathname()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { prefetchArchivePage, prefetchTodaysQuote } = usePrefetch()
+export default function Navigation({
+  title = 'MOTIVE FILES',
+  subtitle,
+}: NavigationProps) {
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { prefetchArchivePage, prefetchTodaysQuote } = usePrefetch();
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const navItems = [
     { href: '/', label: 'TODAY', prefetch: prefetchTodaysQuote },
-    { href: '/archive', label: 'ARCHIVE', prefetch: () => prefetchArchivePage(1) },
-  ]
+    {
+      href: '/archive',
+      label: 'ARCHIVE',
+      prefetch: () => prefetchArchivePage(1),
+    },
+  ];
 
   const isActive = (href: string) => {
     if (href === '/') {
-      return pathname === '/'
+      return pathname === '/';
     }
-    return pathname.startsWith(href)
-  }
+    return pathname.startsWith(href);
+  };
 
   return (
     <header className="relative border-b border-accent/20 bg-black/90 backdrop-blur-sm sticky top-0 z-50 overflow-hidden">
       {/* Background gradient overlay - matching hero section */}
       <div className="absolute inset-0 bg-gradient-radial from-gray-900/40 via-black/80 to-black pointer-events-none gpu-accelerated" />
-      
+
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo/Title */}
           <div className="flex items-center space-x-3">
-            <Link href="/" className="flex items-center space-x-3 group touch-target focus-ring">
+            <Link
+              href="/"
+              className="flex items-center space-x-3 group touch-target focus-ring"
+            >
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-accent rounded-full animate-pulse" />
                 <div className="text-lg font-bold text-white group-hover:text-accent transition-all duration-500">
@@ -70,13 +80,16 @@ export default function Navigation({ title = "MOTIVE FILES", subtitle }: Navigat
                   font-bold transition-all duration-500 flex items-center space-x-3 
                   px-6 py-3 rounded-lg border backdrop-blur-sm touch-target focus-ring
                   hover-lift hover-glow layout-transition
-                  ${isActive(item.href)
-                    ? 'text-white bg-accent/20 border-accent/50 glow-text scale-105 gpu-accelerated' 
-                    : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
+                  ${
+                    isActive(item.href)
+                      ? 'text-white bg-accent/20 border-accent/50 glow-text scale-105 gpu-accelerated'
+                      : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
                   }
                 `}
               >
-                <span className="body-small font-bold uppercase tracking-widest">{item.label}</span>
+                <span className="body-small font-bold uppercase tracking-widest">
+                  {item.label}
+                </span>
                 {isActive(item.href) && (
                   <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
                 )}
@@ -99,9 +112,19 @@ export default function Navigation({ title = "MOTIVE FILES", subtitle }: Navigat
               viewBox="0 0 24 24"
             >
               {isMobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -122,18 +145,23 @@ export default function Navigation({ title = "MOTIVE FILES", subtitle }: Navigat
                     font-bold transition-all duration-500 flex items-center space-x-4 
                     px-6 py-4 rounded-lg border backdrop-blur-sm touch-target focus-ring
                     hover-lift layout-transition scale-in-bounce
-                    ${isActive(item.href)
-                      ? 'text-white bg-accent/20 border-accent/50 glow-text gpu-accelerated' 
-                      : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
+                    ${
+                      isActive(item.href)
+                        ? 'text-white bg-accent/20 border-accent/50 glow-text gpu-accelerated'
+                        : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
                     }
                   `}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <span className="body-text font-bold uppercase tracking-widest flex-1">{item.label}</span>
+                  <span className="body-text font-bold uppercase tracking-widest flex-1">
+                    {item.label}
+                  </span>
                   {isActive(item.href) && (
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                      <span className="body-small text-accent font-bold uppercase tracking-widest">ACTIVE</span>
+                      <span className="body-small text-accent font-bold uppercase tracking-widest">
+                        ACTIVE
+                      </span>
                     </div>
                   )}
                 </Link>
@@ -142,9 +170,9 @@ export default function Navigation({ title = "MOTIVE FILES", subtitle }: Navigat
           </div>
         )}
       </div>
-      
+
       {/* Bottom accent glow */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
     </header>
-  )
+  );
 }

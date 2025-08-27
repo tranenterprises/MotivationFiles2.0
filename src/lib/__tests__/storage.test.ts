@@ -4,9 +4,9 @@ jest.mock('../api/supabase', () => ({
     storage: {
       from: jest.fn(),
       listBuckets: jest.fn(),
-      createBucket: jest.fn()
-    }
-  }
+      createBucket: jest.fn(),
+    },
+  },
 }));
 
 // Get mocks
@@ -18,7 +18,7 @@ import {
   getAudioFileInfo,
   ensureAudioBucketExists,
   getAudioUrl,
-  AUDIO_BUCKET
+  AUDIO_BUCKET,
 } from '../utils/storage';
 
 describe('Storage Module', () => {
@@ -26,7 +26,7 @@ describe('Storage Module', () => {
     upload: jest.fn(),
     remove: jest.fn(),
     list: jest.fn(),
-    getPublicUrl: jest.fn()
+    getPublicUrl: jest.fn(),
   };
 
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe('Storage Module', () => {
     supabaseModule.supabaseAdmin.storage.from.mockReturnValue(mockStorageChain);
     supabaseModule.supabaseAdmin.storage.listBuckets.mockResolvedValue({
       data: [{ name: 'audio' }],
-      error: null
+      error: null,
     });
   });
 
@@ -51,24 +51,31 @@ describe('Storage Module', () => {
     beforeEach(() => {
       mockStorageChain.upload.mockResolvedValue({
         data: { path: 'quotes/test-quote-123-123456.mp3' },
-        error: null
+        error: null,
       });
       mockStorageChain.getPublicUrl.mockReturnValue({
-        data: { publicUrl: 'https://storage.supabase.co/object/public/audio/quotes/test-quote-123-123456.mp3' }
+        data: {
+          publicUrl:
+            'https://storage.supabase.co/object/public/audio/quotes/test-quote-123-123456.mp3',
+        },
       });
     });
 
     it('should upload audio successfully with default options', async () => {
       const result = await uploadQuoteAudio(quoteId, mockAudioBuffer);
 
-      expect(supabaseModule.supabaseAdmin.storage.from).toHaveBeenCalledWith(AUDIO_BUCKET);
+      expect(supabaseModule.supabaseAdmin.storage.from).toHaveBeenCalledWith(
+        AUDIO_BUCKET
+      );
       expect(mockStorageChain.upload).toHaveBeenCalledWith(
-        expect.stringMatching(/^quotes\/\d{4}-\d{2}-\d{2}-test-quote-123\.mp3$/),
+        expect.stringMatching(
+          /^quotes\/\d{4}-\d{2}-\d{2}-test-quote-123\.mp3$/
+        ),
         mockAudioBuffer,
         {
           contentType: 'audio/mpeg',
           cacheControl: '3600',
-          upsert: true
+          upsert: true,
         }
       );
 
@@ -76,7 +83,7 @@ describe('Storage Module', () => {
         url: 'https://storage.supabase.co/object/public/audio/quotes/test-quote-123-123456.mp3',
         path: 'quotes/test-quote-123-123456.mp3',
         fileName: expect.stringMatching(/^2025-08-25-test-quote-123\.mp3$/),
-        size: mockAudioBuffer.length
+        size: mockAudioBuffer.length,
       });
     });
 
@@ -85,7 +92,7 @@ describe('Storage Module', () => {
         fileName: 'custom-audio.wav',
         contentType: 'audio/wav',
         cacheControl: '7200',
-        upsert: false
+        upsert: false,
       };
 
       await uploadQuoteAudio(quoteId, mockAudioBuffer, customOptions);
@@ -96,14 +103,16 @@ describe('Storage Module', () => {
         {
           contentType: 'audio/wav',
           cacheControl: '7200',
-          upsert: false
+          upsert: false,
         }
       );
     });
 
     it('should sanitize custom file names', async () => {
       const unsafeFileName = 'test file@#$%name!.mp3';
-      await uploadQuoteAudio(quoteId, mockAudioBuffer, { fileName: unsafeFileName });
+      await uploadQuoteAudio(quoteId, mockAudioBuffer, {
+        fileName: unsafeFileName,
+      });
 
       expect(mockStorageChain.upload).toHaveBeenCalledWith(
         'quotes/test_file_name_.mp3',
@@ -136,7 +145,7 @@ describe('Storage Module', () => {
         .mockRejectedValueOnce(uploadError)
         .mockResolvedValueOnce({
           data: { path: 'quotes/test.mp3' },
-          error: null
+          error: null,
         });
 
       const result = await uploadQuoteAudio(quoteId, mockAudioBuffer);
@@ -159,7 +168,7 @@ describe('Storage Module', () => {
     it('should handle Supabase upload error response', async () => {
       mockStorageChain.upload.mockResolvedValue({
         data: null,
-        error: { message: 'Storage quota exceeded' }
+        error: { message: 'Storage quota exceeded' },
       });
 
       await expect(uploadQuoteAudio(quoteId, mockAudioBuffer)).rejects.toThrow(
@@ -170,7 +179,7 @@ describe('Storage Module', () => {
     it('should handle missing path in response', async () => {
       mockStorageChain.upload.mockResolvedValue({
         data: { path: null },
-        error: null
+        error: null,
       });
 
       await expect(uploadQuoteAudio(quoteId, mockAudioBuffer)).rejects.toThrow(
@@ -181,10 +190,10 @@ describe('Storage Module', () => {
     it('should handle missing public URL', async () => {
       mockStorageChain.upload.mockResolvedValue({
         data: { path: 'quotes/test.mp3' },
-        error: null
+        error: null,
       });
       mockStorageChain.getPublicUrl.mockReturnValue({
-        data: { publicUrl: null }
+        data: { publicUrl: null },
       });
 
       await expect(uploadQuoteAudio(quoteId, mockAudioBuffer)).rejects.toThrow(
@@ -199,13 +208,17 @@ describe('Storage Module', () => {
 
       await deleteAudioFile('quotes/test-audio.mp3');
 
-      expect(supabaseModule.supabaseAdmin.storage.from).toHaveBeenCalledWith(AUDIO_BUCKET);
-      expect(mockStorageChain.remove).toHaveBeenCalledWith(['quotes/test-audio.mp3']);
+      expect(supabaseModule.supabaseAdmin.storage.from).toHaveBeenCalledWith(
+        AUDIO_BUCKET
+      );
+      expect(mockStorageChain.remove).toHaveBeenCalledWith([
+        'quotes/test-audio.mp3',
+      ]);
     });
 
     it('should handle delete errors', async () => {
       mockStorageChain.remove.mockResolvedValue({
-        error: { message: 'File not found' }
+        error: { message: 'File not found' },
       });
 
       await expect(deleteAudioFile('quotes/nonexistent.mp3')).rejects.toThrow(
@@ -221,31 +234,31 @@ describe('Storage Module', () => {
           name: 'test-audio.mp3',
           metadata: { size: 1024 },
           updated_at: '2024-01-15T10:00:00Z',
-          created_at: '2024-01-15T09:00:00Z'
-        }
+          created_at: '2024-01-15T09:00:00Z',
+        },
       ];
 
       mockStorageChain.list.mockResolvedValue({
         data: mockFileData,
-        error: null
+        error: null,
       });
 
       const result = await getAudioFileInfo('quotes/test-audio.mp3');
 
       expect(mockStorageChain.list).toHaveBeenCalledWith('quotes', {
-        search: 'test-audio.mp3'
+        search: 'test-audio.mp3',
       });
 
       expect(result).toEqual({
         size: 1024,
-        lastModified: new Date('2024-01-15T10:00:00Z')
+        lastModified: new Date('2024-01-15T10:00:00Z'),
       });
     });
 
     it('should return null for non-existent files', async () => {
       mockStorageChain.list.mockResolvedValue({
         data: [],
-        error: null
+        error: null,
       });
 
       const result = await getAudioFileInfo('quotes/nonexistent.mp3');
@@ -255,7 +268,7 @@ describe('Storage Module', () => {
     it('should handle list errors gracefully', async () => {
       mockStorageChain.list.mockResolvedValue({
         data: null,
-        error: { message: 'Access denied' }
+        error: { message: 'Access denied' },
       });
 
       const result = await getAudioFileInfo('quotes/test.mp3');
@@ -272,20 +285,20 @@ describe('Storage Module', () => {
         {
           name: 'test-audio.mp3',
           metadata: { size: 2048 },
-          created_at: '2024-01-15T09:00:00Z'
-        }
+          created_at: '2024-01-15T09:00:00Z',
+        },
       ];
 
       mockStorageChain.list.mockResolvedValue({
         data: mockFileData,
-        error: null
+        error: null,
       });
 
       const result = await getAudioFileInfo('quotes/test-audio.mp3');
 
       expect(result).toEqual({
         size: 2048,
-        lastModified: new Date('2024-01-15T09:00:00Z')
+        lastModified: new Date('2024-01-15T09:00:00Z'),
       });
     });
   });
@@ -294,36 +307,40 @@ describe('Storage Module', () => {
     it('should not create bucket when it already exists', async () => {
       supabaseModule.supabaseAdmin.storage.listBuckets.mockResolvedValue({
         data: [{ name: 'audio' }, { name: 'other-bucket' }],
-        error: null
+        error: null,
       });
 
       await ensureAudioBucketExists();
 
-      expect(supabaseModule.supabaseAdmin.storage.createBucket).not.toHaveBeenCalled();
+      expect(
+        supabaseModule.supabaseAdmin.storage.createBucket
+      ).not.toHaveBeenCalled();
     });
 
     it('should create bucket when it does not exist', async () => {
       supabaseModule.supabaseAdmin.storage.listBuckets.mockResolvedValue({
         data: [{ name: 'other-bucket' }],
-        error: null
+        error: null,
       });
       supabaseModule.supabaseAdmin.storage.createBucket.mockResolvedValue({
-        error: null
+        error: null,
       });
 
       await ensureAudioBucketExists();
 
-      expect(supabaseModule.supabaseAdmin.storage.createBucket).toHaveBeenCalledWith('audio', {
+      expect(
+        supabaseModule.supabaseAdmin.storage.createBucket
+      ).toHaveBeenCalledWith('audio', {
         public: true,
         allowedMimeTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'],
-        fileSizeLimit: 50 * 1024 * 1024
+        fileSizeLimit: 50 * 1024 * 1024,
       });
     });
 
     it('should handle list buckets error', async () => {
       supabaseModule.supabaseAdmin.storage.listBuckets.mockResolvedValue({
         data: null,
-        error: { message: 'Permission denied' }
+        error: { message: 'Permission denied' },
       });
 
       await expect(ensureAudioBucketExists()).rejects.toThrow(
@@ -334,10 +351,10 @@ describe('Storage Module', () => {
     it('should handle create bucket error', async () => {
       supabaseModule.supabaseAdmin.storage.listBuckets.mockResolvedValue({
         data: [],
-        error: null
+        error: null,
       });
       supabaseModule.supabaseAdmin.storage.createBucket.mockResolvedValue({
-        error: { message: 'Bucket creation failed' }
+        error: { message: 'Bucket creation failed' },
       });
 
       await expect(ensureAudioBucketExists()).rejects.toThrow(
@@ -349,14 +366,23 @@ describe('Storage Module', () => {
   describe('getAudioUrl', () => {
     it('should return public URL for file path', () => {
       mockStorageChain.getPublicUrl.mockReturnValue({
-        data: { publicUrl: 'https://storage.supabase.co/object/public/audio/quotes/test.mp3' }
+        data: {
+          publicUrl:
+            'https://storage.supabase.co/object/public/audio/quotes/test.mp3',
+        },
       });
 
       const url = getAudioUrl('quotes/test.mp3');
 
-      expect(supabaseModule.supabaseAdmin.storage.from).toHaveBeenCalledWith(AUDIO_BUCKET);
-      expect(mockStorageChain.getPublicUrl).toHaveBeenCalledWith('quotes/test.mp3');
-      expect(url).toBe('https://storage.supabase.co/object/public/audio/quotes/test.mp3');
+      expect(supabaseModule.supabaseAdmin.storage.from).toHaveBeenCalledWith(
+        AUDIO_BUCKET
+      );
+      expect(mockStorageChain.getPublicUrl).toHaveBeenCalledWith(
+        'quotes/test.mp3'
+      );
+      expect(url).toBe(
+        'https://storage.supabase.co/object/public/audio/quotes/test.mp3'
+      );
     });
   });
 
@@ -366,9 +392,9 @@ describe('Storage Module', () => {
       (clientError as any).status = 400;
       mockStorageChain.upload.mockRejectedValue(clientError);
 
-      await expect(uploadQuoteAudio('test-quote', Buffer.from('test'))).rejects.toThrow(
-        'Failed to upload audio after 1 attempts'
-      );
+      await expect(
+        uploadQuoteAudio('test-quote', Buffer.from('test'))
+      ).rejects.toThrow('Failed to upload audio after 1 attempts');
       expect(mockStorageChain.upload).toHaveBeenCalledTimes(1);
     });
 
@@ -381,7 +407,7 @@ describe('Storage Module', () => {
         .mockRejectedValueOnce(rateLimitError)
         .mockResolvedValueOnce({
           data: { path: 'quotes/test.mp3' },
-          error: null
+          error: null,
         });
 
       const startTime = Date.now();
@@ -402,14 +428,16 @@ describe('Utility functions', () => {
       const mockStorageChain = {
         upload: jest.fn().mockResolvedValue({
           data: { path: 'quotes/2024-01-15-test-quote.mp3' },
-          error: null
+          error: null,
         }),
         getPublicUrl: jest.fn().mockReturnValue({
-          data: { publicUrl: 'https://test.com/audio.mp3' }
-        })
+          data: { publicUrl: 'https://test.com/audio.mp3' },
+        }),
       };
 
-      supabaseModule.supabaseAdmin.storage.from.mockReturnValue(mockStorageChain);
+      supabaseModule.supabaseAdmin.storage.from.mockReturnValue(
+        mockStorageChain
+      );
 
       await uploadQuoteAudio('test-quote', mockAudioBuffer);
 
@@ -425,20 +453,24 @@ describe('Utility functions', () => {
       const mockStorageChain = {
         upload: jest.fn().mockResolvedValue({
           data: { path: 'quotes/test.mp3' },
-          error: null
+          error: null,
         }),
         getPublicUrl: jest.fn().mockReturnValue({
-          data: { publicUrl: 'https://test.com/audio.mp3' }
-        })
+          data: { publicUrl: 'https://test.com/audio.mp3' },
+        }),
       };
 
-      supabaseModule.supabaseAdmin.storage.from.mockReturnValue(mockStorageChain);
+      supabaseModule.supabaseAdmin.storage.from.mockReturnValue(
+        mockStorageChain
+      );
 
       await uploadQuoteAudio('quote@#$%123!', mockAudioBuffer);
 
       // Quote IDs are used directly in the generated filename, not sanitized
       expect(mockStorageChain.upload).toHaveBeenCalledWith(
-        expect.stringMatching(/^quotes\/\d{4}-\d{2}-\d{2}-quote@#\$%123!\.mp3$/),
+        expect.stringMatching(
+          /^quotes\/\d{4}-\d{2}-\d{2}-quote@#\$%123!\.mp3$/
+        ),
         mockAudioBuffer,
         expect.any(Object)
       );

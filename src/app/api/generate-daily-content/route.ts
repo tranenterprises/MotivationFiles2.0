@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateQuote, type QuoteCategory } from '@/lib/api/openai';
 import { generateVoiceWithFallbacksAndUpload } from '@/lib/api/elevenlabs';
-import { 
-  createQuote, 
+import {
+  createQuote,
   getTodaysQuote,
-  getQuotesByCategory 
+  getQuotesByCategory,
 } from '@/lib/api/supabase';
 
-const QUOTE_CATEGORIES: QuoteCategory[] = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
+const QUOTE_CATEGORIES: QuoteCategory[] = [
+  'motivation',
+  'wisdom',
+  'grindset',
+  'reflection',
+  'discipline',
+];
 
 /**
  * Get the next category to use based on equal distribution
@@ -18,7 +24,7 @@ async function getNextCategory(): Promise<QuoteCategory> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const startDate = thirtyDaysAgo.toISOString().split('T')[0];
-    
+
     const categoryCounts: Record<QuoteCategory, number> = {
       motivation: 0,
       wisdom: 0,
@@ -30,15 +36,15 @@ async function getNextCategory(): Promise<QuoteCategory> {
     // Count quotes by category in the last 30 days
     for (const category of QUOTE_CATEGORIES) {
       const quotes = await getQuotesByCategory(category);
-      const recentQuotes = quotes.filter(quote => 
-        quote.date_created && quote.date_created >= startDate
+      const recentQuotes = quotes.filter(
+        quote => quote.date_created && quote.date_created >= startDate
       );
       categoryCounts[category] = recentQuotes.length;
     }
 
     // Find the category with the least usage
-    const sortedCategories = QUOTE_CATEGORIES.sort((a, b) => 
-      categoryCounts[a] - categoryCounts[b]
+    const sortedCategories = QUOTE_CATEGORIES.sort(
+      (a, b) => categoryCounts[a] - categoryCounts[b]
     );
 
     console.log('Category usage in last 30 days:', categoryCounts);
@@ -46,9 +52,14 @@ async function getNextCategory(): Promise<QuoteCategory> {
 
     return sortedCategories[0];
   } catch (error) {
-    console.error('Error determining next category, using random fallback:', error);
+    console.error(
+      'Error determining next category, using random fallback:',
+      error
+    );
     // Fallback to random selection if there's an error
-    return QUOTE_CATEGORIES[Math.floor(Math.random() * QUOTE_CATEGORIES.length)];
+    return QUOTE_CATEGORIES[
+      Math.floor(Math.random() * QUOTE_CATEGORIES.length)
+    ];
   }
 }
 
@@ -66,7 +77,7 @@ async function generateDailyContent() {
       success: true,
       message: 'Quote already exists for today',
       quote: existingQuote,
-      skipReason: 'already_exists'
+      skipReason: 'already_exists',
     };
   }
 
@@ -79,7 +90,7 @@ async function generateDailyContent() {
   // Generate the quote
   console.log('Generating quote...');
   const generatedQuote = await generateQuote(category);
-  
+
   // Create the quote in database first (without audio_url)
   console.log('Creating quote in database...');
   const quoteData = {
@@ -104,7 +115,10 @@ async function generateDailyContent() {
     // Update quote with audio URL
     console.log('Updating quote with audio URL...');
     const { updateQuoteAudioUrl } = await import('@/lib/api/supabase');
-    const finalQuote = await updateQuoteAudioUrl(createdQuote.id, voiceResult.upload.url);
+    const finalQuote = await updateQuoteAudioUrl(
+      createdQuote.id,
+      voiceResult.upload.url
+    );
 
     console.log('Daily content generation completed successfully');
 
@@ -118,7 +132,7 @@ async function generateDailyContent() {
     };
   } catch (voiceError: any) {
     console.error('Voice generation failed:', voiceError.message);
-    
+
     // Quote was created successfully, but voice failed
     // This is still a partial success
     return {
@@ -139,39 +153,39 @@ export async function POST(request: NextRequest) {
     // Verify this is a cron job or authorized request
     const authHeader = request.headers.get('authorization');
     const cronHeader = request.headers.get('x-vercel-cron');
-    
+
     // Allow requests from Vercel cron jobs or with proper authorization
-    const isAuthorized = cronHeader === '1' || 
-                        (authHeader && authHeader === `Bearer ${process.env.CRON_SECRET}`);
+    const isAuthorized =
+      cronHeader === '1' ||
+      (authHeader && authHeader === `Bearer ${process.env.CRON_SECRET}`);
 
     if (!isAuthorized && process.env.NODE_ENV === 'production') {
       console.log('Unauthorized request to generate daily content');
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Unauthorized. This endpoint is for scheduled cron jobs only.' 
+        {
+          success: false,
+          error: 'Unauthorized. This endpoint is for scheduled cron jobs only.',
         },
         { status: 401 }
       );
     }
 
     const result = await generateDailyContent();
-    
+
     // Invalidate cache after generating new content
-    if (result.success && result.data) {
+    if (result.success && result.quote) {
       const { invalidateCache } = await import('@/lib/utils/cache');
       invalidateCache(['today_quote', 'archive', 'quote_count']);
     }
 
-    return NextResponse.json(result, { 
-      status: result.success ? 200 : 500 
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 500,
     });
-
   } catch (error: any) {
     console.error('Daily content generation failed:', error);
 
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: 'Failed to generate daily content',
         details: error.message,
@@ -185,12 +199,12 @@ export async function GET(request: NextRequest) {
   try {
     // Allow GET requests for manual testing (with proper auth)
     const authHeader = request.headers.get('authorization');
-    
+
     if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Unauthorized. Please provide valid authorization header.' 
+        {
+          success: false,
+          error: 'Unauthorized. Please provide valid authorization header.',
         },
         { status: 401 }
       );
@@ -198,15 +212,14 @@ export async function GET(request: NextRequest) {
 
     const result = await generateDailyContent();
 
-    return NextResponse.json(result, { 
-      status: result.success ? 200 : 500 
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 500,
     });
-
   } catch (error: any) {
     console.error('Manual daily content generation failed:', error);
 
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: 'Failed to generate daily content',
         details: error.message,

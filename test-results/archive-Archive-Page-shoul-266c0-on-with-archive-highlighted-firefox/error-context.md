@@ -1,0 +1,120 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+          - generic [ref=e11]:
+            - generic [ref=e12]: •
+            - generic [ref=e13]: Archive
+        - navigation [ref=e14]:
+          - link "TODAY" [ref=e15] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e16] [cursor=pointer]: TODAY
+          - link "ARCHIVE" [ref=e17] [cursor=pointer]:
+            - /url: /archive
+            - generic [ref=e18] [cursor=pointer]: ARCHIVE
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - heading "EVERY WORD OF MOTIVATION" [level=2] [ref=e23]:
+          - text: EVERY WORD OF
+          - generic [ref=e24]: MOTIVATION
+        - paragraph [ref=e25]: Browse through our complete collection of daily motivation quotes, organized chronologically with the latest inspiration first.
+      - generic [ref=e28]:
+        - heading "FILTER BY CATEGORY" [level=3] [ref=e29]
+        - generic [ref=e30]:
+          - link "All Categories" [ref=e31] [cursor=pointer]:
+            - /url: /archive
+          - link "motivation" [ref=e32] [cursor=pointer]:
+            - /url: /archive?category=motivation
+          - link "wisdom" [ref=e33] [cursor=pointer]:
+            - /url: /archive?category=wisdom
+          - link "grindset" [ref=e34] [cursor=pointer]:
+            - /url: /archive?category=grindset
+          - link "reflection" [ref=e35] [cursor=pointer]:
+            - /url: /archive?category=reflection
+          - link "discipline" [ref=e36] [cursor=pointer]:
+            - /url: /archive?category=discipline
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - heading "ARCHIVE STATISTICS" [level=3] [ref=e40]
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: "10"
+              - generic [ref=e44]: Quotes This Page
+            - generic [ref=e45]:
+              - generic [ref=e46]: "5"
+              - generic [ref=e47]: Categories
+            - generic [ref=e48]:
+              - generic [ref=e49]: "0"
+              - generic [ref=e50]: With Audio
+        - generic [ref=e51]:
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - paragraph [ref=e56]: motivation
+              - paragraph [ref=e57]: Saturday, August 23, 2025
+            - blockquote [ref=e58]: "\"Stop making excuses. Start making moves. Every second you hesitate is another second closer to mediocrity.\""
+            - generic [ref=e60]: "#DE9EBE"
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - paragraph [ref=e65]: motivation
+              - paragraph [ref=e66]: Friday, August 22, 2025
+            - blockquote [ref=e67]: "\"You are in control of your life. Stop waiting for permission to become the person you were meant to be.\""
+            - generic [ref=e69]: "#8515B1"
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - paragraph [ref=e74]: wisdom
+              - paragraph [ref=e75]: Thursday, August 21, 2025
+            - blockquote [ref=e76]: "\"Pain is inevitable. Suffering is a choice. The difference is how you respond to what life throws at you.\""
+            - generic [ref=e78]: "#CF531E"
+          - generic [ref=e81]:
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: wisdom
+              - paragraph [ref=e84]: Wednesday, August 20, 2025
+            - blockquote [ref=e85]: "\"Your mind is the most powerful weapon you have. Train it like your life depends on it, because it does.\""
+            - generic [ref=e87]: "#87708F"
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - paragraph [ref=e92]: grindset
+              - paragraph [ref=e93]: Tuesday, August 19, 2025
+            - blockquote [ref=e94]: "\"While they sleep, you work. While they party, you train. While they make excuses, you make progress.\""
+            - generic [ref=e96]: "#65D39E"
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - paragraph [ref=e101]: grindset
+              - paragraph [ref=e102]: Monday, August 18, 2025
+            - blockquote [ref=e103]: "\"The grind never stops. Every day is an opportunity to get better, stronger, faster. What did you do today?\""
+            - generic [ref=e105]: "#0650FF"
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - paragraph [ref=e110]: reflection
+              - paragraph [ref=e111]: Sunday, August 17, 2025
+            - blockquote [ref=e112]: "\"Look in the mirror and ask yourself: Are you the person you promised yourself you would become?\""
+            - generic [ref=e114]: "#029019"
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - paragraph [ref=e119]: reflection
+              - paragraph [ref=e120]: Saturday, August 16, 2025
+            - blockquote [ref=e121]: "\"Yesterday you said tomorrow. How many tomorrows are you going to waste before you start today?\""
+            - generic [ref=e123]: "#67E8F5"
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - paragraph [ref=e128]: discipline
+              - paragraph [ref=e129]: Friday, August 15, 2025
+            - blockquote [ref=e130]: "\"Discipline is doing what needs to be done, even when you do not want to do it. Especially then.\""
+            - generic [ref=e132]: "#29A8B0"
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - paragraph [ref=e137]: discipline
+              - paragraph [ref=e138]: Thursday, August 14, 2025
+            - blockquote [ref=e139]: "\"Your habits determine your future. Every action is a vote for the type of person you wish to become.\""
+            - generic [ref=e141]: "#7BAC9D"
+  - button "Open Next.js Dev Tools" [ref=e147] [cursor=pointer]:
+    - img [ref=e148] [cursor=pointer]
+  - alert [ref=e152]
+```

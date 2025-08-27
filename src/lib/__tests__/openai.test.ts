@@ -6,11 +6,11 @@ jest.mock('openai', () => {
     default: jest.fn().mockImplementation(() => ({
       chat: {
         completions: {
-          create: mockCreate
-        }
-      }
+          create: mockCreate,
+        },
+      },
     })),
-    mockCreate
+    mockCreate,
   };
 });
 
@@ -18,13 +18,17 @@ jest.mock('openai', () => {
 const openAIModule = jest.requireMock('openai');
 const mockCreate = openAIModule.mockCreate;
 
-import { generateQuote, QUOTE_GENERATION_CONFIG, type QuoteCategory } from '../api/openai';
+import {
+  generateQuote,
+  QUOTE_GENERATION_CONFIG,
+  type QuoteCategory,
+} from '../api/openai';
 import { PROMPT_TEMPLATES, SYSTEM_PROMPT } from '../config/prompts';
 
 // Mock console methods to avoid noise in tests
 const consoleSpy = {
   error: jest.spyOn(console, 'error').mockImplementation(() => {}),
-  log: jest.spyOn(console, 'log').mockImplementation(() => {})
+  log: jest.spyOn(console, 'log').mockImplementation(() => {}),
 };
 
 describe('OpenAI Quote Generation', () => {
@@ -44,7 +48,7 @@ describe('OpenAI Quote Generation', () => {
       expect(QUOTE_GENERATION_CONFIG).toEqual({
         model: 'gpt-4',
         temperature: 0.8,
-        max_tokens: 300
+        max_tokens: 300,
       });
     });
 
@@ -52,7 +56,13 @@ describe('OpenAI Quote Generation', () => {
       expect(PROMPT_TEMPLATES).toBeDefined();
       expect(SYSTEM_PROMPT).toBeDefined();
       expect(Object.keys(PROMPT_TEMPLATES)).toEqual(
-        expect.arrayContaining(['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'])
+        expect.arrayContaining([
+          'motivation',
+          'wisdom',
+          'grindset',
+          'reflection',
+          'discipline',
+        ])
       );
     });
   });
@@ -62,10 +72,10 @@ describe('OpenAI Quote Generation', () => {
       choices: [
         {
           message: {
-            content: 'Stay hard! The only person who can stop you is you.'
-          }
-        }
-      ]
+            content: 'Stay hard! The only person who can stop you is you.',
+          },
+        },
+      ],
     };
 
     beforeEach(() => {
@@ -77,7 +87,7 @@ describe('OpenAI Quote Generation', () => {
 
       expect(result).toEqual({
         content: 'Stay hard! The only person who can stop you is you.',
-        category: 'motivation'
+        category: 'motivation',
       });
 
       expect(mockCreate).toHaveBeenCalledWith({
@@ -85,33 +95,41 @@ describe('OpenAI Quote Generation', () => {
         messages: [
           {
             role: 'system',
-            content: SYSTEM_PROMPT
+            content: SYSTEM_PROMPT,
           },
           {
             role: 'user',
-            content: PROMPT_TEMPLATES.motivation
-          }
-        ]
+            content: PROMPT_TEMPLATES.motivation,
+          },
+        ],
       });
     });
 
     it('should work with all quote categories', async () => {
-      const categories: QuoteCategory[] = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
+      const categories: QuoteCategory[] = [
+        'motivation',
+        'wisdom',
+        'grindset',
+        'reflection',
+        'discipline',
+      ];
 
       for (const category of categories) {
         mockCreate.mockResolvedValueOnce(mockOpenAIResponse);
         const result = await generateQuote(category);
 
         expect(result.category).toBe(category);
-        expect(result.content).toBe('Stay hard! The only person who can stop you is you.');
+        expect(result.content).toBe(
+          'Stay hard! The only person who can stop you is you.'
+        );
         expect(mockCreate).toHaveBeenCalledWith(
           expect.objectContaining({
             messages: expect.arrayContaining([
               expect.objectContaining({
                 role: 'user',
-                content: PROMPT_TEMPLATES[category]
-              })
-            ])
+                content: PROMPT_TEMPLATES[category],
+              }),
+            ]),
           })
         );
       }
@@ -122,15 +140,18 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: '"  Stay hard! The only person who can stop you is you.  "'
-            }
-          }
-        ]
+              content:
+                '"  Stay hard! The only person who can stop you is you.  "',
+            },
+          },
+        ],
       });
 
       const result = await generateQuote('motivation');
 
-      expect(result.content).toBe('Stay hard! The only person who can stop you is you.');
+      expect(result.content).toBe(
+        'Stay hard! The only person who can stop you is you.'
+      );
     });
 
     it('should remove special characters during filtering', async () => {
@@ -138,15 +159,18 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: 'Stay hard! @#$% The only person who can stop you is you.'
-            }
-          }
-        ]
+              content:
+                'Stay hard! @#$% The only person who can stop you is you.',
+            },
+          },
+        ],
       });
 
       const result = await generateQuote('motivation');
 
-      expect(result.content).toBe('Stay hard!  The only person who can stop you is you.');
+      expect(result.content).toBe(
+        'Stay hard!  The only person who can stop you is you.'
+      );
     });
 
     it('should throw error if OpenAI returns no content', async () => {
@@ -154,13 +178,15 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: null
-            }
-          }
-        ]
+              content: null,
+            },
+          },
+        ],
       });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Failed to generate quote content');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Failed to generate quote content'
+      );
     });
 
     it('should throw error if content is too short', async () => {
@@ -168,13 +194,15 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: 'Too short'
-            }
-          }
-        ]
+              content: 'Too short',
+            },
+          },
+        ],
       });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Generated quote failed quality validation');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Generated quote failed quality validation'
+      );
     });
 
     it('should throw error if content is too long', async () => {
@@ -183,13 +211,15 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: longContent
-            }
-          }
-        ]
+              content: longContent,
+            },
+          },
+        ],
       });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Generated quote failed quality validation');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Generated quote failed quality validation'
+      );
     });
 
     it('should throw error if content contains forbidden words', async () => {
@@ -197,13 +227,16 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: 'You should hate yourself if you are not working hard enough to succeed.'
-            }
-          }
-        ]
+              content:
+                'You should hate yourself if you are not working hard enough to succeed.',
+            },
+          },
+        ],
       });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Generated quote failed quality validation');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Generated quote failed quality validation'
+      );
     });
 
     it('should throw error if content has too many sentences', async () => {
@@ -211,13 +244,16 @@ describe('OpenAI Quote Generation', () => {
         choices: [
           {
             message: {
-              content: 'First sentence. Second sentence. Third sentence. Fourth sentence. Fifth sentence.'
-            }
-          }
-        ]
+              content:
+                'First sentence. Second sentence. Third sentence. Fourth sentence. Fifth sentence.',
+            },
+          },
+        ],
       });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Generated quote failed quality validation');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Generated quote failed quality validation'
+      );
     });
   });
 
@@ -228,7 +264,7 @@ describe('OpenAI Quote Generation', () => {
         .mockRejectedValueOnce(retryableError)
         .mockRejectedValueOnce(retryableError)
         .mockResolvedValueOnce({
-          choices: [{ message: { content: 'Success after retries!' } }]
+          choices: [{ message: { content: 'Success after retries!' } }],
         });
 
       const result = await generateQuote('motivation');
@@ -239,11 +275,9 @@ describe('OpenAI Quote Generation', () => {
 
     it('should retry on server errors (500)', async () => {
       const serverError = { status: 500, message: 'Internal server error' };
-      mockCreate
-        .mockRejectedValueOnce(serverError)
-        .mockResolvedValueOnce({
-          choices: [{ message: { content: 'Success after server error!' } }]
-        });
+      mockCreate.mockRejectedValueOnce(serverError).mockResolvedValueOnce({
+        choices: [{ message: { content: 'Success after server error!' } }],
+      });
 
       const result = await generateQuote('motivation');
 
@@ -255,22 +289,33 @@ describe('OpenAI Quote Generation', () => {
       const nonRetryableError = { status: 400, message: 'Bad request' };
       mockCreate.mockRejectedValue(nonRetryableError);
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Failed to generate quote after 1 attempts');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Failed to generate quote after 1 attempts'
+      );
       expect(mockCreate).toHaveBeenCalledTimes(1);
     });
 
     it('should retry on quality validation failures', async () => {
       mockCreate
         .mockResolvedValueOnce({
-          choices: [{ message: { content: 'Short' } }]
+          choices: [{ message: { content: 'Short' } }],
         })
         .mockResolvedValueOnce({
-          choices: [{ message: { content: 'This is a valid quote that passes all quality checks.' } }]
+          choices: [
+            {
+              message: {
+                content:
+                  'This is a valid quote that passes all quality checks.',
+              },
+            },
+          ],
         });
 
       const result = await generateQuote('motivation');
 
-      expect(result.content).toBe('This is a valid quote that passes all quality checks.');
+      expect(result.content).toBe(
+        'This is a valid quote that passes all quality checks.'
+      );
       expect(mockCreate).toHaveBeenCalledTimes(2);
     });
 
@@ -278,21 +323,24 @@ describe('OpenAI Quote Generation', () => {
       const retryableError = { status: 429, message: 'Rate limit exceeded' };
       mockCreate.mockRejectedValue(retryableError);
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Failed to generate quote after 3 attempts');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Failed to generate quote after 3 attempts'
+      );
       expect(mockCreate).toHaveBeenCalledTimes(3);
     });
 
     it('should log retry attempts', async () => {
       const retryableError = { status: 429, message: 'Rate limit exceeded' };
-      mockCreate
-        .mockRejectedValueOnce(retryableError)
-        .mockResolvedValueOnce({
-          choices: [{ message: { content: 'Success after log test!' } }]
-        });
+      mockCreate.mockRejectedValueOnce(retryableError).mockResolvedValueOnce({
+        choices: [{ message: { content: 'Success after log test!' } }],
+      });
 
       await generateQuote('motivation');
 
-      expect(consoleSpy.error).toHaveBeenCalledWith('Quote generation attempt 1 failed:', 'Rate limit exceeded');
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        'Quote generation attempt 1 failed:',
+        'Rate limit exceeded'
+      );
       expect(consoleSpy.log).toHaveBeenCalledWith('Retrying in 1000ms...');
     });
   });
@@ -301,24 +349,30 @@ describe('OpenAI Quote Generation', () => {
     it('should handle empty choices array', async () => {
       mockCreate.mockResolvedValue({ choices: [] });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Failed to generate quote content');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Failed to generate quote content'
+      );
     });
 
     it('should handle undefined message content', async () => {
       mockCreate.mockResolvedValue({
-        choices: [{ message: {} }]
+        choices: [{ message: {} }],
       });
 
-      await expect(generateQuote('motivation')).rejects.toThrow('Failed to generate quote content');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Failed to generate quote content'
+      );
     });
 
     it('should handle content with only whitespace', async () => {
       mockCreate.mockResolvedValue({
-        choices: [{ message: { content: '   \n\t   ' } }]
+        choices: [{ message: { content: '   \n\t   ' } }],
       });
 
       // The trimmed rawContent becomes empty string, which fails the rawContent check
-      await expect(generateQuote('motivation')).rejects.toThrow('Failed to generate quote after 1 attempts: Failed to generate quote content');
+      await expect(generateQuote('motivation')).rejects.toThrow(
+        'Failed to generate quote after 1 attempts: Failed to generate quote content'
+      );
     });
   });
 });

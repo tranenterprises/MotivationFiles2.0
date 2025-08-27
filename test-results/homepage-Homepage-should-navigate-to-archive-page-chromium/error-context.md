@@ -1,0 +1,59 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e6] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+      - img [ref=e8] [cursor=pointer]
+    - generic [ref=e11] [cursor=pointer]:
+      - button "Open issues overlay" [ref=e12] [cursor=pointer]:
+        - generic [ref=e13] [cursor=pointer]:
+          - generic [ref=e14] [cursor=pointer]: "0"
+          - generic [ref=e15] [cursor=pointer]: "1"
+        - generic [ref=e16] [cursor=pointer]: Issue
+      - button "Collapse issues badge" [ref=e17] [cursor=pointer]:
+        - img [ref=e18] [cursor=pointer]
+  - alert [ref=e20]
+  - generic [ref=e21]:
+    - banner [ref=e22]:
+      - generic [ref=e24]:
+        - link "MOTIVE FILES" [ref=e26] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e29] [cursor=pointer]: MOTIVE FILES
+        - navigation [ref=e30]:
+          - link "TODAY" [ref=e31] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e32] [cursor=pointer]: TODAY
+          - link "ARCHIVE" [ref=e34] [cursor=pointer]:
+            - /url: /archive
+            - generic [ref=e35] [cursor=pointer]: ARCHIVE
+    - main [ref=e37]:
+      - generic [ref=e41]: wisdom
+      - generic [ref=e42]:
+        - generic [ref=e44]: Tuesday, August 26, 2025
+        - blockquote [ref=e45]:
+          - generic [ref=e46]: THE
+          - generic [ref=e47]: ONLY
+          - generic [ref=e48]: IMPOSSIBLE
+          - generic [ref=e49]: JOURNEY
+          - generic [ref=e50]: IS
+          - generic [ref=e51]: THE
+          - generic [ref=e52]: ONE
+          - generic [ref=e53]: YOU
+          - generic [ref=e54]: NEVER
+          - generic [ref=e55]: BEGIN
+        - generic [ref=e57]: "#CK-002"
+      - generic [ref=e60]:
+        - heading "Today's Quote is Coming" [level=3] [ref=e61]
+        - paragraph [ref=e62]: We're preparing today's daily motivation with full audio experience
+        - generic [ref=e63]:
+          - button "Check Again" [ref=e64]
+          - link "Browse Archive" [ref=e65] [cursor=pointer]:
+            - /url: /archive
+      - generic [ref=e66]:
+        - paragraph [ref=e67]: In the meantime, enjoy this inspirational quote
+        - link "View Archive" [ref=e68] [cursor=pointer]:
+          - /url: /archive
+          - text: View Archive
+          - img [ref=e69] [cursor=pointer]
+```

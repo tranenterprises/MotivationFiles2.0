@@ -3,6 +3,7 @@
 ## Vercel Deployment
 
 ### Prerequisites
+
 1. Create accounts for:
    - [Vercel](https://vercel.com)
    - [Supabase](https://supabase.com)
@@ -14,6 +15,7 @@
 When deploying to Vercel, configure these environment variables in your project settings:
 
 #### Required Environment Variables:
+
 ```
 OPENAI_API_KEY=sk-...
 ELEVENLABS_API_KEY=...
@@ -25,6 +27,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ### Deployment Steps
 
 1. **Connect to Vercel:**
+
    ```bash
    npm install -g vercel
    vercel login
@@ -63,6 +66,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ### Troubleshooting
 
 **Common Issues:**
+
 1. **Cron jobs not working:** Ensure Vercel Pro plan for cron functionality
 2. **API timeouts:** Check function timeout settings in `vercel.json`
 3. **Environment variables:** Verify all keys are correctly set in Vercel dashboard

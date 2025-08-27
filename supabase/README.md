@@ -16,6 +16,7 @@ Since this project uses Supabase's hosted service, migrations need to be applied
 ## Schema Overview
 
 The `quotes` table includes:
+
 - `id` (UUID, Primary Key, Auto-generated)
 - `date` (DATE, Unique - one quote per day)
 - `content` (TEXT, Not null - the motivational quote)
@@ -26,6 +27,7 @@ The `quotes` table includes:
 ## Security
 
 Row Level Security (RLS) is enabled with the following policies:
+
 - Public users can read all quotes
 - Only the service role can insert/update/delete quotes
 - Regular users cannot modify data

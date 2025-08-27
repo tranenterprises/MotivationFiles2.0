@@ -23,12 +23,10 @@ class RateLimiter {
     const forwarded = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
     const connectingIp = request.headers.get('cf-connecting-ip'); // Cloudflare
-    
+
     // Use the first available IP address
-    const ip = forwarded?.split(',')[0]?.trim() || 
-              realIp || 
-              connectingIp || 
-              'unknown';
+    const ip =
+      forwarded?.split(',')[0]?.trim() || realIp || connectingIp || 'unknown';
 
     return ip;
   }
@@ -49,7 +47,7 @@ class RateLimiter {
    * Check if request is within rate limit
    */
   checkRateLimit(
-    request: NextRequest, 
+    request: NextRequest,
     endpoint: 'quotes' | 'generate' | 'manual',
     customLimit?: { requests: number; window: number }
   ): {
@@ -104,11 +102,15 @@ class RateLimiter {
   /**
    * Get rate limit headers for response
    */
-  getRateLimitHeaders(rateLimitResult: ReturnType<typeof this.checkRateLimit>): Record<string, string> {
+  getRateLimitHeaders(
+    rateLimitResult: ReturnType<typeof this.checkRateLimit>
+  ): Record<string, string> {
     const headers: Record<string, string> = {
       'X-RateLimit-Limit': rateLimitResult.limit.toString(),
       'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
-      'X-RateLimit-Reset': Math.ceil(rateLimitResult.resetTime / 1000).toString(),
+      'X-RateLimit-Reset': Math.ceil(
+        rateLimitResult.resetTime / 1000
+      ).toString(),
     };
 
     if (rateLimitResult.retryAfter) {
@@ -132,9 +134,13 @@ export function withRateLimit<T extends any[]>(
 ) {
   return async (...args: T): Promise<Response> => {
     const request = args[0] as NextRequest;
-    
+
     try {
-      const rateLimitResult = rateLimiter.checkRateLimit(request, endpoint, customLimit);
+      const rateLimitResult = rateLimiter.checkRateLimit(
+        request,
+        endpoint,
+        customLimit
+      );
       const headers = rateLimiter.getRateLimitHeaders(rateLimitResult);
 
       if (!rateLimitResult.allowed) {
@@ -181,14 +187,19 @@ export function addSecurityHeaders(response: Response): Response {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // CORS headers for API
-  response.headers.set('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' 
-    ? (process.env.NEXT_PUBLIC_APP_URL || 'https://yourdomain.com')
-    : '*'
+  response.headers.set(
+    'Access-Control-Allow-Origin',
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_APP_URL || 'https://yourdomain.com'
+      : '*'
   );
   response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  response.headers.set(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization'
+  );
 
   return response;
 }

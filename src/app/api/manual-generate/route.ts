@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateQuote, type QuoteCategory } from '@/lib/api/openai';
 import { generateVoiceWithFallbacksAndUpload } from '@/lib/api/elevenlabs';
-import { 
-  createQuote, 
+import {
+  createQuote,
   getTodaysQuote,
   updateQuoteAudioUrl,
-  getQuotesByCategory 
+  getQuotesByCategory,
 } from '@/lib/api/supabase';
 import { withRateLimit, addSecurityHeaders } from '@/lib/utils/rate-limit';
 
-const QUOTE_CATEGORIES: QuoteCategory[] = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
+const QUOTE_CATEGORIES: QuoteCategory[] = [
+  'motivation',
+  'wisdom',
+  'grindset',
+  'reflection',
+  'discipline',
+];
 
 /**
  * Get the next category to use based on equal distribution
@@ -20,7 +26,7 @@ async function getNextCategory(): Promise<QuoteCategory> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const startDate = thirtyDaysAgo.toISOString().split('T')[0];
-    
+
     const categoryCounts: Record<QuoteCategory, number> = {
       motivation: 0,
       wisdom: 0,
@@ -32,22 +38,27 @@ async function getNextCategory(): Promise<QuoteCategory> {
     // Count quotes by category in the last 30 days
     for (const category of QUOTE_CATEGORIES) {
       const quotes = await getQuotesByCategory(category);
-      const recentQuotes = quotes.filter(quote => 
-        quote.date_created && quote.date_created >= startDate
+      const recentQuotes = quotes.filter(
+        quote => quote.date_created && quote.date_created >= startDate
       );
       categoryCounts[category] = recentQuotes.length;
     }
 
     // Find the category with the least usage
-    const sortedCategories = QUOTE_CATEGORIES.sort((a, b) => 
-      categoryCounts[a] - categoryCounts[b]
+    const sortedCategories = QUOTE_CATEGORIES.sort(
+      (a, b) => categoryCounts[a] - categoryCounts[b]
     );
 
     return sortedCategories[0];
   } catch (error) {
-    console.error('Error determining next category, using random fallback:', error);
+    console.error(
+      'Error determining next category, using random fallback:',
+      error
+    );
     // Fallback to random selection if there's an error
-    return QUOTE_CATEGORIES[Math.floor(Math.random() * QUOTE_CATEGORIES.length)];
+    return QUOTE_CATEGORIES[
+      Math.floor(Math.random() * QUOTE_CATEGORIES.length)
+    ];
   }
 }
 
@@ -68,10 +79,11 @@ async function generateManualContent(options: {
     if (existingQuote) {
       return {
         success: true,
-        message: 'Quote already exists for today. Use force=true to regenerate.',
+        message:
+          'Quote already exists for today. Use force=true to regenerate.',
         quote: existingQuote,
         skipReason: 'already_exists',
-        generated: false
+        generated: false,
       };
     }
   }
@@ -79,13 +91,13 @@ async function generateManualContent(options: {
   console.log(`Generating manual content for: ${today}`);
 
   // Use provided category or determine the next category
-  const selectedCategory = category || await getNextCategory();
+  const selectedCategory = category || (await getNextCategory());
   console.log('Selected category:', selectedCategory);
 
   // Generate the quote
   console.log('Generating quote...');
   const generatedQuote = await generateQuote(selectedCategory);
-  
+
   // Create the quote in database first (without audio_url)
   console.log('Creating quote in database...');
   const quoteData = {
@@ -109,7 +121,10 @@ async function generateManualContent(options: {
 
     // Update quote with audio URL
     console.log('Updating quote with audio URL...');
-    const finalQuote = await updateQuoteAudioUrl(createdQuote.id, voiceResult.upload.url);
+    const finalQuote = await updateQuoteAudioUrl(
+      createdQuote.id,
+      voiceResult.upload.url
+    );
 
     console.log('Manual content generation completed successfully');
 
@@ -121,11 +136,11 @@ async function generateManualContent(options: {
       audioUrl: voiceResult.upload.url,
       category: generatedQuote.category,
       generated: true,
-      targetDate: today
+      targetDate: today,
     };
   } catch (voiceError: any) {
     console.error('Voice generation failed:', voiceError.message);
-    
+
     // Quote was created successfully, but voice failed
     return {
       success: true,
@@ -135,7 +150,7 @@ async function generateManualContent(options: {
       voiceError: voiceError.message,
       category: generatedQuote.category,
       generated: true,
-      targetDate: today
+      targetDate: today,
     };
   }
 }
@@ -162,17 +177,18 @@ async function handlePOST(request: NextRequest) {
     // Verify authorization
     const authHeader = request.headers.get('authorization');
     const adminKey = options.adminKey;
-    
+
     // Allow requests with proper authorization header or admin key
-    const isAuthorized = (authHeader && authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
-                        (adminKey && adminKey === process.env.ADMIN_SECRET);
+    const isAuthorized =
+      (authHeader && authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
+      (adminKey && adminKey === process.env.ADMIN_SECRET);
 
     if (!isAuthorized && process.env.NODE_ENV === 'production') {
       console.log('Unauthorized request to manual generate');
       const response = NextResponse.json(
-        { 
-          success: false, 
-          error: 'Unauthorized. Please provide valid authorization.' 
+        {
+          success: false,
+          error: 'Unauthorized. Please provide valid authorization.',
         },
         { status: 401 }
       );
@@ -184,7 +200,7 @@ async function handlePOST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: `Invalid category. Must be one of: ${QUOTE_CATEGORIES.join(', ')}`
+          error: `Invalid category. Must be one of: ${QUOTE_CATEGORIES.join(', ')}`,
         },
         { status: 400 }
       );
@@ -197,7 +213,7 @@ async function handlePOST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: 'targetDate must be in YYYY-MM-DD format'
+            error: 'targetDate must be in YYYY-MM-DD format',
           },
           { status: 400 }
         );
@@ -207,9 +223,9 @@ async function handlePOST(request: NextRequest) {
     const result = await generateManualContent({
       category: options.category,
       force: options.force ?? false,
-      targetDate: options.targetDate
+      targetDate: options.targetDate,
     });
-    
+
     // Invalidate cache after generating new content (if generated)
     if (result.success && result.generated) {
       try {
@@ -221,21 +237,21 @@ async function handlePOST(request: NextRequest) {
       }
     }
 
-    const response = NextResponse.json(result, { 
-      status: result.success ? 200 : 500 
+    const response = NextResponse.json(result, {
+      status: result.success ? 200 : 500,
     });
     return addSecurityHeaders(response);
-
   } catch (error: any) {
     console.error('Manual content generation failed:', error);
 
     // Handle specific errors
     if (error.message.includes('Failed to create quote')) {
       return NextResponse.json(
-        { 
+        {
           success: false,
           error: 'Database error: Failed to create quote',
-          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+          details:
+            process.env.NODE_ENV === 'development' ? error.message : undefined,
         },
         { status: 503 }
       );
@@ -243,20 +259,22 @@ async function handlePOST(request: NextRequest) {
 
     if (error.message.includes('OpenAI') || error.message.includes('quota')) {
       return NextResponse.json(
-        { 
+        {
           success: false,
           error: 'AI service temporarily unavailable',
-          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+          details:
+            process.env.NODE_ENV === 'development' ? error.message : undefined,
         },
         { status: 503 }
       );
     }
 
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );
@@ -268,12 +286,12 @@ async function handleGET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const authHeader = request.headers.get('authorization');
-    
+
     if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Unauthorized. Please provide valid authorization header.' 
+        {
+          success: false,
+          error: 'Unauthorized. Please provide valid authorization header.',
         },
         { status: 401 }
       );
@@ -289,31 +307,31 @@ async function handleGET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: `Invalid category. Must be one of: ${QUOTE_CATEGORIES.join(', ')}`
+          error: `Invalid category. Must be one of: ${QUOTE_CATEGORIES.join(', ')}`,
         },
         { status: 400 }
       );
     }
 
-    const result = await generateManualContent({ 
-      category: category || undefined, 
-      force, 
-      targetDate: targetDate || undefined 
+    const result = await generateManualContent({
+      category: category || undefined,
+      force,
+      targetDate: targetDate || undefined,
     });
 
-    const response = NextResponse.json(result, { 
-      status: result.success ? 200 : 500 
+    const response = NextResponse.json(result, {
+      status: result.success ? 200 : 500,
     });
     return addSecurityHeaders(response);
-
   } catch (error: any) {
     console.error('Manual content generation failed:', error);
 
     const response = NextResponse.json(
-      { 
+      {
         success: false,
         error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details:
+          process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
       { status: 500 }
     );

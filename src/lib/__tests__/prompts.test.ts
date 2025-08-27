@@ -1,10 +1,20 @@
-import { PROMPT_TEMPLATES, SYSTEM_PROMPT, QuoteCategory } from '../config/prompts';
+import {
+  PROMPT_TEMPLATES,
+  SYSTEM_PROMPT,
+  QuoteCategory,
+} from '../config/prompts';
 
 describe('Prompts', () => {
   describe('PROMPT_TEMPLATES', () => {
     it('should have templates for all quote categories', () => {
-      const expectedCategories: QuoteCategory[] = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
-      
+      const expectedCategories: QuoteCategory[] = [
+        'motivation',
+        'wisdom',
+        'grindset',
+        'reflection',
+        'discipline',
+      ];
+
       expectedCategories.forEach(category => {
         expect(PROMPT_TEMPLATES[category]).toBeDefined();
         expect(typeof PROMPT_TEMPLATES[category]).toBe('string');

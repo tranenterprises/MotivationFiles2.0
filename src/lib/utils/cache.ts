@@ -2,21 +2,21 @@
  * Client-side caching utilities for better performance
  */
 
-import { Quote } from '../types/types'
+import { Quote } from '../types/types';
 
 export interface CacheEntry<T> {
-  data: T
-  timestamp: number
-  ttl: number // Time to live in milliseconds
+  data: T;
+  timestamp: number;
+  ttl: number; // Time to live in milliseconds
 }
 
 export interface CacheOptions {
-  ttl?: number // Time to live in milliseconds
-  storage?: 'memory' | 'localStorage' | 'sessionStorage'
+  ttl?: number; // Time to live in milliseconds
+  storage?: 'memory' | 'localStorage' | 'sessionStorage';
 }
 
 // In-memory cache for session data
-const memoryCache = new Map<string, CacheEntry<any>>()
+const memoryCache = new Map<string, CacheEntry<any>>();
 
 // Default cache TTL values
 export const CACHE_TTL = {
@@ -24,7 +24,7 @@ export const CACHE_TTL = {
   ARCHIVE_PAGE: 10 * 60 * 1000, // 10 minutes - archive data is relatively stable
   QUOTE_COUNT: 15 * 60 * 1000, // 15 minutes - count changes less frequently
   AUDIO_METADATA: 60 * 60 * 1000, // 1 hour - audio metadata rarely changes
-} as const
+} as const;
 
 /**
  * Get data from cache
@@ -32,37 +32,41 @@ export const CACHE_TTL = {
  * @param options Caching options
  * @returns Cached data or null if not found/expired
  */
-export function getCachedData<T>(key: string, options: CacheOptions = {}): T | null {
-  const { storage = 'memory' } = options
+export function getCachedData<T>(
+  key: string,
+  options: CacheOptions = {}
+): T | null {
+  const { storage = 'memory' } = options;
 
   try {
-    let cacheEntry: CacheEntry<T> | null = null
+    let cacheEntry: CacheEntry<T> | null = null;
 
     if (storage === 'memory') {
-      cacheEntry = memoryCache.get(key) || null
+      cacheEntry = memoryCache.get(key) || null;
     } else if (typeof window !== 'undefined') {
-      const storageObj = storage === 'localStorage' ? localStorage : sessionStorage
-      const cached = storageObj.getItem(key)
+      const storageObj =
+        storage === 'localStorage' ? localStorage : sessionStorage;
+      const cached = storageObj.getItem(key);
       if (cached) {
-        cacheEntry = JSON.parse(cached)
+        cacheEntry = JSON.parse(cached);
       }
     }
 
     if (!cacheEntry) {
-      return null
+      return null;
     }
 
     // Check if cache entry is expired
     if (Date.now() > cacheEntry.timestamp + cacheEntry.ttl) {
       // Remove expired entry
-      removeCachedData(key, { storage })
-      return null
+      removeCachedData(key, { storage });
+      return null;
     }
 
-    return cacheEntry.data
+    return cacheEntry.data;
   } catch (error) {
-    console.warn(`Cache get error for key "${key}":`, error)
-    return null
+    console.warn(`Cache get error for key "${key}":`, error);
+    return null;
   }
 }
 
@@ -72,24 +76,29 @@ export function getCachedData<T>(key: string, options: CacheOptions = {}): T | n
  * @param data Data to cache
  * @param options Caching options
  */
-export function setCachedData<T>(key: string, data: T, options: CacheOptions = {}): void {
-  const { ttl = CACHE_TTL.ARCHIVE_PAGE, storage = 'memory' } = options
+export function setCachedData<T>(
+  key: string,
+  data: T,
+  options: CacheOptions = {}
+): void {
+  const { ttl = CACHE_TTL.ARCHIVE_PAGE, storage = 'memory' } = options;
 
   try {
     const cacheEntry: CacheEntry<T> = {
       data,
       timestamp: Date.now(),
       ttl,
-    }
+    };
 
     if (storage === 'memory') {
-      memoryCache.set(key, cacheEntry)
+      memoryCache.set(key, cacheEntry);
     } else if (typeof window !== 'undefined') {
-      const storageObj = storage === 'localStorage' ? localStorage : sessionStorage
-      storageObj.setItem(key, JSON.stringify(cacheEntry))
+      const storageObj =
+        storage === 'localStorage' ? localStorage : sessionStorage;
+      storageObj.setItem(key, JSON.stringify(cacheEntry));
     }
   } catch (error) {
-    console.warn(`Cache set error for key "${key}":`, error)
+    console.warn(`Cache set error for key "${key}":`, error);
   }
 }
 
@@ -98,18 +107,22 @@ export function setCachedData<T>(key: string, data: T, options: CacheOptions = {
  * @param key Cache key
  * @param options Caching options
  */
-export function removeCachedData(key: string, options: CacheOptions = {}): void {
-  const { storage = 'memory' } = options
+export function removeCachedData(
+  key: string,
+  options: CacheOptions = {}
+): void {
+  const { storage = 'memory' } = options;
 
   try {
     if (storage === 'memory') {
-      memoryCache.delete(key)
+      memoryCache.delete(key);
     } else if (typeof window !== 'undefined') {
-      const storageObj = storage === 'localStorage' ? localStorage : sessionStorage
-      storageObj.removeItem(key)
+      const storageObj =
+        storage === 'localStorage' ? localStorage : sessionStorage;
+      storageObj.removeItem(key);
     }
   } catch (error) {
-    console.warn(`Cache remove error for key "${key}":`, error)
+    console.warn(`Cache remove error for key "${key}":`, error);
   }
 }
 
@@ -118,43 +131,50 @@ export function removeCachedData(key: string, options: CacheOptions = {}): void 
  * @param options Caching options
  */
 export function clearCache(options: CacheOptions = {}): void {
-  const { storage = 'memory' } = options
+  const { storage = 'memory' } = options;
 
   try {
     if (storage === 'memory') {
-      memoryCache.clear()
+      memoryCache.clear();
     } else if (typeof window !== 'undefined') {
-      const storageObj = storage === 'localStorage' ? localStorage : sessionStorage
+      const storageObj =
+        storage === 'localStorage' ? localStorage : sessionStorage;
       // Clear only cache entries (keys that start with cache prefix)
-      const keys = Object.keys(storageObj).filter(key => key.startsWith('cache:'))
-      keys.forEach(key => storageObj.removeItem(key))
+      const keys = Object.keys(storageObj).filter(key =>
+        key.startsWith('cache:')
+      );
+      keys.forEach(key => storageObj.removeItem(key));
     }
   } catch (error) {
-    console.warn('Cache clear error:', error)
+    console.warn('Cache clear error:', error);
   }
 }
 
 /**
  * Generate cache key for quotes with pagination
  */
-export function generateArchiveCacheKey(page: number = 1, category?: string, limit: number = 12): string {
-  const categoryPart = category ? `_cat-${category}` : ''
-  return `cache:archive_p${page}_l${limit}${categoryPart}`
+export function generateArchiveCacheKey(
+  page: number = 1,
+  category?: string,
+  limit: number = 12
+): string {
+  const categoryPart = category ? `_cat-${category}` : '';
+  return `cache:archive_p${page}_l${limit}${categoryPart}`;
 }
 
 /**
  * Generate cache key for today's quote
  */
 export function generateTodayQuoteCacheKey(): string {
-  const today = new Date().toISOString().split('T')[0]
-  return `cache:today_quote_${today}`
+  const today = new Date().toISOString().split('T')[0];
+  return `cache:today_quote_${today}`;
 }
 
 /**
  * Generate cache key for quote count
  */
 export function generateQuoteCountCacheKey(): string {
-  return 'cache:quote_count'
+  return 'cache:quote_count';
 }
 
 /**
@@ -170,85 +190,78 @@ export async function withCache<T>(
   options: CacheOptions = {}
 ): Promise<T> {
   // Try to get from cache first
-  const cached = getCachedData<T>(cacheKey, options)
+  const cached = getCachedData<T>(cacheKey, options);
   if (cached !== null) {
-    return cached
+    return cached;
   }
 
   // Fetch fresh data
-  const freshData = await apiCall()
-  
+  const freshData = await apiCall();
+
   // Cache the fresh data
-  setCachedData(cacheKey, freshData, options)
-  
-  return freshData
+  setCachedData(cacheKey, freshData, options);
+
+  return freshData;
 }
 
 /**
  * Cached version of getTodaysQuote
  */
 export async function getCachedTodaysQuote(): Promise<Quote | null> {
-  const { getTodaysQuote } = await import('../api/supabase')
-  
-  return withCache(
-    generateTodayQuoteCacheKey(),
-    getTodaysQuote,
-    { 
-      ttl: CACHE_TTL.TODAY_QUOTE,
-      storage: 'sessionStorage' // Use sessionStorage for today's quote
-    }
-  )
+  const { getTodaysQuote } = await import('../api/supabase');
+
+  return withCache(generateTodayQuoteCacheKey(), getTodaysQuote, {
+    ttl: CACHE_TTL.TODAY_QUOTE,
+    storage: 'sessionStorage', // Use sessionStorage for today's quote
+  });
 }
 
 /**
  * Cached version of getAllQuotes with pagination
  */
-export async function getCachedAllQuotes(limit?: number, offset?: number): Promise<Quote[]> {
-  const { getAllQuotes } = await import('../api/supabase')
-  
-  const page = offset ? Math.floor(offset / (limit || 12)) + 1 : 1
-  const cacheKey = generateArchiveCacheKey(page, undefined, limit)
-  
-  return withCache(
-    cacheKey,
-    () => getAllQuotes(limit, offset),
-    { 
-      ttl: CACHE_TTL.ARCHIVE_PAGE,
-      storage: 'localStorage' // Use localStorage for archive pages (persist across sessions)
-    }
-  )
+export async function getCachedAllQuotes(
+  limit?: number,
+  offset?: number
+): Promise<Quote[]> {
+  const { getAllQuotes } = await import('../api/supabase');
+
+  const page = offset ? Math.floor(offset / (limit || 12)) + 1 : 1;
+  const cacheKey = generateArchiveCacheKey(page, undefined, limit);
+
+  return withCache(cacheKey, () => getAllQuotes(limit, offset), {
+    ttl: CACHE_TTL.ARCHIVE_PAGE,
+    storage: 'localStorage', // Use localStorage for archive pages (persist across sessions)
+  });
 }
 
 /**
  * Cached version of getQuotesByCategory
  */
-export async function getCachedQuotesByCategory(category: string): Promise<Quote[]> {
-  const { getQuotesByCategory } = await import('../api/supabase')
-  
+export async function getCachedQuotesByCategory(
+  category: string
+): Promise<Quote[]> {
+  const { getQuotesByCategory } = await import('../api/supabase');
+
   return withCache(
     `cache:category_${category}`,
     () => getQuotesByCategory(category),
-    { 
+    {
       ttl: CACHE_TTL.ARCHIVE_PAGE,
-      storage: 'localStorage'
+      storage: 'localStorage',
     }
-  )
+  );
 }
 
 /**
  * Cached version of getQuoteCount
  */
 export async function getCachedQuoteCount(): Promise<number> {
-  const { getQuoteCount } = await import('../api/supabase')
-  
-  return withCache(
-    generateQuoteCountCacheKey(),
-    getQuoteCount,
-    { 
-      ttl: CACHE_TTL.QUOTE_COUNT,
-      storage: 'localStorage'
-    }
-  )
+  const { getQuoteCount } = await import('../api/supabase');
+
+  return withCache(generateQuoteCountCacheKey(), getQuoteCount, {
+    ttl: CACHE_TTL.QUOTE_COUNT,
+    storage: 'localStorage',
+  });
 }
 
 /**
@@ -259,20 +272,20 @@ export function invalidateCache(patterns: string[]): void {
     // Clear memory cache
     for (const key of memoryCache.keys()) {
       if (key.includes(pattern)) {
-        memoryCache.delete(key)
+        memoryCache.delete(key);
       }
     }
 
     // Clear browser storage cache
     if (typeof window !== 'undefined') {
       [localStorage, sessionStorage].forEach(storage => {
-        const keys = Object.keys(storage).filter(key => 
-          key.startsWith('cache:') && key.includes(pattern)
-        )
-        keys.forEach(key => storage.removeItem(key))
-      })
+        const keys = Object.keys(storage).filter(
+          key => key.startsWith('cache:') && key.includes(pattern)
+        );
+        keys.forEach(key => storage.removeItem(key));
+      });
     }
-  })
+  });
 }
 
 /**
@@ -281,15 +294,15 @@ export function invalidateCache(patterns: string[]): void {
 export async function preloadCache(): Promise<void> {
   try {
     // Preload today's quote
-    await getCachedTodaysQuote()
-    
+    await getCachedTodaysQuote();
+
     // Preload first page of archive
-    await getCachedAllQuotes(12, 0)
-    
+    await getCachedAllQuotes(12, 0);
+
     // Preload quote count
-    await getCachedQuoteCount()
+    await getCachedQuoteCount();
   } catch (error) {
-    console.warn('Cache preload failed:', error)
+    console.warn('Cache preload failed:', error);
   }
 }
 
@@ -297,28 +310,28 @@ export async function preloadCache(): Promise<void> {
  * Get cache statistics for debugging
  */
 export function getCacheStats(): {
-  memoryEntries: number
-  localStorageEntries: number
-  sessionStorageEntries: number
+  memoryEntries: number;
+  localStorageEntries: number;
+  sessionStorageEntries: number;
 } {
-  const memoryEntries = memoryCache.size
-  
-  let localStorageEntries = 0
-  let sessionStorageEntries = 0
-  
+  const memoryEntries = memoryCache.size;
+
+  let localStorageEntries = 0;
+  let sessionStorageEntries = 0;
+
   if (typeof window !== 'undefined') {
-    localStorageEntries = Object.keys(localStorage).filter(key => 
+    localStorageEntries = Object.keys(localStorage).filter(key =>
       key.startsWith('cache:')
-    ).length
-    
-    sessionStorageEntries = Object.keys(sessionStorage).filter(key => 
+    ).length;
+
+    sessionStorageEntries = Object.keys(sessionStorage).filter(key =>
       key.startsWith('cache:')
-    ).length
+    ).length;
   }
-  
+
   return {
     memoryEntries,
     localStorageEntries,
-    sessionStorageEntries
-  }
+    sessionStorageEntries,
+  };
 }

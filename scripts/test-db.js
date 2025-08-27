@@ -1,7 +1,7 @@
 /**
  * Database testing script
  * Tests all Supabase utility functions with mock data
- * 
+ *
  * Run with: node scripts/test-db.js
  */
 
@@ -17,7 +17,7 @@ const {
   deleteQuote,
   quoteExistsForDate,
   getQuoteCount,
-  getQuotesByDateRange
+  getQuotesByDateRange,
 } = require('../src/lib/supabase.ts');
 
 async function testDatabaseOperations() {
@@ -60,7 +60,9 @@ async function testDatabaseOperations() {
     const specificDate = '2024-08-25';
     const quoteByDate = await getQuoteByDate(specificDate);
     if (quoteByDate) {
-      console.log(`Quote for ${specificDate}: ${quoteByDate.content.substring(0, 50)}...`);
+      console.log(
+        `Quote for ${specificDate}: ${quoteByDate.content.substring(0, 50)}...`
+      );
     } else {
       console.log(`No quote found for ${specificDate}`);
     }
@@ -68,7 +70,9 @@ async function testDatabaseOperations() {
 
     // Test 6: Check if quote exists for date
     console.log('🔍 Testing quoteExistsForDate...');
-    const existsToday = await quoteExistsForDate(new Date().toISOString().split('T')[0]);
+    const existsToday = await quoteExistsForDate(
+      new Date().toISOString().split('T')[0]
+    );
     const exists2024 = await quoteExistsForDate('2024-08-25');
     console.log(`Quote exists for today: ${existsToday}`);
     console.log(`Quote exists for 2024-08-25: ${exists2024}\n`);
@@ -76,7 +80,9 @@ async function testDatabaseOperations() {
     // Test 7: Get quotes by date range
     console.log('📊 Testing getQuotesByDateRange...');
     const rangeQuotes = await getQuotesByDateRange('2024-08-20', '2024-08-25');
-    console.log(`Found ${rangeQuotes.length} quotes in range 2024-08-20 to 2024-08-25`);
+    console.log(
+      `Found ${rangeQuotes.length} quotes in range 2024-08-20 to 2024-08-25`
+    );
     rangeQuotes.forEach(quote => {
       console.log(`- ${quote.date}: ${quote.category}`);
     });
@@ -87,39 +93,46 @@ async function testDatabaseOperations() {
     const testDate = new Date();
     testDate.setDate(testDate.getDate() + 30); // 30 days in the future
     const futureDate = testDate.toISOString().split('T')[0];
-    
+
     const newQuote = {
       date: futureDate,
-      content: 'This is a test quote created by the database test script. It demonstrates that our create functionality is working properly.',
+      content:
+        'This is a test quote created by the database test script. It demonstrates that our create functionality is working properly.',
       category: 'test',
-      audio_url: null
+      audio_url: null,
     };
 
     try {
       const createdQuote = await createQuote(newQuote);
-      console.log(`✅ Successfully created test quote with ID: ${createdQuote.id}`);
-      
+      console.log(
+        `✅ Successfully created test quote with ID: ${createdQuote.id}`
+      );
+
       // Test 9: Update the test quote
       console.log('✏️  Testing updateQuote...');
       const updatedQuote = await updateQuote(createdQuote.id, {
-        content: 'This test quote has been updated to verify the update functionality is working correctly.',
-        audio_url: 'https://example.com/test-audio.mp3'
+        content:
+          'This test quote has been updated to verify the update functionality is working correctly.',
+        audio_url: 'https://example.com/test-audio.mp3',
       });
-      console.log(`✅ Successfully updated quote. New content: ${updatedQuote.content.substring(0, 50)}...`);
-      
+      console.log(
+        `✅ Successfully updated quote. New content: ${updatedQuote.content.substring(0, 50)}...`
+      );
+
       // Test 10: Delete the test quote (cleanup)
       console.log('🗑️  Testing deleteQuote (cleanup)...');
       await deleteQuote(createdQuote.id);
       console.log('✅ Successfully deleted test quote\n');
-      
     } catch (error) {
-      console.error('❌ Error with create/update/delete operations:', error.message);
+      console.error(
+        '❌ Error with create/update/delete operations:',
+        error.message
+      );
       console.log('This might be expected if running in read-only mode\n');
     }
 
     console.log('🎉 Database operations test completed successfully!');
     console.log('All core functionality appears to be working correctly.');
-
   } catch (error) {
     console.error('❌ Database test failed:', error.message);
     console.error('Stack:', error.stack);

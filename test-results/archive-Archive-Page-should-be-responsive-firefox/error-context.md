@@ -1,0 +1,111 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+        - button "Toggle mobile menu" [ref=e11]:
+          - img [ref=e12]
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - heading "EVERY WORD OF MOTIVATION" [level=2] [ref=e17]:
+          - text: EVERY WORD OF
+          - generic [ref=e18]: MOTIVATION
+        - paragraph [ref=e19]: Browse through our complete collection of daily motivation quotes, organized chronologically with the latest inspiration first.
+      - generic [ref=e22]:
+        - heading "FILTER BY CATEGORY" [level=3] [ref=e23]
+        - generic [ref=e24]:
+          - link "All Categories" [ref=e25] [cursor=pointer]:
+            - /url: /archive
+          - link "motivation" [ref=e26] [cursor=pointer]:
+            - /url: /archive?category=motivation
+          - link "wisdom" [ref=e27] [cursor=pointer]:
+            - /url: /archive?category=wisdom
+          - link "grindset" [ref=e28] [cursor=pointer]:
+            - /url: /archive?category=grindset
+          - link "reflection" [ref=e29] [cursor=pointer]:
+            - /url: /archive?category=reflection
+          - link "discipline" [ref=e30] [cursor=pointer]:
+            - /url: /archive?category=discipline
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - heading "ARCHIVE STATISTICS" [level=3] [ref=e34]
+          - generic [ref=e35]:
+            - generic [ref=e36]:
+              - generic [ref=e37]: "10"
+              - generic [ref=e38]: Quotes This Page
+            - generic [ref=e39]:
+              - generic [ref=e40]: "5"
+              - generic [ref=e41]: Categories
+            - generic [ref=e42]:
+              - generic [ref=e43]: "0"
+              - generic [ref=e44]: With Audio
+        - generic [ref=e45]:
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - paragraph [ref=e50]: motivation
+              - paragraph [ref=e51]: Saturday, August 23, 2025
+            - blockquote [ref=e52]: "\"Stop making excuses. Start making moves. Every second you hesitate is another second closer to mediocrity.\""
+            - generic [ref=e54]: "#DE9EBE"
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: motivation
+              - paragraph [ref=e60]: Friday, August 22, 2025
+            - blockquote [ref=e61]: "\"You are in control of your life. Stop waiting for permission to become the person you were meant to be.\""
+            - generic [ref=e63]: "#8515B1"
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - paragraph [ref=e68]: wisdom
+              - paragraph [ref=e69]: Thursday, August 21, 2025
+            - blockquote [ref=e70]: "\"Pain is inevitable. Suffering is a choice. The difference is how you respond to what life throws at you.\""
+            - generic [ref=e72]: "#CF531E"
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - paragraph [ref=e77]: wisdom
+              - paragraph [ref=e78]: Wednesday, August 20, 2025
+            - blockquote [ref=e79]: "\"Your mind is the most powerful weapon you have. Train it like your life depends on it, because it does.\""
+            - generic [ref=e81]: "#87708F"
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - paragraph [ref=e86]: grindset
+              - paragraph [ref=e87]: Tuesday, August 19, 2025
+            - blockquote [ref=e88]: "\"While they sleep, you work. While they party, you train. While they make excuses, you make progress.\""
+            - generic [ref=e90]: "#65D39E"
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - paragraph [ref=e95]: grindset
+              - paragraph [ref=e96]: Monday, August 18, 2025
+            - blockquote [ref=e97]: "\"The grind never stops. Every day is an opportunity to get better, stronger, faster. What did you do today?\""
+            - generic [ref=e99]: "#0650FF"
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - paragraph [ref=e104]: reflection
+              - paragraph [ref=e105]: Sunday, August 17, 2025
+            - blockquote [ref=e106]: "\"Look in the mirror and ask yourself: Are you the person you promised yourself you would become?\""
+            - generic [ref=e108]: "#029019"
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - paragraph [ref=e113]: reflection
+              - paragraph [ref=e114]: Saturday, August 16, 2025
+            - blockquote [ref=e115]: "\"Yesterday you said tomorrow. How many tomorrows are you going to waste before you start today?\""
+            - generic [ref=e117]: "#67E8F5"
+          - generic [ref=e120]:
+            - generic [ref=e121]:
+              - paragraph [ref=e122]: discipline
+              - paragraph [ref=e123]: Friday, August 15, 2025
+            - blockquote [ref=e124]: "\"Discipline is doing what needs to be done, even when you do not want to do it. Especially then.\""
+            - generic [ref=e126]: "#29A8B0"
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - paragraph [ref=e131]: discipline
+              - paragraph [ref=e132]: Thursday, August 14, 2025
+            - blockquote [ref=e133]: "\"Your habits determine your future. Every action is a vote for the type of person you wish to become.\""
+            - generic [ref=e135]: "#7BAC9D"
+  - button "Open Next.js Dev Tools" [ref=e141] [cursor=pointer]:
+    - img [ref=e142] [cursor=pointer]
+  - alert [ref=e146]
+```

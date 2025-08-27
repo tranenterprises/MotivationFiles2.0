@@ -10,21 +10,19 @@ A dark, gritty, yet inspiring motivational website that immerses users with a **
 
 ### **Core Concept**
 
-* Fullscreen hero dedicated to the **motivational speech of the day**.
-* Background audio track plays the speech.
-* Transcript displays as **large, bold, white text**.
-* Each phrase/keyword is **highlighted in sync** with the spoken audio.
+- Fullscreen hero dedicated to the **motivational speech of the day**.
+- Background audio track plays the speech.
+- Transcript displays as **large, bold, white text**.
+- Each phrase/keyword is **highlighted in sync** with the spoken audio.
 
 ### **Design Aesthetic**
 
-* **Typography**:
+- **Typography**:
+  - Bold, uppercase sans-serif (e.g., Neue Haas Grotesk, Inter ExtraBold, Bebas Neue).
+  - Poster-like scale for dramatic effect.
+  - Highlighted words glow or pulse for emphasis.
 
-  * Bold, uppercase sans-serif (e.g., Neue Haas Grotesk, Inter ExtraBold, Bebas Neue).
-  * Poster-like scale for dramatic effect.
-  * Highlighted words glow or pulse for emphasis.
-
-* **Highlighting Style**:
-
-  * Glowing neon white or metallic accents.
-  * Pulse, shimmer, or slight enlargement when emphasized.
-  * Smooth transitions (fade in/out) to mai
+- **Highlighting Style**:
+  - Glowing neon white or metallic accents.
+  - Pulse, shimmer, or slight enlargement when emphasized.
+  - Smooth transitions (fade in/out) to mai

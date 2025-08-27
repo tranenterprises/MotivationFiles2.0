@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { 
-  getTodaysQuote, 
+import {
+  getTodaysQuote,
   getAllQuotes,
   getQuotesByCategory,
   getQuoteCount,
-  getQuotesByDateRange 
+  getQuotesByDateRange,
 } from '@/lib/api/supabase';
 import { withRateLimit, addSecurityHeaders } from '@/lib/utils/rate-limit';
 
 async function handleGET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Parse query parameters
     const type = searchParams.get('type') || 'today'; // 'today', 'archive', 'category'
     const category = searchParams.get('category');
@@ -27,7 +27,7 @@ async function handleGET(request: NextRequest) {
       responseData = NextResponse.json(
         {
           success: false,
-          error: 'Limit cannot exceed 100 quotes per request'
+          error: 'Limit cannot exceed 100 quotes per request',
         },
         { status: 400 }
       );
@@ -37,13 +37,13 @@ async function handleGET(request: NextRequest) {
     switch (type) {
       case 'today': {
         const todayQuote = await getTodaysQuote();
-        
+
         if (!todayQuote) {
           responseData = NextResponse.json(
             {
               success: true,
               data: null,
-              message: 'No quote available for today'
+              message: 'No quote available for today',
             },
             { status: 200 }
           );
@@ -54,7 +54,7 @@ async function handleGET(request: NextRequest) {
           {
             success: true,
             data: todayQuote,
-            message: 'Today\'s quote retrieved successfully'
+            message: "Today's quote retrieved successfully",
           },
           { status: 200 }
         );
@@ -64,7 +64,7 @@ async function handleGET(request: NextRequest) {
       case 'archive': {
         const quotes = await getAllQuotes(limit, offset);
         const totalCount = await getQuoteCount();
-        
+
         responseData = NextResponse.json(
           {
             success: true,
@@ -73,9 +73,9 @@ async function handleGET(request: NextRequest) {
               limit,
               offset,
               total: totalCount,
-              hasMore: offset + quotes.length < totalCount
+              hasMore: offset + quotes.length < totalCount,
             },
-            message: 'Archive quotes retrieved successfully'
+            message: 'Archive quotes retrieved successfully',
           },
           { status: 200 }
         );
@@ -87,19 +87,25 @@ async function handleGET(request: NextRequest) {
           responseData = NextResponse.json(
             {
               success: false,
-              error: 'Category parameter is required for category type'
+              error: 'Category parameter is required for category type',
             },
             { status: 400 }
           );
           return addSecurityHeaders(responseData);
         }
 
-        const validCategories = ['motivation', 'wisdom', 'grindset', 'reflection', 'discipline'];
+        const validCategories = [
+          'motivation',
+          'wisdom',
+          'grindset',
+          'reflection',
+          'discipline',
+        ];
         if (!validCategories.includes(category)) {
           responseData = NextResponse.json(
             {
               success: false,
-              error: `Invalid category. Must be one of: ${validCategories.join(', ')}`
+              error: `Invalid category. Must be one of: ${validCategories.join(', ')}`,
             },
             { status: 400 }
           );
@@ -107,14 +113,14 @@ async function handleGET(request: NextRequest) {
         }
 
         const quotes = await getQuotesByCategory(category);
-        
+
         responseData = NextResponse.json(
           {
             success: true,
             data: quotes,
             category,
             count: quotes.length,
-            message: `${category} quotes retrieved successfully`
+            message: `${category} quotes retrieved successfully`,
           },
           { status: 200 }
         );
@@ -126,7 +132,8 @@ async function handleGET(request: NextRequest) {
           responseData = NextResponse.json(
             {
               success: false,
-              error: 'start_date and end_date parameters are required for date_range type'
+              error:
+                'start_date and end_date parameters are required for date_range type',
             },
             { status: 400 }
           );
@@ -139,7 +146,7 @@ async function handleGET(request: NextRequest) {
           responseData = NextResponse.json(
             {
               success: false,
-              error: 'Dates must be in YYYY-MM-DD format'
+              error: 'Dates must be in YYYY-MM-DD format',
             },
             { status: 400 }
           );
@@ -151,7 +158,7 @@ async function handleGET(request: NextRequest) {
           responseData = NextResponse.json(
             {
               success: false,
-              error: 'start_date must be before or equal to end_date'
+              error: 'start_date must be before or equal to end_date',
             },
             { status: 400 }
           );
@@ -159,14 +166,14 @@ async function handleGET(request: NextRequest) {
         }
 
         const quotes = await getQuotesByDateRange(startDate, endDate);
-        
+
         responseData = NextResponse.json(
           {
             success: true,
             data: quotes,
             dateRange: { startDate, endDate },
             count: quotes.length,
-            message: 'Date range quotes retrieved successfully'
+            message: 'Date range quotes retrieved successfully',
           },
           { status: 200 }
         );
@@ -177,26 +184,27 @@ async function handleGET(request: NextRequest) {
         responseData = NextResponse.json(
           {
             success: false,
-            error: 'Invalid type parameter. Must be one of: today, archive, category, date_range'
+            error:
+              'Invalid type parameter. Must be one of: today, archive, category, date_range',
           },
           { status: 400 }
         );
         return addSecurityHeaders(responseData);
       }
     }
-
   } catch (error: any) {
     console.error('Quote API error:', error);
 
     let responseData;
-    
+
     // Handle specific database errors
     if (error.message.includes('Failed to fetch')) {
       responseData = NextResponse.json(
         {
           success: false,
           error: 'Database connection error',
-          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+          details:
+            process.env.NODE_ENV === 'development' ? error.message : undefined,
         },
         { status: 503 }
       );
@@ -205,7 +213,8 @@ async function handleGET(request: NextRequest) {
         {
           success: false,
           error: 'Internal server error',
-          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+          details:
+            process.env.NODE_ENV === 'development' ? error.message : undefined,
         },
         { status: 500 }
       );
@@ -219,7 +228,7 @@ async function handleGET(request: NextRequest) {
 export const GET = withRateLimit(handleGET, 'quotes');
 
 // Handle CORS preflight requests
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   const response = new Response(null, { status: 200 });
   return addSecurityHeaders(response);
 }

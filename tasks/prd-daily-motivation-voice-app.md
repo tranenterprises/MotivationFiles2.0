@@ -49,7 +49,7 @@ The Daily Motivation Voice App is a React/Next.js web application that provides 
 ## Non-Goals (Out of Scope)
 
 1. **User Authentication**: No user accounts, login systems, or personalization features
-2. **Social Features**: No sharing, commenting, or community features  
+2. **Social Features**: No sharing, commenting, or community features
 3. **Push Notifications**: No mobile notifications or email alerts
 4. **Search Functionality**: No search or filtering within the repository
 5. **Favorites/Bookmarking**: No ability to save or bookmark specific quotes
