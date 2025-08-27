@@ -53,6 +53,54 @@ export function findLeastUsedCategory(
   return sortedCategories[0];
 }
 
+/**
+ * Advanced category distribution algorithm that considers:
+ * - Usage frequency weights
+ * - Even distribution over time
+ * - Randomization to avoid predictable patterns
+ */
+export function selectCategoryWithDistribution(
+  categoryCounts: CategoryCount,
+  options: { 
+    randomizationFactor?: number;
+    enforceBalance?: boolean;
+  } = {}
+): QuoteCategory {
+  const { randomizationFactor = 0.2, enforceBalance = true } = options;
+  
+  const totalQuotes = Object.values(categoryCounts).reduce((sum, count) => sum + count, 0);
+  const expectedPerCategory = totalQuotes / QUOTE_CATEGORIES.length;
+  
+  // Calculate weights for each category (lower count = higher weight)
+  const categoryWeights: Array<{ category: QuoteCategory; weight: number }> = 
+    QUOTE_CATEGORIES.map(category => {
+      const count = categoryCounts[category];
+      const deficit = Math.max(0, expectedPerCategory - count);
+      
+      // Base weight: categories with fewer quotes get higher weights
+      let weight = enforceBalance ? deficit + 1 : expectedPerCategory - count + 1;
+      
+      // Add randomization to prevent predictable patterns
+      weight += Math.random() * randomizationFactor * weight;
+      
+      return { category, weight: Math.max(weight, 0.1) }; // Minimum weight to ensure all categories can be selected
+    });
+  
+  // Weighted random selection
+  const totalWeight = categoryWeights.reduce((sum, item) => sum + item.weight, 0);
+  let randomValue = Math.random() * totalWeight;
+  
+  for (const { category, weight } of categoryWeights) {
+    randomValue -= weight;
+    if (randomValue <= 0) {
+      return category;
+    }
+  }
+  
+  // Fallback to least used category
+  return findLeastUsedCategory(categoryCounts);
+}
+
 export async function determineNextCategory(
   supabaseClient: any,
   options: Partial<CategoryAnalysisOptions> = {}
@@ -60,21 +108,24 @@ export async function determineNextCategory(
   const opts = { ...DEFAULT_CATEGORY_OPTIONS, ...options };
 
   try {
+    // Use getQuotesByDateRange for efficient single query
+    const { getQuotesByDateRange } = await import('./supabase-utils.ts');
+    
+    const endDate = new Date().toISOString().split('T')[0];
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - opts.daysBack);
     const startDateStr = startDate.toISOString().split('T')[0];
 
+    // Single database query to get all quotes in date range
+    const quotes = await getQuotesByDateRange(supabaseClient, startDateStr, endDate);
+
     const categoryCounts = initializeCategoryCounts();
 
-    // Count quotes by category in the specified time period
-    for (const category of QUOTE_CATEGORIES) {
-      const { data: quotes } = await supabaseClient
-        .from('quotes')
-        .select('id')
-        .eq('category', category)
-        .gte('date_created', startDateStr);
-
-      categoryCounts[category] = quotes?.length || 0;
+    // Count quotes by category from the retrieved data
+    for (const quote of quotes) {
+      if (validateCategory(quote.category)) {
+        categoryCounts[quote.category as QuoteCategory]++;
+      }
     }
 
     console.log(
@@ -82,7 +133,12 @@ export async function determineNextCategory(
       categoryCounts
     );
 
-    const selectedCategory = findLeastUsedCategory(categoryCounts);
+    // Use improved distribution algorithm for better balance
+    const selectedCategory = selectCategoryWithDistribution(categoryCounts, {
+      randomizationFactor: 0.3, // Add some randomness to prevent predictability
+      enforceBalance: true, // Ensure even distribution over time
+    });
+    
     console.log('Selected category:', selectedCategory);
 
     return selectedCategory;
