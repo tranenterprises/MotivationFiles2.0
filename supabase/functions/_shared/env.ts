@@ -54,18 +54,26 @@ export function getOptionalEnv(
 
 export function loadEdgeFunctionEnv(): EdgeFunctionEnvConfig {
   // Map Next.js environment variables to Supabase Edge Function environment variables
-  // Next.js uses NEXT_PUBLIC_SUPABASE_URL, but edge functions use SUPABASE_URL
-  // Try both patterns for flexibility
-  const supabaseUrl = getOptionalEnv('SUPABASE_URL') || 
+  // Edge functions skip SUPABASE_ prefixed variables, so we use alternative names
+  // Try multiple patterns for flexibility
+  const supabaseUrl = getOptionalEnv('DATABASE_URL') ||
+                     getOptionalEnv('SUPABASE_URL') || 
                      getOptionalEnv('NEXT_PUBLIC_SUPABASE_URL');
   
   if (!supabaseUrl) {
-    throw new Error('SUPABASE_URL environment variable is required (or NEXT_PUBLIC_SUPABASE_URL as fallback)');
+    throw new Error('DATABASE_URL environment variable is required (or SUPABASE_URL/NEXT_PUBLIC_SUPABASE_URL as fallback)');
+  }
+
+  const serviceRoleKey = getOptionalEnv('SERVICE_ROLE_TOKEN') ||
+                        getOptionalEnv('SUPABASE_SERVICE_ROLE_KEY');
+
+  if (!serviceRoleKey) {
+    throw new Error('SERVICE_ROLE_TOKEN environment variable is required (or SUPABASE_SERVICE_ROLE_KEY as fallback)');
   }
 
   return {
     supabaseUrl,
-    supabaseServiceRoleKey: getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    supabaseServiceRoleKey: serviceRoleKey,
     openaiApiKey: getRequiredEnv('OPENAI_API_KEY'),
     elevenlabsApiKey: getRequiredEnv('ELEVENLABS_API_KEY'),
     cronSecret: getOptionalEnv('CRON_SECRET'),
@@ -94,6 +102,8 @@ export function validateEdgeFunctionEnv(env: EdgeFunctionEnvConfig): void {
  */
 export function logEnvironmentStatus(): void {
   const vars = [
+    'DATABASE_URL',
+    'SERVICE_ROLE_TOKEN',
     'SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_URL', 
     'SUPABASE_SERVICE_ROLE_KEY',

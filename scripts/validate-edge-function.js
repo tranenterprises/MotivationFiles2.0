@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * Validation script to ensure Edge Function logic matches existing codebase
- * This compares the Edge Function implementation with the main codebase APIs
+ * Edge Function Validation Script
+ * 
+ * Tests the deployed daily-quote-generator edge function with various scenarios
+ * Usage: node scripts/validate-edge-function.js <project-ref> <cron-secret>
+ * 
+ * Or for code validation: node scripts/validate-edge-function.js --code-only
  */
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 
 const projectRoot = path.join(__dirname, '..');
 const edgeFunctionPath = path.join(

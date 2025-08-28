@@ -42,7 +42,7 @@ export interface VoiceWithUploadResult extends VoiceGenerationResult {
 }
 
 export const DEFAULT_ELEVENLABS_CONFIG = {
-  voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam voice (closest to David Goggins style)
+  voiceId: 'tTZ0TVc9Q1bbWngiduLK', // Rudra voice (closest to David Goggins style)
   modelId: 'eleven_monolingual_v1',
   outputFormat: 'mp3_44100_192',
   voiceSettings: {
