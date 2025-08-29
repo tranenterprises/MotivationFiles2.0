@@ -4,15 +4,17 @@ import HeroSection from '../HeroSection';
 
 // Mock the AudioPlayer component
 jest.mock('../../media/AudioPlayer', () => {
-  return function MockAudioPlayer({
-    onPlay,
-    onPause,
-    onEnded,
-    onTimeUpdate,
-    audioUrl,
-    title,
-    className,
-  }: any) {
+  return function MockAudioPlayer(props: any) {
+    const {
+      onPlay,
+      onPause,
+      onEnded,
+      onTimeUpdate,
+      audioUrl,
+      title,
+      className,
+      autoPlay,
+    } = props;
     return (
       <div data-testid="audio-player" className={className}>
         <button
@@ -32,6 +34,7 @@ jest.mock('../../media/AudioPlayer', () => {
         </button>
         <div data-testid="audio-url">{audioUrl}</div>
         <div data-testid="audio-title">{title}</div>
+        <div data-testid="audio-autoplay">{autoPlay ? 'true' : 'false'}</div>
       </div>
     );
   };
@@ -109,7 +112,6 @@ describe('HeroSection', () => {
       expect(screen.getByText('champion')).toBeInTheDocument();
       expect(screen.getByText('up.')).toBeInTheDocument();
       expect(screen.getAllByText('motivation')[0]).toBeInTheDocument();
-      expect(screen.getByText('MOTIVATIONAL SPEECH')).toBeInTheDocument();
     });
 
     it('displays quote metadata correctly', () => {
@@ -146,12 +148,17 @@ describe('HeroSection', () => {
       expect(screen.getByTestId('audio-title')).toHaveTextContent('motivation');
     });
 
+    it('enables autoplay for audio player', () => {
+      render(<HeroSection quote={mockQuote} />);
+
+      expect(screen.getByTestId('audio-autoplay')).toHaveTextContent('true');
+    });
+
     it('does not render audio section when no audio_url', () => {
       const quoteWithoutAudio = { ...mockQuote, audio_url: null };
       render(<HeroSection quote={quoteWithoutAudio} />);
 
       expect(screen.queryByTestId('audio-player')).not.toBeInTheDocument();
-      expect(screen.queryByText('MOTIVATIONAL SPEECH')).not.toBeInTheDocument();
     });
 
     it('highlights words when audio is played', async () => {

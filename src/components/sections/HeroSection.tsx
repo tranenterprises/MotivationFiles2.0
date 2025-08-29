@@ -94,7 +94,7 @@ export default function HeroSection({
       </div>
 
       {/* Main Quote Display */}
-      <div className="relative z-10 container-full text-center mb-8 md:mb-12 fade-in stagger-2 layout-stable">
+      <div className="relative z-10 container-full text-center mb-8 md:mb-12 fade-in stagger-3 layout-stable">
         {/* Date at top */}
         <div className="mb-6 md:mb-8 slide-up stagger-1">
           <span className="text-sm md:text-base font-bold uppercase tracking-widest text-accent hover:text-accent-light transition-colors">
@@ -121,41 +121,31 @@ export default function HeroSection({
         </blockquote>
 
         {/* Quote ID */}
-        <div className="body-small text-gray-500 slide-up stagger-3">
+        <div className="body-small text-gray-500 slide-up stagger-4">
           <span className="hover:text-accent transition-colors">
             #{quote.id.slice(-6).toUpperCase()}
           </span>
         </div>
       </div>
 
-      {/* Audio Control Center */}
+      {/* Audio Player - Moved above quote */}
       {quote.audio_url && (
-        <div className="relative z-10 w-full max-w-3xl mx-auto px-4 slide-up stagger-4">
-          <div className="bg-black/60 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-8 shadow-2xl hover-lift hover-glow layout-transition">
-            <div className="text-center mb-4 md:mb-6">
-              <h3 className="headline-text text-white mb-2 scale-in stagger-5">
-                MOTIVATIONAL SPEECH
-              </h3>
-              <p className="body-small text-gray-400 fade-in stagger-5">
-                Experience the full intensity with audio
-              </p>
-            </div>
-
-            <div className="slide-up stagger-5">
-              <AudioPlayer
-                audioUrl={quote.audio_url}
-                title={quote.category}
-                duration={quote.audio_duration}
-                size="large"
-                preloadStrategy="metadata"
-                className="w-full"
-                audioRef={audioPlayerRef}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onEnded={handleEnded}
-                onTimeUpdate={handleTimeUpdate}
-              />
-            </div>
+        <div className="relative z-10 w-full max-w-3xl mx-auto px-4 mb-8 md:mb-12 slide-up stagger-2">
+          <div className="bg-black/40 backdrop-blur-sm border border-gray-700/30 rounded-lg md:rounded-xl p-3 md:p-4 shadow-xl hover-glow layout-transition">
+            <AudioPlayer
+              audioUrl={quote.audio_url}
+              title={quote.category}
+              duration={quote.audio_duration}
+              size="large"
+              preloadStrategy="metadata"
+              className="w-full"
+              audioRef={audioPlayerRef}
+              autoPlay={true}
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onEnded={handleEnded}
+              onTimeUpdate={handleTimeUpdate}
+            />
           </div>
         </div>
       )}

@@ -62,6 +62,7 @@ const mockProps = {
   duration: 60,
   size: 'medium' as const,
   preloadStrategy: 'metadata' as const,
+  autoPlay: false,
 };
 
 describe('AudioPlayer Component', () => {
@@ -448,6 +449,98 @@ describe('AudioPlayer Component', () => {
       // Should show formatted times
       expect(screen.getByText('1:30')).toBeInTheDocument();
       expect(screen.getByText('3:00')).toBeInTheDocument();
+    });
+  });
+
+  describe('Auto-play Functionality', () => {
+    it('does not auto-play when autoPlay is false', async () => {
+      render(<AudioPlayer {...mockProps} autoPlay={false} />);
+
+      // Wait a moment to ensure no auto-play attempt
+      await waitFor(
+        () => {
+          expect(mockAudio.play).not.toHaveBeenCalled();
+        },
+        { timeout: 1500 }
+      );
+    });
+
+    it('attempts auto-play when autoPlay is true and audio is preloaded', async () => {
+      const onPlay = jest.fn();
+
+      render(<AudioPlayer {...mockProps} autoPlay={true} onPlay={onPlay} />);
+
+      // Simulate audio being preloaded
+      const canPlayThroughHandler = mockAudio.addEventListener.mock.calls.find(
+        call => call[0] === 'canplaythrough'
+      )?.[1];
+
+      if (canPlayThroughHandler) {
+        act(() => {
+          canPlayThroughHandler();
+        });
+      }
+
+      await waitFor(
+        () => {
+          expect(mockAudio.play).toHaveBeenCalled();
+          expect(onPlay).toHaveBeenCalled();
+        },
+        { timeout: 2000 }
+      );
+    });
+
+    it('handles auto-play rejection gracefully', async () => {
+      const mockError = new Error(
+        'The play() request was interrupted by a call to pause()'
+      );
+      mockAudio.play.mockRejectedValue(mockError);
+
+      render(<AudioPlayer {...mockProps} autoPlay={true} />);
+
+      // Simulate audio being ready
+      const canPlayThroughHandler = mockAudio.addEventListener.mock.calls.find(
+        call => call[0] === 'canplaythrough'
+      )?.[1];
+
+      if (canPlayThroughHandler) {
+        act(() => {
+          canPlayThroughHandler();
+        });
+      }
+
+      // Should not throw an error - auto-play failure is handled gracefully
+      await waitFor(
+        () => {
+          expect(mockAudio.play).toHaveBeenCalled();
+        },
+        { timeout: 2000 }
+      );
+    });
+
+    it('only attempts auto-play once', async () => {
+      render(<AudioPlayer {...mockProps} autoPlay={true} />);
+
+      // Simulate multiple preload events
+      const canPlayThroughHandler = mockAudio.addEventListener.mock.calls.find(
+        call => call[0] === 'canplaythrough'
+      )?.[1];
+
+      if (canPlayThroughHandler) {
+        act(() => {
+          canPlayThroughHandler();
+        });
+        act(() => {
+          canPlayThroughHandler();
+        });
+      }
+
+      await waitFor(
+        () => {
+          expect(mockAudio.play).toHaveBeenCalledTimes(1);
+        },
+        { timeout: 2000 }
+      );
     });
   });
 

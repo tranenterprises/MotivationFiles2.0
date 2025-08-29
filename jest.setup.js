@@ -1,5 +1,4 @@
-import '@testing-library/jest-dom';
-import React from 'react';
+require('@testing-library/jest-dom');
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -21,21 +20,20 @@ jest.mock('next/navigation', () => ({
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: function MockImage(props) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} alt="" />;
+    return require('react').createElement('img', {
+      ...props,
+      alt: props.alt || '',
+    });
   },
 }));
 
 // Mock Next.js Link component
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ children, href, ...props }: any) => {
-    return (
-      <a href={href} {...props}>
-        {children}
-      </a>
-    );
+  default: function MockLink({ children, href, ...props }) {
+    return require('react').createElement('a', { href, ...props }, children);
   },
 }));
 
@@ -46,7 +44,7 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
 
 // Mock Web APIs for server components
-import { TextEncoder, TextDecoder } from 'util';
+const { TextEncoder, TextDecoder } = require('util');
 
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;

@@ -17,6 +17,7 @@ interface AudioPlayerProps {
   onLoadProgress?: (loaded: number, total: number) => void;
   onTimeUpdate?: (currentTime: number) => void;
   audioRef?: React.MutableRefObject<HTMLAudioElement | null>;
+  autoPlay?: boolean;
 }
 
 export default function AudioPlayer({
@@ -33,6 +34,7 @@ export default function AudioPlayer({
   onLoadProgress,
   onTimeUpdate,
   audioRef: externalAudioRef,
+  autoPlay = false,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +44,7 @@ export default function AudioPlayer({
   const [errorMessage, setErrorMessage] = useState('');
   const [loadProgress, setLoadProgress] = useState(0);
   const [isPreloaded, setIsPreloaded] = useState(false);
+  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressRef = useRef<HTMLDivElement | null>(null);
@@ -201,6 +204,38 @@ export default function AudioPlayer({
     onTimeUpdate,
     externalAudioRef,
   ]);
+
+  // Auto-play effect
+  useEffect(() => {
+    if (autoPlay && !hasAutoPlayed && audioRef.current && !hasError) {
+      const attemptAutoPlay = async () => {
+        try {
+          await audioRef.current!.play();
+          setIsPlaying(true);
+          setHasAutoPlayed(true);
+          onPlay?.();
+        } catch (error) {
+          console.log('Auto-play prevented by browser:', error);
+          setHasAutoPlayed(true); // Don't keep trying
+        }
+      };
+
+      // Wait for audio to be ready
+      if (isPreloaded || loadProgress > 25) {
+        attemptAutoPlay();
+        return undefined;
+      } else {
+        // Wait for enough audio to be loaded
+        const timer = setTimeout(() => {
+          if (audioRef.current) {
+            attemptAutoPlay();
+          }
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+    return undefined;
+  }, [autoPlay, hasAutoPlayed, isPreloaded, loadProgress, hasError, onPlay]);
 
   const togglePlayPause = async () => {
     if (!audioRef.current || hasError) return;
