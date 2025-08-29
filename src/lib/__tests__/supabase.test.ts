@@ -1,5 +1,8 @@
 import { Quote } from '../types/types';
 
+// Test updated to cover only client-safe operations
+// Admin functions (create, update, delete) are now server-side only
+
 // Mock data for testing
 const mockQuote: Quote = {
   id: '123e4567-e89b-12d3-a456-426614174000',
@@ -178,16 +181,23 @@ describe('Supabase Utilities', () => {
     });
   });
 
-  describe('Mock Functions Setup', () => {
-    it('should have mock functions available', () => {
+  describe('Client Functions Setup', () => {
+    it('should have client-safe read functions available', () => {
       const supabaseModule = require('../api/supabase');
 
+      // Core read operations (client-safe)
       expect(supabaseModule.getTodaysQuote).toBeDefined();
       expect(supabaseModule.getAllQuotes).toBeDefined();
       expect(supabaseModule.getQuotesByCategory).toBeDefined();
-      expect(supabaseModule.createQuote).toBeDefined();
-      expect(supabaseModule.updateQuote).toBeDefined();
-      expect(supabaseModule.deleteQuote).toBeDefined();
+      expect(supabaseModule.getQuoteByDate).toBeDefined();
+      expect(supabaseModule.quoteExistsForDate).toBeDefined();
+      expect(supabaseModule.getQuoteCount).toBeDefined();
+      expect(supabaseModule.getQuotesByDateRange).toBeDefined();
+      
+      // Admin operations should NOT be available in client-side module
+      expect(supabaseModule.createQuote).toBeUndefined();
+      expect(supabaseModule.updateQuote).toBeUndefined();
+      expect(supabaseModule.deleteQuote).toBeUndefined();
     });
   });
 });

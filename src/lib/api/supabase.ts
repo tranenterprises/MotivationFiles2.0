@@ -6,11 +6,6 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export const supabaseAdmin = createClient(
-  supabaseUrl,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 // Database utility functions
 
 /**
@@ -102,66 +97,8 @@ export async function getQuoteByDate(date: string): Promise<Quote | null> {
   return data;
 }
 
-/**
- * Create a new quote (admin only - uses service role)
- */
-export async function createQuote(
-  quote: Omit<Quote, 'id' | 'created_at' | 'updated_at'>
-): Promise<Quote> {
-  const { data, error } = await supabaseAdmin
-    .from('quotes')
-    .insert(quote)
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to create quote: ${error.message}`);
-  }
-
-  return data;
-}
-
-/**
- * Update an existing quote (admin only - uses service role)
- */
-export async function updateQuote(
-  id: string,
-  updates: Partial<Omit<Quote, 'id' | 'created_at' | 'updated_at'>>
-): Promise<Quote> {
-  const { data, error } = await supabaseAdmin
-    .from('quotes')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to update quote: ${error.message}`);
-  }
-
-  return data;
-}
-
-/**
- * Update quote audio URL (admin only - uses service role)
- */
-export async function updateQuoteAudioUrl(
-  id: string,
-  audioUrl: string
-): Promise<Quote> {
-  return updateQuote(id, { audio_url: audioUrl });
-}
-
-/**
- * Delete a quote (admin only - uses service role)
- */
-export async function deleteQuote(id: string): Promise<void> {
-  const { error } = await supabaseAdmin.from('quotes').delete().eq('id', id);
-
-  if (error) {
-    throw new Error(`Failed to delete quote: ${error.message}`);
-  }
-}
+// Note: Admin operations (create, update, delete) are handled by Supabase Edge Functions
+// This module only contains client-safe read operations
 
 /**
  * Check if quote exists for date

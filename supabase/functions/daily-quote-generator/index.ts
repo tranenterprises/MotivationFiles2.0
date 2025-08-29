@@ -30,8 +30,8 @@ function validateAuthorization(req: Request, cronSecret?: string): boolean {
   
   // Fallback to CRON_SECRET validation
   if (!cronSecret) {
-    console.log('No CRON_SECRET configured - allowing request');
-    return true; // Allow if no secret is configured
+    console.log('No CRON_SECRET configured - rejecting request for security');
+    return false; // SECURITY: Reject if no secret is configured
   }
 
   if (!authHeader) {

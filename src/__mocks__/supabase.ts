@@ -39,10 +39,8 @@ export const getTodaysQuote = jest.fn();
 export const getAllQuotes = jest.fn();
 export const getQuotesByCategory = jest.fn();
 export const getQuoteByDate = jest.fn();
-export const createQuote = jest.fn();
-export const updateQuote = jest.fn();
-export const updateQuoteAudioUrl = jest.fn();
-export const deleteQuote = jest.fn();
+// Note: Admin functions (createQuote, updateQuote, deleteQuote) removed from client-side
+// These functions are now server-side only for security
 export const quoteExistsForDate = jest.fn();
 export const getQuoteCount = jest.fn();
 export const getQuotesByDateRange = jest.fn();
@@ -68,4 +66,5 @@ export const supabase = {
   })),
 };
 
-export const supabaseAdmin = supabase;
+// Note: supabaseAdmin removed from client-side code for security
+// Admin operations moved to server-side files

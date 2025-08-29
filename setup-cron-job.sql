@@ -1,5 +1,9 @@
 -- Setup pg_cron for daily quote generation at 5:00 AM UTC
 -- Run this in your Supabase SQL Editor
+-- 
+-- SECURITY NOTE: Replace placeholders with your actual values:
+-- - Replace YOUR_PROJECT_REF with your Supabase project reference
+-- - Replace YOUR_CRON_SECRET with your actual CRON_SECRET value
 
 -- First, ensure the pg_cron extension is enabled
 CREATE EXTENSION IF NOT EXISTS pg_cron;
@@ -10,9 +14,9 @@ SELECT cron.schedule(
   '0 5 * * *', -- 5:00 AM UTC daily
   $$
   SELECT net.http_post(
-    url := 'https://jrbkzqbutldvkfoaxgry.supabase.co/functions/v1/daily-quote-generator',
+    url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-generator',
     headers := jsonb_build_object(
-      'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyYmt6cWJ1dGxkdmtmb2F4Z3J5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjA3MTc3NCwiZXhwIjoyMDcxNjQ3Nzc0fQ.f_DeAU2EzNLMdQAwgX-TiTjnkPZcaYBwdIVQnSjWQ3s',
+      'Authorization', 'Bearer YOUR_CRON_SECRET',
       'Content-Type', 'application/json'
     )
   );
@@ -31,9 +35,9 @@ DECLARE
   result json;
 BEGIN
   SELECT net.http_post(
-    url := 'https://jrbkzqbutldvkfoaxgry.supabase.co/functions/v1/daily-quote-generator',
+    url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-generator',
     headers := jsonb_build_object(
-      'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyYmt6cWJ1dGxkdmtmb2F4Z3J5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjA3MTc3NCwiZXhwIjoyMDcxNjQ3Nzc0fQ.f_DeAU2EzNLMdQAwgX-TiTjnkPZcaYBwdIVQnSjWQ3s',
+      'Authorization', 'Bearer YOUR_CRON_SECRET',
       'Content-Type', 'application/json'
     )
   ) INTO result;
