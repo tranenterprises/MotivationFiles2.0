@@ -6,10 +6,6 @@ import AudioPlayer from '@/components/media/AudioPlayer';
 import FallbackContent from '@/components/content/FallbackContent';
 import HeroFallback from '@/components/sections/HeroFallback';
 import { formatDate } from '@/lib/utils/date';
-import {
-  findWordsAtTime,
-  createSimpleHighlightEffect,
-} from '@/lib/utils/alignment';
 
 interface HeroSectionProps {
   quote: Quote | null;
@@ -20,7 +16,6 @@ export default function HeroSection({
   quote,
   hasError = false,
 }: HeroSectionProps) {
-  const [highlightedWords, setHighlightedWords] = useState<number[]>([]);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   // Handle fallback cases
@@ -43,53 +38,31 @@ export default function HeroSection({
   }
 
   if (!quote) {
+    console.log('❌ No quote available');
     return <HeroFallback />;
   }
 
-  const words = quote.content.split(' ');
-
-  const updateHighlightedWords = (currentTime: number) => {
-    if (currentTime <= 0) {
-      setHighlightedWords([]);
-      return;
-    }
-
-    const currentTimeMs = currentTime * 1000; // Convert to milliseconds
-
-    // Use word alignment data if available for precise synchronization
-    if (quote.word_alignment && quote.word_alignment.length > 0) {
-      const highlightedIndices = findWordsAtTime(
-        quote.word_alignment,
-        currentTimeMs,
-        2
-      );
-      setHighlightedWords(highlightedIndices);
-    } else if (quote.audio_duration && quote.audio_duration > 0) {
-      // Fallback to time-based highlighting for quotes without alignment data
-      const highlightedIndices = createSimpleHighlightEffect(
-        words,
-        currentTime,
-        quote.audio_duration,
-        3
-      );
-      setHighlightedWords(highlightedIndices);
-    }
-  };
+  const words: string[] = quote.content.split(' ');
 
   const handlePlay = () => {
-    // Audio is playing - we can add additional logic here if needed
+    console.log('🎵 Audio playback started');
   };
 
   const handlePause = () => {
-    // Audio is paused - we can add additional logic here if needed
+    console.log('⏸️ Audio playback paused');
   };
 
   const handleTimeUpdate = (currentTime: number) => {
-    updateHighlightedWords(currentTime);
+    // Just log time updates, no word highlighting
+    console.log('⏰ Audio time update:', currentTime);
   };
 
   const handleEnded = () => {
-    setHighlightedWords([]);
+    console.log('✅ Audio playback ended');
+  };
+
+  const handleError = (error: string) => {
+    console.error('❌ Audio playback error:', error);
   };
 
   return (
@@ -117,21 +90,7 @@ export default function HeroSection({
         </div>
 
         <blockquote className="cinematic-text text-white mb-6 md:mb-8 px-4 md:px-8 gpu-accelerated">
-          {words.map((word, index) => (
-            <span
-              key={index}
-              className={`
-                inline-block mx-1 md:mx-2 transition-all duration-500 ease-out will-change-transform
-                ${
-                  highlightedWords.includes(index)
-                    ? 'text-white glow-text scale-105 font-bold gpu-accelerated'
-                    : 'text-gray-400 scale-100'
-                }
-              `}
-            >
-              {word}
-            </span>
-          ))}
+          {quote.content}
         </blockquote>
 
         {/* Quote ID */}
@@ -155,13 +114,11 @@ export default function HeroSection({
               className="w-full"
               audioRef={audioPlayerRef}
               autoPlay={true}
-              hasWordAlignment={
-                !!(quote.word_alignment && quote.word_alignment.length > 0)
-              }
               onPlay={handlePlay}
               onPause={handlePause}
               onEnded={handleEnded}
               onTimeUpdate={handleTimeUpdate}
+              onError={handleError}
             />
           </div>
         </div>

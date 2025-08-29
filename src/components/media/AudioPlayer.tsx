@@ -85,118 +85,141 @@ export default function AudioPlayer({
       return;
     }
 
-    const audio = new Audio();
-    audioRef.current = audio;
+    let audio: HTMLAudioElement | null = null;
+    
+    try {
+      audio = new Audio();
+      audioRef.current = audio;
 
-    // Also set external ref if provided
-    if (externalAudioRef) {
-      externalAudioRef.current = audio;
-    }
-
-    // Cross-browser compatibility and preload settings
-    audio.preload = preloadStrategy;
-    audio.crossOrigin = 'anonymous';
-
-    // Set supported audio formats for better browser compatibility
-    if (audio.canPlayType) {
-      const mp3Support = audio.canPlayType('audio/mpeg');
-      const wavSupport = audio.canPlayType('audio/wav');
-      const oggSupport = audio.canPlayType('audio/ogg');
-
-      if (!mp3Support && !wavSupport && !oggSupport) {
-        setHasError(true);
-        setErrorMessage('Audio format not supported');
-        return;
+      // Also set external ref if provided
+      if (externalAudioRef) {
+        externalAudioRef.current = audio;
       }
-    }
 
-    audio.src = audioUrl;
+      // Cross-browser compatibility and preload settings
+      audio.preload = preloadStrategy;
+      audio.crossOrigin = 'anonymous';
 
-    const handleLoadedMetadata = () => {
-      setAudioDuration(audio.duration);
-      setIsLoading(false);
-      setHasError(false);
-    };
+      // Set supported audio formats for better browser compatibility
+      if (audio.canPlayType) {
+        const mp3Support = audio.canPlayType('audio/mpeg');
+        const wavSupport = audio.canPlayType('audio/wav');
+        const oggSupport = audio.canPlayType('audio/ogg');
 
-    const handleProgress = () => {
-      if (audio.buffered.length > 0) {
-        const loaded = audio.buffered.end(audio.buffered.length - 1);
-        const total = audio.duration;
-        const progress = total ? (loaded / total) * 100 : 0;
-
-        setLoadProgress(progress);
-        onLoadProgress?.(loaded, total);
-
-        // Consider it preloaded when we have enough buffer (25% or 30 seconds)
-        const preloadThreshold = Math.min(0.25 * total, 30);
-        if (loaded >= preloadThreshold) {
-          setIsPreloaded(true);
+        if (!mp3Support && !wavSupport && !oggSupport) {
+          setHasError(true);
+          setErrorMessage('Audio format not supported');
+          return;
         }
       }
-    };
 
-    const handleCanPlayThrough = () => {
-      setIsPreloaded(true);
-      setLoadProgress(100);
-    };
+      audio.src = audioUrl;
 
-    const handleTimeUpdate = () => {
-      const currentAudioTime = audio.currentTime;
-      setCurrentTime(currentAudioTime);
-      onTimeUpdate?.(currentAudioTime);
-    };
+      const handleLoadedMetadata = () => {
+        if (audio) {
+          setAudioDuration(audio.duration);
+          setIsLoading(false);
+          setHasError(false);
+        }
+      };
 
-    const handleEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-      onEnded?.();
-    };
+      const handleProgress = () => {
+        if (audio && audio.buffered.length > 0) {
+          const loaded = audio.buffered.end(audio.buffered.length - 1);
+          const total = audio.duration;
+          const progress = total ? (loaded / total) * 100 : 0;
 
-    const handleError = (e: Event) => {
-      console.error('Audio error:', e);
+          setLoadProgress(progress);
+          onLoadProgress?.(loaded, total);
+
+          // Consider it preloaded when we have enough buffer (25% or 30 seconds)
+          const preloadThreshold = Math.min(0.25 * total, 30);
+          if (loaded >= preloadThreshold) {
+            setIsPreloaded(true);
+          }
+        }
+      };
+
+      const handleCanPlayThrough = () => {
+        setIsPreloaded(true);
+        setLoadProgress(100);
+      };
+
+      const handleTimeUpdate = () => {
+        if (audio) {
+          const currentAudioTime = audio.currentTime;
+          setCurrentTime(currentAudioTime);
+          onTimeUpdate?.(currentAudioTime);
+        }
+      };
+
+      const handleEnded = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+        onEnded?.();
+      };
+
+      const handleError = (e: Event) => {
+        console.error('Audio error:', e);
+        setHasError(true);
+        setErrorMessage('Failed to load audio');
+        setIsLoading(false);
+        setIsPlaying(false);
+        onError?.('Failed to load audio');
+      };
+
+      const handleCanPlay = () => {
+        setIsLoading(false);
+        setHasError(false);
+      };
+
+      const handleLoadStart = () => {
+        setIsLoading(true);
+        setHasError(false);
+      };
+
+      // Add event listeners
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('error', handleError);
+      audio.addEventListener('canplay', handleCanPlay);
+      audio.addEventListener('loadstart', handleLoadStart);
+      audio.addEventListener('progress', handleProgress);
+      audio.addEventListener('canplaythrough', handleCanPlayThrough);
+
+      // Return cleanup function
+      return () => {
+        console.log('🧹 AudioPlayer cleanup starting...');
+        try {
+          if (audio) {
+            // Remove event listeners
+            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            audio.removeEventListener('timeupdate', handleTimeUpdate);
+            audio.removeEventListener('ended', handleEnded);
+            audio.removeEventListener('error', handleError);
+            audio.removeEventListener('canplay', handleCanPlay);
+            audio.removeEventListener('loadstart', handleLoadStart);
+            audio.removeEventListener('progress', handleProgress);
+            audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+
+            if (!audio.paused) {
+              audio.pause();
+            }
+            audio.src = '';
+            console.log('✅ AudioPlayer cleanup completed');
+          }
+        } catch (error) {
+          console.error('💥 Error in AudioPlayer cleanup:', error);
+        }
+      };
+      
+    } catch (error) {
+      console.error('💥 Error in AudioPlayer useEffect:', error);
       setHasError(true);
-      setErrorMessage('Failed to load audio');
-      setIsLoading(false);
-      setIsPlaying(false);
-      onError?.('Failed to load audio');
-    };
-
-    const handleCanPlay = () => {
-      setIsLoading(false);
-      setHasError(false);
-    };
-
-    const handleLoadStart = () => {
-      setIsLoading(true);
-      setHasError(false);
-    };
-
-    // Add event listeners
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('loadstart', handleLoadStart);
-    audio.addEventListener('progress', handleProgress);
-    audio.addEventListener('canplaythrough', handleCanPlayThrough);
-
-    return () => {
-      // Cleanup
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('loadstart', handleLoadStart);
-      audio.removeEventListener('progress', handleProgress);
-      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-
-      if (!audio.paused) {
-        audio.pause();
-      }
-      audio.src = '';
-    };
+      setErrorMessage('Failed to initialize audio player');
+      return;
+    }
   }, [
     audioUrl,
     preloadStrategy,
