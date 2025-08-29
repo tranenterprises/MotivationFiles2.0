@@ -11,31 +11,36 @@ export function createWordIndexMapping(
 ): number[] {
   const mapping: number[] = [];
   let displayIndex = 0;
-  
+
   // Safety check to prevent infinite loops
-  const maxIterations = Math.max(alignmentWords.length, displayWords.length) * 2;
+  const maxIterations =
+    Math.max(alignmentWords.length, displayWords.length) * 2;
   let iterations = 0;
-  
-  for (let alignmentIndex = 0; alignmentIndex < alignmentWords.length; alignmentIndex++) {
+
+  for (
+    let alignmentIndex = 0;
+    alignmentIndex < alignmentWords.length;
+    alignmentIndex++
+  ) {
     iterations++;
     if (iterations > maxIterations) {
       console.error('🚨 Breaking out of mapping loop - too many iterations');
       break;
     }
-    
+
     const alignmentWord = alignmentWords[alignmentIndex].word;
-    
+
     if (displayIndex >= displayWords.length) {
       mapping.push(-1); // No more display words
       continue;
     }
-    
+
     const displayWord = displayWords[displayIndex];
     // Direct match
     if (alignmentWord === displayWord) {
       mapping.push(displayIndex);
       displayIndex++;
-    } 
+    }
     // Alignment word might include punctuation
     else if (alignmentWord.replace(/[.,!?;:]$/, '') === displayWord) {
       mapping.push(displayIndex);
@@ -45,14 +50,13 @@ export function createWordIndexMapping(
     else if (alignmentWord.includes("'") && displayWord.includes("'")) {
       mapping.push(displayIndex);
       displayIndex++;
-    }
-    else {
+    } else {
       // Word mismatch - try to proceed gracefully
       mapping.push(displayIndex < displayWords.length ? displayIndex : -1);
       displayIndex++;
     }
   }
-  
+
   return mapping;
 }
 
@@ -101,15 +105,21 @@ export function findDisplayWordsAtTime(
 
   // Create mapping between alignment words and display words
   const indexMapping = createWordIndexMapping(displayWords, wordAlignment);
-  
+
   // Find active alignment word indices
-  const alignmentIndices = findWordsAtTime(wordAlignment, currentTimeMs, highlightRange);
-  
+  const alignmentIndices = findWordsAtTime(
+    wordAlignment,
+    currentTimeMs,
+    highlightRange
+  );
+
   // Map to display indices
   const displayIndices = alignmentIndices
     .map(alignmentIndex => indexMapping[alignmentIndex])
-    .filter(displayIndex => displayIndex >= 0 && displayIndex < displayWords.length);
-  
+    .filter(
+      displayIndex => displayIndex >= 0 && displayIndex < displayWords.length
+    );
+
   return displayIndices.sort((a, b) => a - b);
 }
 
@@ -124,26 +134,29 @@ export function findDisplayPhrasesAtTime(
   } = {}
 ): number[] {
   const { bufferMs = 800, lookAheadMs = 200 } = options; // More aggressive timing
-  
+
   if (!wordAlignment || wordAlignment.length === 0) {
     return [];
   }
 
   // Create mapping between alignment words and display words
   const indexMapping = createWordIndexMapping(displayWords, wordAlignment);
-  
+
   // Very aggressive early start - begin highlighting well before speech
   const adjustedTimeMs = Math.max(0, currentTimeMs - bufferMs);
-  
+
   // Find the word that will be active soonest (including future words)
   let targetWordIndex = -1;
   let earliestStartTime = Infinity;
-  
+
   for (let i = 0; i < wordAlignment.length; i++) {
     const word = wordAlignment[i];
-    
+
     // Look for words that are currently active or will be active soon
-    if (word.endTime >= adjustedTimeMs && word.startTime <= currentTimeMs + lookAheadMs) {
+    if (
+      word.endTime >= adjustedTimeMs &&
+      word.startTime <= currentTimeMs + lookAheadMs
+    ) {
       // Prioritize words that start earliest (including future ones)
       if (word.startTime < earliestStartTime) {
         earliestStartTime = word.startTime;
@@ -151,19 +164,24 @@ export function findDisplayPhrasesAtTime(
       }
     }
   }
-  
+
   // If no upcoming word found, try to find the very first word if we're at the beginning
   if (targetWordIndex === -1 && currentTimeMs < 1000) {
     targetWordIndex = 0;
   }
-  
+
   if (targetWordIndex === -1) {
     return [];
   }
-  
+
   // Find the complete phrase boundaries around the target word
-  const phraseIndices = getCurrentPhrase(wordAlignment, targetWordIndex, indexMapping, displayWords);
-  
+  const phraseIndices = getCurrentPhrase(
+    wordAlignment,
+    targetWordIndex,
+    indexMapping,
+    displayWords
+  );
+
   return phraseIndices.sort((a, b) => a - b);
 }
 
@@ -184,36 +202,42 @@ function getCurrentPhrase(
   for (let i = activeIndex - 1; i >= 0; i--) {
     const word = wordAlignment[i].word.toLowerCase().trim();
     // Stop at major sentence endings (but continue through commas for better flow)
-    if (word.match(/[.!?]$/) || word.match(/^(and|but|so|because|however|therefore|meanwhile)$/)) {
+    if (
+      word.match(/[.!?]$/) ||
+      word.match(/^(and|but|so|because|however|therefore|meanwhile)$/)
+    ) {
       break;
     }
     phraseStart = i;
   }
-  
+
   // Find the end of the current phrase - look forwards to natural pause points
   let phraseEnd = activeIndex;
   for (let i = activeIndex; i < wordAlignment.length; i++) {
     const word = wordAlignment[i].word.toLowerCase().trim();
     phraseEnd = i;
-    
+
     // Stop after natural pause points (periods, exclamations, questions)
-    // Include commas but don't stop there for more natural phrases  
+    // Include commas but don't stop there for more natural phrases
     if (word.match(/[.!?]$/)) {
       break;
     }
-    
+
     // Stop at conjunctions that start new clauses (but include the current word)
-    if (i > activeIndex && word.match(/^(and|but|so|because|however|therefore|meanwhile)$/)) {
+    if (
+      i > activeIndex &&
+      word.match(/^(and|but|so|because|however|therefore|meanwhile)$/)
+    ) {
       phraseEnd = i - 1;
       break;
     }
-    
+
     // Limit phrase length to prevent very long highlights (max 15 words)
     if (i - phraseStart >= 14) {
       break;
     }
   }
-  
+
   // Map alignment indices to display indices
   const displayIndices: number[] = [];
   for (let i = phraseStart; i <= phraseEnd; i++) {
@@ -224,56 +248,12 @@ function getCurrentPhrase(
       }
     }
   }
-  
+
   // Remove duplicates and sort
   return [...new Set(displayIndices)].sort((a, b) => a - b);
 }
 
-// Helper function to expand word selection to complete phrases
-function expandToPhrases(
-  wordAlignment: WordAlignment[],
-  activeIndices: number[],
-  indexMapping: number[],
-  displayWords: string[]
-): number[] {
-  if (activeIndices.length === 0) return [];
-  
-  const minIndex = Math.min(...activeIndices);
-  const maxIndex = Math.max(...activeIndices);
-  
-  // Find the start of the phrase (look backward until we find sentence start or major punctuation)
-  let phraseStart = minIndex;
-  for (let i = minIndex - 1; i >= 0; i--) {
-    const word = wordAlignment[i].word;
-    // Stop at major punctuation that ends a phrase
-    if (word.match(/[.!?;:]$/)) {
-      break;
-    }
-    phraseStart = i;
-  }
-  
-  // Find the end of the phrase (look forward until we find punctuation)
-  let phraseEnd = maxIndex;
-  for (let i = maxIndex + 1; i < wordAlignment.length; i++) {
-    const word = wordAlignment[i].word;
-    phraseEnd = i;
-    // Stop after punctuation that ends a phrase
-    if (word.match(/[.!?;:,]$/)) {
-      break;
-    }
-  }
-  
-  // Map alignment indices to display indices
-  const displayIndices: number[] = [];
-  for (let i = phraseStart; i <= phraseEnd; i++) {
-    const displayIndex = indexMapping[i];
-    if (displayIndex >= 0 && displayIndex < displayWords.length) {
-      displayIndices.push(displayIndex);
-    }
-  }
-  
-  return displayIndices;
-}
+// Removed unused expandToPhrases function
 
 export function getWordAtTime(
   wordAlignment: WordAlignment[],

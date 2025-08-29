@@ -10,7 +10,6 @@ interface QuoteCardProps {
   showAudio?: boolean;
   size?: 'small' | 'medium' | 'large';
   onAudioPlay?: () => void;
-  isLoading?: boolean;
 }
 
 export default function QuoteCard({
@@ -18,7 +17,6 @@ export default function QuoteCard({
   showAudio = true,
   size = 'large',
   onAudioPlay,
-  isLoading = false,
 }: QuoteCardProps) {
   const [isAudioLoading, setIsAudioLoading] = useState(false);
 

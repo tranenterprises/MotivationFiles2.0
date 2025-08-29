@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Quote } from '@/lib/types/types';
 import AudioPlayer from '@/components/media/AudioPlayer';
 import FallbackContent from '@/components/content/FallbackContent';
@@ -42,7 +42,7 @@ export default function HeroSection({
     return <HeroFallback />;
   }
 
-  const words: string[] = quote.content.split(' ');
+  // const words: string[] = quote.content.split(' '); // Unused for now
 
   const handlePlay = () => {
     console.log('🎵 Audio playback started');

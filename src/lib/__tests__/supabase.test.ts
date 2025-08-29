@@ -193,7 +193,7 @@ describe('Supabase Utilities', () => {
       expect(supabaseModule.quoteExistsForDate).toBeDefined();
       expect(supabaseModule.getQuoteCount).toBeDefined();
       expect(supabaseModule.getQuotesByDateRange).toBeDefined();
-      
+
       // Admin operations should NOT be available in client-side module
       expect(supabaseModule.createQuote).toBeUndefined();
       expect(supabaseModule.updateQuote).toBeUndefined();

@@ -11,7 +11,7 @@ import { loadEdgeFunctionEnv, createSecureHeaders } from '../_shared/env.ts';
 // Enhanced security validation
 function validateAuthorization(req: Request, cronSecret?: string): boolean {
   const authHeader = req.headers.get('authorization');
-  
+
   // If we have verify_jwt = true, Supabase has already validated the JWT
   // Check if this is a service_role JWT (which should be allowed for cron jobs)
   if (authHeader?.startsWith('Bearer ')) {
@@ -27,7 +27,7 @@ function validateAuthorization(req: Request, cronSecret?: string): boolean {
       console.log('Failed to decode JWT payload:', error);
     }
   }
-  
+
   // Fallback to CRON_SECRET validation
   if (!cronSecret) {
     console.log('No CRON_SECRET configured - rejecting request for security');

@@ -117,7 +117,7 @@ export async function determineNextCategory(
 
   try {
     // Use getQuotesByDateRange for efficient single query
-    const { getQuotesByDateRange } = await import('./supabase-utils.ts');
+    const { getQuotesByDateRange } = await import('./supabase-utils.js');
 
     const endDate = new Date().toISOString().split('T')[0];
     const startDate = new Date();

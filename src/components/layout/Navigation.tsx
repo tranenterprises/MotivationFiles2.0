@@ -11,7 +11,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({
-  title = 'MOTIVE FILES',
+  title: _title = 'MOTIVE FILES',
   subtitle,
 }: NavigationProps) {
   const pathname = usePathname();
@@ -70,7 +70,7 @@ export default function Navigation({
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-2">
-            {navItems.map((item, index) => (
+            {navItems.map((item, _index) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -134,7 +134,7 @@ export default function Navigation({
         {isMobileMenuOpen && (
           <div className="md:hidden mt-6 pb-4 border-t border-gray-700/50 slide-down">
             <nav className="flex flex-col space-y-3 pt-6">
-              {navItems.map((item, index) => (
+              {navItems.map((item, _index) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -151,7 +151,7 @@ export default function Navigation({
                         : 'text-gray-300 bg-black/40 border-gray-700/50 hover:text-accent hover:bg-accent/10 hover:border-accent/30'
                     }
                   `}
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  style={{ animationDelay: `${_index * 100}ms` }}
                 >
                   <span className="body-text font-bold uppercase tracking-widest flex-1">
                     {item.label}

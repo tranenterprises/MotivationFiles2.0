@@ -19,7 +19,7 @@ export interface WordAlignment {
 }
 
 export function processAlignmentData(
-  text: string,
+  _text: string,
   alignmentData: ElevenLabsAlignment
 ): WordAlignment[] {
   const { charStartTimesMs, charsDurationsMs, chars } = alignmentData;

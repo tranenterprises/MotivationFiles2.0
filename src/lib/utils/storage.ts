@@ -7,9 +7,7 @@ const AUDIO_BUCKET = 'audio';
 // See src/lib/utils/storage-server.ts for admin functions
 
 export function getAudioUrl(filePath: string): string {
-  const { data } = supabase.storage
-    .from(AUDIO_BUCKET)
-    .getPublicUrl(filePath);
+  const { data } = supabase.storage.from(AUDIO_BUCKET).getPublicUrl(filePath);
 
   return data.publicUrl;
 }

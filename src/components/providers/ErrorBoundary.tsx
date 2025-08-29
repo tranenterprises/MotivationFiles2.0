@@ -99,13 +99,18 @@ export default class ErrorBoundary extends React.Component<
   }
 
   retry = () => {
-    this.setState({ hasError: false, error: undefined });
+    this.setState({ hasError: false });
   };
 
   render() {
     if (this.state.hasError) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback;
-      return <FallbackComponent error={this.state.error} retry={this.retry} />;
+      return (
+        <FallbackComponent
+          error={this.state.error || new Error('Unknown error')}
+          retry={this.retry}
+        />
+      );
     }
 
     return this.props.children;

@@ -86,7 +86,7 @@ export default function AudioPlayer({
     }
 
     let audio: HTMLAudioElement | null = null;
-    
+
     try {
       audio = new Audio();
       audioRef.current = audio;
@@ -213,7 +213,6 @@ export default function AudioPlayer({
           console.error('💥 Error in AudioPlayer cleanup:', error);
         }
       };
-      
     } catch (error) {
       console.error('💥 Error in AudioPlayer useEffect:', error);
       setHasError(true);
@@ -258,8 +257,10 @@ export default function AudioPlayer({
             const delayTimer = setTimeout(() => {
               attemptAutoPlay();
             }, 1500);
+            // Store delayTimer for cleanup
             return delayTimer;
           }
+          return undefined;
         }, 1000);
         return () => {
           clearTimeout(timer);
