@@ -35,6 +35,15 @@ export async function generateDailyQuote(
 ): Promise<DailyQuoteGenerationResult> {
   // Load and validate environment
   const env = loadEdgeFunctionEnv();
+  
+  // Debug: Log environment variable status
+  console.log('=== Environment Debug ===');
+  console.log('Supabase URL:', env.supabaseUrl?.substring(0, 30) + '...');
+  console.log('Service Role Key present:', !!env.supabaseServiceRoleKey);
+  console.log('OpenAI API Key present:', !!env.openaiApiKey);
+  console.log('ElevenLabs API Key present:', !!env.elevenlabsApiKey);
+  console.log('========================');
+  
   validateEdgeFunctionEnv(env);
 
   const targetDate = options.date || new Date().toISOString().split('T')[0];
@@ -71,7 +80,7 @@ export async function generateDailyQuote(
     // Generate the quote using OpenAI
     console.log('Generating quote...');
     const generatedQuote = await generateQuote(env.openaiApiKey, category, {
-      model: 'gpt-4',
+      model: 'gpt-4o-mini',
       temperature: 0.8,
       maxTokens: 300,
     });
@@ -108,7 +117,7 @@ export async function generateDailyQuote(
         generatedQuote.content,
         createdQuote.id,
         {
-          voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam voice
+          voiceId: 'tTZ0TVc9Q1bbWngiduLK', // Rudra voice
           outputFormat: 'mp3_44100_192',
         }
       );

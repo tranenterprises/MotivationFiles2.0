@@ -18,7 +18,7 @@ export interface GeneratedQuote {
 }
 
 export const DEFAULT_OPENAI_CONFIG = {
-  model: 'gpt-4',
+  model: 'gpt-4.1-mini',
   temperature: 0.8,
   maxTokens: 300,
 } as const;

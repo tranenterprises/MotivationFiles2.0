@@ -1,7 +1,7 @@
 // ElevenLabs utilities for edge functions
 // Adapted from src/lib/api/elevenlabs.ts for Deno runtime
 
-import { ElevenLabsClient } from 'https://esm.sh/@elevenlabs/elevenlabs-js@0.8.0';
+// Using fetch-based implementation for edge function compatibility
 import { BufferUtils } from './buffer-utils.ts';
 import { withRetry, isRetryableError, isVoiceError } from './retry-utils.ts';
 
@@ -72,10 +72,15 @@ export const AUDIO_FORMAT_CONFIG = {
   },
 } as const;
 
+// Simplified interface for edge function compatibility
+interface SimpleElevenLabsClient {
+  apiKey: string;
+}
+
 export function createElevenLabsClient(
   config: ElevenLabsConfig
-): ElevenLabsClient {
-  return new ElevenLabsClient({ apiKey: config.apiKey });
+): SimpleElevenLabsClient {
+  return { apiKey: config.apiKey };
 }
 
 export function getAudioFormat(
@@ -104,7 +109,7 @@ export function parseAudioFormat(formatString: string): {
 }
 
 export async function generateVoiceWithElevenLabs(
-  elevenlabs: ElevenLabsClient,
+  elevenlabs: SimpleElevenLabsClient,
   text: string,
   config: Partial<ElevenLabsConfig> = {},
   voiceId?: string
@@ -113,21 +118,47 @@ export async function generateVoiceWithElevenLabs(
   const currentVoiceId = voiceId || finalConfig.voiceId!;
   const formatInfo = parseAudioFormat(finalConfig.outputFormat!);
 
-  const audioResponse = await elevenlabs.textToSpeech.convert(currentVoiceId, {
-    text,
-    modelId: finalConfig.modelId!,
-    voiceSettings: {
-      ...finalConfig.voiceSettings!,
-      ...config.voiceSettings,
+  console.log('=== ElevenLabs Voice Generation Debug ===');
+  console.log('API Key present:', !!elevenlabs.apiKey);
+  console.log('API Key length:', elevenlabs.apiKey?.length);
+  console.log('Voice ID:', currentVoiceId);
+  console.log('Text length:', text.length);
+  console.log('Output format:', finalConfig.outputFormat);
+  console.log('URL:', `https://api.elevenlabs.io/v1/text-to-speech/${currentVoiceId}`);
+  console.log('========================================');
+
+  // Use fetch API for edge function compatibility
+  const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${currentVoiceId}`, {
+    method: 'POST',
+    headers: {
+      'xi-api-key': elevenlabs.apiKey,
+      'Content-Type': 'application/json',
     },
-    outputFormat: finalConfig.outputFormat as any,
+    body: JSON.stringify({
+      text,
+      model_id: finalConfig.modelId!,
+      voice_settings: {
+        ...finalConfig.voiceSettings!,
+        ...config.voiceSettings,
+      },
+    }),
   });
 
-  if (!audioResponse) {
-    throw new Error('ElevenLabs returned empty audio response');
+  console.log('ElevenLabs API response status:', response.status, response.statusText);
+  console.log('ElevenLabs API response headers:', Object.fromEntries(response.headers.entries()));
+
+  if (!response.ok) {
+    let errorText = '';
+    try {
+      errorText = await response.text();
+    } catch (e) {
+      errorText = 'Could not read error response';
+    }
+    console.error('ElevenLabs API error response:', errorText);
+    throw new Error(`ElevenLabs API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
-  const audioBuffer = await BufferUtils.streamToUint8Array(audioResponse);
+  const audioBuffer = new Uint8Array(await response.arrayBuffer());
 
   if (BufferUtils.isEmpty(audioBuffer)) {
     throw new Error('Generated audio buffer is empty');
@@ -142,7 +173,7 @@ export async function generateVoiceWithElevenLabs(
 }
 
 export async function generateVoiceWithFallbacks(
-  elevenlabs: ElevenLabsClient,
+  elevenlabs: SimpleElevenLabsClient,
   text: string,
   config: Partial<ElevenLabsConfig> = {}
 ): Promise<VoiceGenerationResult> {
@@ -189,7 +220,7 @@ export async function generateVoiceWithFallbacks(
 }
 
 export async function generateVoiceWithRetry(
-  elevenlabs: ElevenLabsClient,
+  elevenlabs: SimpleElevenLabsClient,
   text: string,
   config: Partial<ElevenLabsConfig> = {}
 ): Promise<VoiceGenerationResult> {
