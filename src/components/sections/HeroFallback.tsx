@@ -39,7 +39,9 @@ export default function HeroFallback() {
   const fallbackQuote =
     FALLBACK_QUOTES[Math.floor(Math.random() * FALLBACK_QUOTES.length)];
   const words = fallbackQuote.content.split(' ');
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Los_Angeles',
+  });
 
   return (
     <main className="min-h-screen flex flex-col justify-center items-center section-spacing relative overflow-hidden critical-render">

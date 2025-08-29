@@ -12,7 +12,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  * Get today's quote
  */
 export async function getTodaysQuote(): Promise<Quote | null> {
-  const today = new Date().toISOString().split('T')[0];
+  // Use PST timezone for today's date
+  const today = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Los_Angeles',
+  });
 
   const { data, error } = await supabase
     .from('quotes')

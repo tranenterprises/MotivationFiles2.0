@@ -6,6 +6,7 @@ import {
   formatDate,
   formatQuoteDate,
   getTodayISOString,
+  getPSTDate,
   formatDuration,
   getRelativeTime,
   isToday,
@@ -304,6 +305,52 @@ describe('Date Utilities', () => {
       expect(result2).toMatch(
         /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/
       );
+    });
+
+    it('should format dates consistently without timezone conversion issues', () => {
+      // Test the specific issue we fixed: date should not shift backwards due to timezone
+      const testDate = '2025-08-29';
+      const formatted = formatDate(testDate, 'full');
+      
+      // Should contain August 29, not August 28
+      expect(formatted).toContain('August 29');
+      expect(formatted).toContain('2025');
+      expect(formatted).not.toContain('August 28');
+    });
+
+    it('should maintain date integrity across different format types', () => {
+      const testDate = '2025-01-15';
+      
+      const fullFormat = formatDate(testDate, 'full');
+      const shortFormat = formatDate(testDate, 'short');
+      const compactFormat = formatDate(testDate, 'compact');
+      
+      // All should contain the same date
+      expect(fullFormat).toContain('January 15');
+      expect(shortFormat).toContain('Jan 15');
+      expect(compactFormat).toContain('15');
+      
+      // None should contain January 14 due to timezone issues
+      expect(fullFormat).not.toContain('January 14');
+      expect(shortFormat).not.toContain('Jan 14');
+    });
+  });
+
+  describe('PST Timezone Functions', () => {
+    it('should return valid ISO string for PST timezone', () => {
+      const pstDate = getTodayISOString();
+      
+      // Should match YYYY-MM-DD format
+      expect(pstDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(typeof pstDate).toBe('string');
+    });
+
+    it('should return valid PST Date object', () => {
+      const pstDate = getPSTDate();
+      
+      expect(pstDate).toBeInstanceOf(Date);
+      expect(pstDate.getTime()).toBeGreaterThan(0);
+      expect(typeof pstDate.getTime()).toBe('number');
     });
   });
 

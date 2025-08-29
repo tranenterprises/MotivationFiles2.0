@@ -42,6 +42,17 @@ export default function HeroSection({
     return <HeroFallback />;
   }
 
+  // Check if quote is for today's date (using PST)
+  const today = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Los_Angeles',
+  });
+  const quoteDate = quote.date_created;
+
+  if (quoteDate !== today) {
+    console.log(`❌ Quote is for ${quoteDate}, but today is ${today}`);
+    return <HeroFallback />;
+  }
+
   // const words: string[] = quote.content.split(' '); // Unused for now
 
   const handlePlay = () => {

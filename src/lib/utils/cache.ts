@@ -166,7 +166,9 @@ export function generateArchiveCacheKey(
  * Generate cache key for today's quote
  */
 export function generateTodayQuoteCacheKey(): string {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Los_Angeles',
+  });
   return `cache:today_quote_${today}`;
 }
 

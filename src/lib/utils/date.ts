@@ -12,7 +12,9 @@ export function formatDate(
   dateString: string,
   format: 'full' | 'short' | 'compact' | 'title' = 'full'
 ): string {
-  const date = new Date(dateString);
+  // Parse date string as local date (don't add timezone info)
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
 
   switch (format) {
     case 'full':
@@ -22,6 +24,7 @@ export function formatDate(
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        timeZone: 'America/Los_Angeles',
       });
 
     case 'short':
@@ -30,6 +33,7 @@ export function formatDate(
         year: 'numeric',
         month: 'short',
         day: 'numeric',
+        timeZone: 'America/Los_Angeles',
       });
 
     case 'compact':
@@ -38,6 +42,7 @@ export function formatDate(
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
+        timeZone: 'America/Los_Angeles',
       });
 
     case 'title':
@@ -46,10 +51,13 @@ export function formatDate(
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
+        timeZone: 'America/Los_Angeles',
       });
 
     default:
-      return date.toLocaleDateString('en-US');
+      return date.toLocaleDateString('en-US', {
+        timeZone: 'America/Los_Angeles',
+      });
   }
 }
 
@@ -63,22 +71,39 @@ export function formatQuoteDate(
   dateString: string,
   size: 'small' | 'medium' | 'large' = 'large'
 ): string {
-  const date = new Date(dateString);
+  // Parse date string as local date (don't add timezone info)
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
 
   return date.toLocaleDateString('en-US', {
     weekday: size === 'small' ? undefined : 'long',
     year: 'numeric',
     month: size === 'small' ? 'short' : 'long',
     day: 'numeric',
+    timeZone: 'America/Los_Angeles',
   });
 }
 
 /**
- * Formats the current date as ISO string (YYYY-MM-DD) for database storage
- * @returns Today's date in ISO format
+ * Formats the current date as ISO string (YYYY-MM-DD) for database storage in PST
+ * @returns Today's date in ISO format (PST timezone)
  */
 export function getTodayISOString(): string {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Los_Angeles',
+  });
+}
+
+/**
+ * Gets current date in PST timezone
+ * @returns Date object representing current time in PST
+ */
+export function getPSTDate(): Date {
+  return new Date(
+    new Date().toLocaleString('en-US', {
+      timeZone: 'America/Los_Angeles',
+    })
+  );
 }
 
 /**
