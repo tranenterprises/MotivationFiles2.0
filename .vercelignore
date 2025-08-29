@@ -1,0 +1,18 @@
+# Ignore Supabase Edge Functions (they run on Supabase, not Vercel)
+supabase/functions/
+
+# Ignore test files
+**/*.test.ts
+**/*.test.tsx
+**/__tests__/
+
+# Ignore development files
+.env.local.dev
+.env.local.edge
+
+# Ignore backup files
+*.backup
+
+# Ignore documentation
+*.md
+!README.md
