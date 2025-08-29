@@ -2,40 +2,40 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e2]:
-    - banner [ref=e3]:
-      - generic [ref=e5]:
-        - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
-        - button "Toggle mobile menu" [ref=e11]:
-          - img [ref=e12]
-    - main [ref=e15]:
-      - generic [ref=e19]: grindset
-      - generic [ref=e20]:
-        - generic [ref=e22]: Tuesday, August 26, 2025
-        - blockquote [ref=e23]:
-          - generic [ref=e24]: DON'T
-          - generic [ref=e25]: WAIT
-          - generic [ref=e26]: FOR
-          - generic [ref=e27]: OPPORTUNITY.
-          - generic [ref=e28]: CREATE
-          - generic [ref=e29]: IT
-        - generic [ref=e31]: "#CK-004"
-      - generic [ref=e34]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e35]
-        - paragraph [ref=e36]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e37]:
-          - button "Check Again" [ref=e38]
-          - link "Browse Archive" [ref=e39] [cursor=pointer]:
-            - /url: /archive
-      - generic [ref=e40]:
-        - paragraph [ref=e41]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e42] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e43] [cursor=pointer]
-  - button "Open Next.js Dev Tools" [ref=e50] [cursor=pointer]:
-    - img [ref=e51] [cursor=pointer]
-  - alert [ref=e55]
+    - generic [ref=e2]:
+        - banner [ref=e3]:
+            - generic [ref=e5]:
+                - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+                - button "Toggle mobile menu" [ref=e11]:
+                    - img [ref=e12]
+        - main [ref=e15]:
+            - generic [ref=e19]: grindset
+            - generic [ref=e20]:
+                - generic [ref=e22]: Tuesday, August 26, 2025
+                - blockquote [ref=e23]:
+                    - generic [ref=e24]: DON'T
+                    - generic [ref=e25]: WAIT
+                    - generic [ref=e26]: FOR
+                    - generic [ref=e27]: OPPORTUNITY.
+                    - generic [ref=e28]: CREATE
+                    - generic [ref=e29]: IT
+                - generic [ref=e31]: '#CK-004'
+            - generic [ref=e34]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e35]
+                - paragraph [ref=e36]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e37]:
+                    - button "Check Again" [ref=e38]
+                    - link "Browse Archive" [ref=e39] [cursor=pointer]:
+                        - /url: /archive
+            - generic [ref=e40]:
+                - paragraph [ref=e41]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e42] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e43] [cursor=pointer]
+    - button "Open Next.js Dev Tools" [ref=e50] [cursor=pointer]:
+        - img [ref=e51] [cursor=pointer]
+    - alert [ref=e55]
 ```

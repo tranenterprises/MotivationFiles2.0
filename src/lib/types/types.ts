@@ -1,3 +1,14 @@
+export interface WordAlignment {
+  word: string;
+  startTime: number; // in milliseconds
+  endTime: number; // in milliseconds
+  characters: {
+    char: string;
+    startTime: number;
+    duration: number;
+  }[];
+}
+
 export interface Quote {
   id: string;
   date_created: string;
@@ -5,6 +16,7 @@ export interface Quote {
   category: string;
   audio_url: string | null;
   audio_duration: number | null;
+  word_alignment: WordAlignment[] | null;
   created_at: string;
   updated_at: string;
 }

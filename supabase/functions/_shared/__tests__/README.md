@@ -5,17 +5,21 @@ This directory contains comprehensive tests for the Supabase Edge Function utili
 ## Test Structure
 
 ### Pure Utilities Tests (`utils-only.test.ts`)
+
 **✅ PASSING** - Tests all utility functions that don't depend on external ESM imports:
+
 - Environment variable handling
-- Buffer/Uint8Array operations  
+- Buffer/Uint8Array operations
 - Retry logic and error handling
 - Category balancing algorithms
 - Integration scenarios
 
 ### Mock-based Tests (Individual test files)
+
 **⚠️ ESM IMPORT ISSUES** - Due to Jest's limitations with ESM imports from URLs, these tests can't run in the Node.js environment:
+
 - `openai-utils.test.ts` - OpenAI integration tests
-- `elevenlabs-utils.test.ts` - ElevenLabs voice generation tests  
+- `elevenlabs-utils.test.ts` - ElevenLabs voice generation tests
 - `supabase-utils.test.ts` - Database operation tests
 - `integration.test.ts` - End-to-end workflow tests
 
@@ -66,11 +70,13 @@ This directory contains comprehensive tests for the Supabase Edge Function utili
 ## Running Tests
 
 ### Pure Utilities (Recommended)
+
 ```bash
 npm test -- supabase/functions/_shared/__tests__/utils-only.test.ts
 ```
 
 ### All Tests (Will show ESM import errors but core logic passes)
+
 ```bash
 npm test -- supabase/functions/_shared/__tests__/
 ```
@@ -80,16 +86,21 @@ npm test -- supabase/functions/_shared/__tests__/
 Since Jest can't directly test the ESM imports used in edge functions, we recommend this approach:
 
 ### 1. Pure Utilities Testing ✅
+
 Test all business logic that doesn't depend on external APIs using the `utils-only.test.ts` file.
 
 ### 2. Manual Edge Function Testing 🔧
+
 Test the actual edge function integration by:
+
 - Running `supabase functions serve daily-quote-generator`
 - Making HTTP requests to test the function
 - Verifying logs and outputs
 
 ### 3. Integration Testing in Production 🚀
+
 Test the complete workflow by:
+
 - Deploying to Supabase staging environment
 - Running the pg_cron job
 - Verifying database and storage results

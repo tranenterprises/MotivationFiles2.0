@@ -18,6 +18,7 @@ interface AudioPlayerProps {
   onTimeUpdate?: (currentTime: number) => void;
   audioRef?: React.MutableRefObject<HTMLAudioElement | null>;
   autoPlay?: boolean;
+  hasWordAlignment?: boolean;
 }
 
 export default function AudioPlayer({
@@ -35,6 +36,7 @@ export default function AudioPlayer({
   onTimeUpdate,
   audioRef: externalAudioRef,
   autoPlay = false,
+  hasWordAlignment = false,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -517,6 +519,20 @@ export default function AudioPlayer({
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
               </svg>
               <span>{errorMessage}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Word Alignment Status */}
+        {hasWordAlignment && !hasError && (
+          <div
+            className={`${config.time} text-green-400 bg-green-900/20 px-2 py-1 rounded border border-green-500/30 backdrop-blur-sm`}
+          >
+            <div className="flex items-center space-x-1">
+              <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              <span>Precise Sync</span>
             </div>
           </div>
         )}

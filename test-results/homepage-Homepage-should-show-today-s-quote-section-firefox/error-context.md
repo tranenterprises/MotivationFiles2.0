@@ -2,59 +2,59 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e6] [cursor=pointer]:
-    - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
-      - img [ref=e8] [cursor=pointer]
-    - generic [ref=e12] [cursor=pointer]:
-      - button "Open issues overlay" [ref=e13] [cursor=pointer]:
-        - generic [ref=e14] [cursor=pointer]:
-          - generic [ref=e15] [cursor=pointer]: "0"
-          - generic [ref=e16] [cursor=pointer]: "1"
-        - generic [ref=e17] [cursor=pointer]: Issue
-      - button "Collapse issues badge" [ref=e18] [cursor=pointer]:
-        - img [ref=e19] [cursor=pointer]
-  - alert [ref=e21]
-  - generic [ref=e22]:
-    - banner [ref=e23]:
-      - generic [ref=e25]:
-        - link "MOTIVE FILES" [ref=e27] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e30] [cursor=pointer]: MOTIVE FILES
-        - navigation [ref=e31]:
-          - link "TODAY" [ref=e32] [cursor=pointer]:
-            - /url: /
-            - generic [ref=e33] [cursor=pointer]: TODAY
-          - link "ARCHIVE" [ref=e35] [cursor=pointer]:
-            - /url: /archive
-            - generic [ref=e36] [cursor=pointer]: ARCHIVE
-    - main [ref=e38]:
-      - generic [ref=e42]: motivation
-      - generic [ref=e43]:
-        - generic [ref=e45]: Tuesday, August 26, 2025
-        - blockquote [ref=e46]:
-          - generic [ref=e47]: EVERY
-          - generic [ref=e48]: CHAMPION
-          - generic [ref=e49]: WAS
-          - generic [ref=e50]: ONCE
-          - generic [ref=e51]: A
-          - generic [ref=e52]: CONTENDER
-          - generic [ref=e53]: WHO
-          - generic [ref=e54]: REFUSED
-          - generic [ref=e55]: TO
-          - generic [ref=e56]: GIVE
-          - generic [ref=e57]: UP
-        - generic [ref=e59]: "#CK-001"
-      - generic [ref=e62]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e63]
-        - paragraph [ref=e64]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e65]:
-          - button "Check Again" [ref=e66]
-          - link "Browse Archive" [ref=e67] [cursor=pointer]:
-            - /url: /archive
-      - generic [ref=e68]:
-        - paragraph [ref=e69]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e70] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e71] [cursor=pointer]
+    - generic [ref=e6] [cursor=pointer]:
+        - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+            - img [ref=e8] [cursor=pointer]
+        - generic [ref=e12] [cursor=pointer]:
+            - button "Open issues overlay" [ref=e13] [cursor=pointer]:
+                - generic [ref=e14] [cursor=pointer]:
+                    - generic [ref=e15] [cursor=pointer]: '0'
+                    - generic [ref=e16] [cursor=pointer]: '1'
+                - generic [ref=e17] [cursor=pointer]: Issue
+            - button "Collapse issues badge" [ref=e18] [cursor=pointer]:
+                - img [ref=e19] [cursor=pointer]
+    - alert [ref=e21]
+    - generic [ref=e22]:
+        - banner [ref=e23]:
+            - generic [ref=e25]:
+                - link "MOTIVE FILES" [ref=e27] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e30] [cursor=pointer]: MOTIVE FILES
+                - navigation [ref=e31]:
+                    - link "TODAY" [ref=e32] [cursor=pointer]:
+                        - /url: /
+                        - generic [ref=e33] [cursor=pointer]: TODAY
+                    - link "ARCHIVE" [ref=e35] [cursor=pointer]:
+                        - /url: /archive
+                        - generic [ref=e36] [cursor=pointer]: ARCHIVE
+        - main [ref=e38]:
+            - generic [ref=e42]: motivation
+            - generic [ref=e43]:
+                - generic [ref=e45]: Tuesday, August 26, 2025
+                - blockquote [ref=e46]:
+                    - generic [ref=e47]: EVERY
+                    - generic [ref=e48]: CHAMPION
+                    - generic [ref=e49]: WAS
+                    - generic [ref=e50]: ONCE
+                    - generic [ref=e51]: A
+                    - generic [ref=e52]: CONTENDER
+                    - generic [ref=e53]: WHO
+                    - generic [ref=e54]: REFUSED
+                    - generic [ref=e55]: TO
+                    - generic [ref=e56]: GIVE
+                    - generic [ref=e57]: UP
+                - generic [ref=e59]: '#CK-001'
+            - generic [ref=e62]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e63]
+                - paragraph [ref=e64]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e65]:
+                    - button "Check Again" [ref=e66]
+                    - link "Browse Archive" [ref=e67] [cursor=pointer]:
+                        - /url: /archive
+            - generic [ref=e68]:
+                - paragraph [ref=e69]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e70] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e71] [cursor=pointer]
 ```

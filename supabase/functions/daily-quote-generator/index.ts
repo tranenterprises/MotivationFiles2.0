@@ -6,24 +6,39 @@ import {
   performHealthCheck,
   type DailyQuoteGenerationResult,
 } from '../_shared/daily-quote-generator.ts';
-import { 
-  loadEdgeFunctionEnv, 
-  createSecureHeaders 
-} from '../_shared/env.ts';
+import { loadEdgeFunctionEnv, createSecureHeaders } from '../_shared/env.ts';
 
 // Enhanced security validation
 function validateAuthorization(req: Request, cronSecret?: string): boolean {
+  const authHeader = req.headers.get('authorization');
+  
+  // If we have verify_jwt = true, Supabase has already validated the JWT
+  // Check if this is a service_role JWT (which should be allowed for cron jobs)
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.replace('Bearer ', '');
+    try {
+      // Decode JWT payload (without verification since Supabase already verified it)
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.role === 'service_role') {
+        console.log('Service role JWT detected - allowing request');
+        return true;
+      }
+    } catch (error) {
+      console.log('Failed to decode JWT payload:', error);
+    }
+  }
+  
+  // Fallback to CRON_SECRET validation
   if (!cronSecret) {
     console.log('No CRON_SECRET configured - allowing request');
     return true; // Allow if no secret is configured
   }
 
-  const authHeader = req.headers.get('authorization');
   if (!authHeader) {
     return false;
   }
 
-  // Support multiple auth formats
+  // Support multiple auth formats for CRON_SECRET
   return (
     authHeader.includes(cronSecret) ||
     authHeader === `Bearer ${cronSecret}` ||
@@ -36,7 +51,7 @@ Deno.serve(async (req: Request) => {
   const startTime = Date.now();
   const requestId = crypto.randomUUID().substring(0, 8);
   const method = req.method;
-  
+
   console.log(`[${requestId}] ${method} ${req.url} - Edge function triggered`);
 
   try {
@@ -53,53 +68,68 @@ Deno.serve(async (req: Request) => {
       // Health check endpoint
       console.log(`[${requestId}] Performing health check`);
       const healthResult = await performHealthCheck();
-      
-      const statusCode = healthResult.status === 'healthy' ? 200 :
-                        healthResult.status === 'degraded' ? 200 : 503;
-      
-      return new Response(JSON.stringify({
-        ...healthResult,
-        requestId,
-        timestamp: new Date().toISOString(),
-      }), {
-        status: statusCode,
-        headers: createSecureHeaders({
-          'X-Request-ID': requestId,
+
+      const statusCode =
+        healthResult.status === 'healthy'
+          ? 200
+          : healthResult.status === 'degraded'
+            ? 200
+            : 503;
+
+      return new Response(
+        JSON.stringify({
+          ...healthResult,
+          requestId,
+          timestamp: new Date().toISOString(),
         }),
-      });
+        {
+          status: statusCode,
+          headers: createSecureHeaders({
+            'X-Request-ID': requestId,
+          }),
+        }
+      );
     }
 
     // Main generation endpoint (POST or cron trigger)
     if (method !== 'POST' && method !== 'GET') {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Method not allowed',
-        requestId,
-      }), {
-        status: 405,
-        headers: createSecureHeaders({
-          'Allow': 'GET, POST, OPTIONS',
-          'X-Request-ID': requestId,
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Method not allowed',
+          requestId,
         }),
-      });
+        {
+          status: 405,
+          headers: createSecureHeaders({
+            Allow: 'GET, POST, OPTIONS',
+            'X-Request-ID': requestId,
+          }),
+        }
+      );
     }
 
     // Enhanced security check
     const env = loadEdgeFunctionEnv();
     const isAuthorized = validateAuthorization(req, env.cronSecret);
-    
+
     if (!isAuthorized) {
-      console.log(`[${requestId}] Unauthorized request - invalid or missing credentials`);
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Unauthorized',
-        requestId,
-      }), {
-        status: 401,
-        headers: createSecureHeaders({
-          'X-Request-ID': requestId,
+      console.log(
+        `[${requestId}] Unauthorized request - invalid or missing credentials`
+      );
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Unauthorized',
+          requestId,
         }),
-      });
+        {
+          status: 401,
+          headers: createSecureHeaders({
+            'X-Request-ID': requestId,
+          }),
+        }
+      );
     }
 
     // Parse request body for options (if POST)
@@ -118,10 +148,13 @@ Deno.serve(async (req: Request) => {
 
     // Generate daily quote using shared utilities
     console.log(`[${requestId}] Starting daily quote generation...`);
-    const result: DailyQuoteGenerationResult = await generateDailyQuote(options);
-    
+    const result: DailyQuoteGenerationResult =
+      await generateDailyQuote(options);
+
     const duration = Date.now() - startTime;
-    console.log(`[${requestId}] Daily quote generation completed in ${duration}ms`);
+    console.log(
+      `[${requestId}] Daily quote generation completed in ${duration}ms`
+    );
 
     // Build response with metadata
     const response = {
@@ -138,7 +171,6 @@ Deno.serve(async (req: Request) => {
         'X-Request-ID': requestId,
       }),
     });
-
   } catch (error: any) {
     const duration = Date.now() - startTime;
     console.error(`[${requestId}] Edge function failed after ${duration}ms:`, {
@@ -148,7 +180,7 @@ Deno.serve(async (req: Request) => {
     });
 
     // Determine if this is a retryable error
-    const isRetryable = 
+    const isRetryable =
       error.message?.includes('timeout') ||
       error.message?.includes('network') ||
       error.message?.includes('connection') ||
@@ -156,20 +188,23 @@ Deno.serve(async (req: Request) => {
       error.message?.includes('502') ||
       error.message?.includes('500');
 
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Internal server error',
-      details: error.message,
-      retryable: isRetryable,
-      requestId,
-      duration,
-      timestamp: new Date().toISOString(),
-    }), {
-      status: isRetryable ? 503 : 500,
-      headers: createSecureHeaders({
-        'X-Request-ID': requestId,
-        ...(isRetryable && { 'Retry-After': '300' }), // Suggest retry after 5 minutes
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Internal server error',
+        details: error.message,
+        retryable: isRetryable,
+        requestId,
+        duration,
+        timestamp: new Date().toISOString(),
       }),
-    });
+      {
+        status: isRetryable ? 503 : 500,
+        headers: createSecureHeaders({
+          'X-Request-ID': requestId,
+          ...(isRetryable && { 'Retry-After': '300' }), // Suggest retry after 5 minutes
+        }),
+      }
+    );
   }
 });

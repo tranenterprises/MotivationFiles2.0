@@ -216,7 +216,7 @@ describe('Category Utilities', () => {
     it('should favor categories with lower counts over many iterations', () => {
       const categoryCounts = {
         motivation: 10,
-        wisdom: 10, 
+        wisdom: 10,
         grindset: 10,
         reflection: 0, // This should be heavily favored
         discipline: 10,
@@ -276,13 +276,20 @@ describe('Category Utilities', () => {
         select: () => ({
           gte: () => ({
             lte: () => ({
-              order: () => Promise.resolve({
-                data: [{ id: '1', category: 'motivation', date_created: '2024-01-01' }],
-                error: null
-              })
-            })
-          })
-        })
+              order: () =>
+                Promise.resolve({
+                  data: [
+                    {
+                      id: '1',
+                      category: 'motivation',
+                      date_created: '2024-01-01',
+                    },
+                  ],
+                  error: null,
+                }),
+            }),
+          }),
+        }),
       }));
 
       const category = await determineNextCategory(mockClient);
@@ -323,13 +330,14 @@ describe('Category Utilities', () => {
         select: () => ({
           gte: () => ({
             lte: () => ({
-              order: () => Promise.resolve({
-                data: [],
-                error: null
-              })
-            })
-          })
-        })
+              order: () =>
+                Promise.resolve({
+                  data: [],
+                  error: null,
+                }),
+            }),
+          }),
+        }),
       }));
 
       const category = await determineNextCategory(mockClient, { daysBack: 7 });

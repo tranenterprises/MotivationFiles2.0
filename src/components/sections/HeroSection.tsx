@@ -6,6 +6,10 @@ import AudioPlayer from '@/components/media/AudioPlayer';
 import FallbackContent from '@/components/content/FallbackContent';
 import HeroFallback from '@/components/sections/HeroFallback';
 import { formatDate } from '@/lib/utils/date';
+import {
+  findWordsAtTime,
+  createSimpleHighlightEffect,
+} from '@/lib/utils/alignment';
 
 interface HeroSectionProps {
   quote: Quote | null;
@@ -45,20 +49,30 @@ export default function HeroSection({
   const words = quote.content.split(' ');
 
   const updateHighlightedWords = (currentTime: number) => {
-    if (quote.audio_duration && currentTime > 0) {
-      const progress = currentTime / quote.audio_duration;
-      const wordsToHighlight = Math.floor(progress * words.length);
+    if (currentTime <= 0) {
+      setHighlightedWords([]);
+      return;
+    }
 
-      // Create a wave effect for highlighting
-      const activeRange = 3;
-      const startIndex = Math.max(0, wordsToHighlight - activeRange);
-      const endIndex = Math.min(words.length, wordsToHighlight + activeRange);
+    const currentTimeMs = currentTime * 1000; // Convert to milliseconds
 
-      const newHighlighted = Array.from(
-        { length: endIndex - startIndex },
-        (_, i) => startIndex + i
+    // Use word alignment data if available for precise synchronization
+    if (quote.word_alignment && quote.word_alignment.length > 0) {
+      const highlightedIndices = findWordsAtTime(
+        quote.word_alignment,
+        currentTimeMs,
+        2
       );
-      setHighlightedWords(newHighlighted);
+      setHighlightedWords(highlightedIndices);
+    } else if (quote.audio_duration && quote.audio_duration > 0) {
+      // Fallback to time-based highlighting for quotes without alignment data
+      const highlightedIndices = createSimpleHighlightEffect(
+        words,
+        currentTime,
+        quote.audio_duration,
+        3
+      );
+      setHighlightedWords(highlightedIndices);
     }
   };
 
@@ -141,6 +155,9 @@ export default function HeroSection({
               className="w-full"
               audioRef={audioPlayerRef}
               autoPlay={true}
+              hasWordAlignment={
+                !!(quote.word_alignment && quote.word_alignment.length > 0)
+              }
               onPlay={handlePlay}
               onPause={handlePause}
               onEnded={handleEnded}

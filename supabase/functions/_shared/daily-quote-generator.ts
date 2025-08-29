@@ -4,12 +4,20 @@
 import { loadEdgeFunctionEnv, validateEdgeFunctionEnv } from './env.ts';
 import { determineNextCategory } from './category-utils.ts';
 import { generateQuote } from './openai-utils.ts';
-import { generateVoiceAndUpload } from './elevenlabs-utils.ts';
+import {
+  generateVoiceAndUpload,
+  generateVoiceWithAlignmentAndUpload,
+} from './elevenlabs-utils.ts';
+import {
+  processAlignmentData,
+  validateAlignmentData,
+} from './alignment-utils.ts';
 import {
   createSupabaseClient,
   quoteExistsForDate,
   createQuote,
   updateQuoteAudioUrl,
+  updateQuote,
   type Quote,
 } from './supabase-utils.ts';
 
@@ -35,7 +43,7 @@ export async function generateDailyQuote(
 ): Promise<DailyQuoteGenerationResult> {
   // Load and validate environment
   const env = loadEdgeFunctionEnv();
-  
+
   // Debug: Log environment variable status
   console.log('=== Environment Debug ===');
   console.log('Supabase URL:', env.supabaseUrl?.substring(0, 30) + '...');
@@ -43,7 +51,7 @@ export async function generateDailyQuote(
   console.log('OpenAI API Key present:', !!env.openaiApiKey);
   console.log('ElevenLabs API Key present:', !!env.elevenlabsApiKey);
   console.log('========================');
-  
+
   validateEdgeFunctionEnv(env);
 
   const targetDate = options.date || new Date().toISOString().split('T')[0];
@@ -108,10 +116,10 @@ export async function generateDailyQuote(
       };
     }
 
-    // Generate voice and upload audio
+    // Generate voice and upload audio with alignment data
     try {
-      console.log('Generating voice audio...');
-      const voiceResult = await generateVoiceAndUpload(
+      console.log('Generating voice audio with alignment data...');
+      const voiceResult = await generateVoiceWithAlignmentAndUpload(
         env.elevenlabsApiKey,
         supabaseClient,
         generatedQuote.content,
@@ -122,13 +130,37 @@ export async function generateDailyQuote(
         }
       );
 
-      // Update quote with audio URL
-      console.log('Updating quote with audio URL...');
-      const finalQuote = await updateQuoteAudioUrl(
+      // Process alignment data if available
+      let wordAlignment = null;
+      if (
+        voiceResult.alignmentData &&
+        validateAlignmentData(voiceResult.alignmentData)
+      ) {
+        console.log('Processing alignment data...');
+        wordAlignment = processAlignmentData(
+          generatedQuote.content,
+          voiceResult.alignmentData
+        );
+        console.log(
+          `Processed ${wordAlignment.length} words with alignment data`
+        );
+      }
+
+      // Update quote with audio URL and alignment data
+      console.log('Updating quote with audio URL and alignment data...');
+      const updates: any = {
+        audio_url: voiceResult.uploadResult.url,
+        audio_duration: voiceResult.duration,
+      };
+
+      if (wordAlignment) {
+        updates.word_alignment = wordAlignment;
+      }
+
+      const finalQuote = await updateQuote(
         supabaseClient,
         createdQuote.id,
-        voiceResult.uploadResult.url,
-        voiceResult.duration
+        updates
       );
 
       console.log('Daily content generation completed successfully');

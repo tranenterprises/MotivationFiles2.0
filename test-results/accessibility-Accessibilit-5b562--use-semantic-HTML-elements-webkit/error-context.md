@@ -2,55 +2,55 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e2]:
-    - banner [ref=e3]:
-      - generic [ref=e5]:
-        - link "MOTIVE FILES" [ref=e7]:
-          - /url: /
-          - generic [ref=e10]: MOTIVE FILES
-        - navigation [ref=e11]:
-          - link "TODAY" [ref=e12]:
-            - /url: /
-            - generic [ref=e13]: TODAY
-          - link "ARCHIVE" [ref=e15]:
-            - /url: /archive
-            - generic [ref=e16]: ARCHIVE
-    - main [ref=e18]:
-      - generic [ref=e22]: discipline
-      - generic [ref=e23]:
-        - generic [ref=e25]: Tuesday, August 26, 2025
-        - blockquote [ref=e26]:
-          - generic [ref=e27]: SUCCESS
-          - generic [ref=e28]: IS
-          - generic [ref=e29]: NOT
-          - generic [ref=e30]: FINAL,
-          - generic [ref=e31]: FAILURE
-          - generic [ref=e32]: IS
-          - generic [ref=e33]: NOT
-          - generic [ref=e34]: "FATAL:"
-          - generic [ref=e35]: IT
-          - generic [ref=e36]: IS
-          - generic [ref=e37]: THE
-          - generic [ref=e38]: COURAGE
-          - generic [ref=e39]: TO
-          - generic [ref=e40]: CONTINUE
-          - generic [ref=e41]: THAT
-          - generic [ref=e42]: COUNTS
-        - generic [ref=e44]: "#CK-003"
-      - generic [ref=e47]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e48]
-        - paragraph [ref=e49]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e50]:
-          - button "Check Again" [ref=e51]
-          - link "Browse Archive" [ref=e52]:
-            - /url: /archive
-      - generic [ref=e53]:
-        - paragraph [ref=e54]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e55] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e56] [cursor=pointer]
-  - button "Open Next.js Dev Tools" [ref=e63] [cursor=pointer]:
-    - img [ref=e64] [cursor=pointer]
-  - alert [ref=e69]
+    - generic [ref=e2]:
+        - banner [ref=e3]:
+            - generic [ref=e5]:
+                - link "MOTIVE FILES" [ref=e7]:
+                    - /url: /
+                    - generic [ref=e10]: MOTIVE FILES
+                - navigation [ref=e11]:
+                    - link "TODAY" [ref=e12]:
+                        - /url: /
+                        - generic [ref=e13]: TODAY
+                    - link "ARCHIVE" [ref=e15]:
+                        - /url: /archive
+                        - generic [ref=e16]: ARCHIVE
+        - main [ref=e18]:
+            - generic [ref=e22]: discipline
+            - generic [ref=e23]:
+                - generic [ref=e25]: Tuesday, August 26, 2025
+                - blockquote [ref=e26]:
+                    - generic [ref=e27]: SUCCESS
+                    - generic [ref=e28]: IS
+                    - generic [ref=e29]: NOT
+                    - generic [ref=e30]: FINAL,
+                    - generic [ref=e31]: FAILURE
+                    - generic [ref=e32]: IS
+                    - generic [ref=e33]: NOT
+                    - generic [ref=e34]: 'FATAL:'
+                    - generic [ref=e35]: IT
+                    - generic [ref=e36]: IS
+                    - generic [ref=e37]: THE
+                    - generic [ref=e38]: COURAGE
+                    - generic [ref=e39]: TO
+                    - generic [ref=e40]: CONTINUE
+                    - generic [ref=e41]: THAT
+                    - generic [ref=e42]: COUNTS
+                - generic [ref=e44]: '#CK-003'
+            - generic [ref=e47]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e48]
+                - paragraph [ref=e49]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e50]:
+                    - button "Check Again" [ref=e51]
+                    - link "Browse Archive" [ref=e52]:
+                        - /url: /archive
+            - generic [ref=e53]:
+                - paragraph [ref=e54]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e55] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e56] [cursor=pointer]
+    - button "Open Next.js Dev Tools" [ref=e63] [cursor=pointer]:
+        - img [ref=e64] [cursor=pointer]
+    - alert [ref=e69]
 ```

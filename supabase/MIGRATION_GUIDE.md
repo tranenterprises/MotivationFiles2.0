@@ -16,21 +16,23 @@ We're migrating from the Vercel API route at `/api/generate-daily-content` to a 
 ## Step 1: Deploy the Edge Function
 
 1. **Login to Supabase CLI:**
+
    ```bash
    supabase login
    ```
 
 2. **Link your project:**
+
    ```bash
    supabase link --project-ref YOUR_PROJECT_REF
    ```
-   
+
    You can find your project ref in the Supabase dashboard URL: `https://supabase.com/dashboard/project/YOUR_PROJECT_REF`
 
 3. **Set environment variables for the Edge Function:**
-   
+
    In your Supabase dashboard, go to Project Settings → Edge Functions → Environment variables and add:
-   
+
    ```
    SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
@@ -47,6 +49,7 @@ We're migrating from the Vercel API route at `/api/generate-daily-content` to a 
 ## Step 2: Test the Edge Function
 
 1. **Test manually via CLI:**
+
    ```bash
    curl -X POST \
      "https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-generator" \
@@ -68,10 +71,11 @@ We're migrating from the Vercel API route at `/api/generate-daily-content` to a 
    - Replace `YOUR_CRON_SECRET_HERE` with your cron secret
 
 3. **Execute the SQL script** in the SQL Editor:
+
    ```sql
    -- Enable pg_cron extension
    CREATE EXTENSION IF NOT EXISTS pg_cron;
-   
+
    -- Create the scheduled job
    SELECT cron.schedule(
      'daily-quote-generation',
@@ -96,6 +100,7 @@ We're migrating from the Vercel API route at `/api/generate-daily-content` to a 
 ## Step 4: Test the Complete System
 
 1. **Create the manual trigger function** (optional, for testing):
+
    ```sql
    CREATE OR REPLACE FUNCTION trigger_daily_quote_generation()
    RETURNS json
@@ -111,21 +116,22 @@ We're migrating from the Vercel API route at `/api/generate-daily-content` to a 
          'Content-Type', 'application/json'
        )
      ) INTO result;
-     
+
      RETURN result;
    END;
    $$;
    ```
 
 2. **Test the manual trigger:**
+
    ```sql
    SELECT trigger_daily_quote_generation();
    ```
 
 3. **Check cron job logs:**
    ```sql
-   SELECT * FROM cron.job_run_details 
-   WHERE jobid = (SELECT jobid FROM cron.job WHERE jobname = 'daily-quote-generation') 
+   SELECT * FROM cron.job_run_details
+   WHERE jobid = (SELECT jobid FROM cron.job WHERE jobname = 'daily-quote-generation')
    ORDER BY start_time DESC LIMIT 10;
    ```
 
@@ -140,6 +146,7 @@ We're migrating from the Vercel API route at `/api/generate-daily-content` to a 
 If you need to rollback to Vercel cron:
 
 1. **Disable the pg_cron job:**
+
    ```sql
    SELECT cron.unschedule('daily-quote-generation');
    ```
@@ -159,20 +166,24 @@ If you need to rollback to Vercel cron:
 ## Troubleshooting
 
 ### Edge Function Issues
+
 - Check environment variables are set correctly in Supabase dashboard
 - Verify the function deployed successfully: `supabase functions list`
 - Check Edge Function logs in Supabase dashboard
 
-### pg_cron Issues  
+### pg_cron Issues
+
 - Ensure pg_cron extension is enabled: `SELECT * FROM pg_available_extensions WHERE name = 'pg_cron';`
 - Check if the job exists: `SELECT * FROM cron.job;`
 - Check job execution history: `SELECT * FROM cron.job_run_details ORDER BY start_time DESC;`
 
 ### Authentication Issues
+
 - Verify CRON_SECRET matches between environment variables and SQL script
 - Ensure Authorization header format is correct: `Bearer YOUR_SECRET`
 
 ### Database Issues
+
 - Verify quotes table exists and has correct schema
 - Check Supabase service role key has proper permissions
 - Ensure storage bucket 'quote-audio' exists for audio uploads
@@ -180,6 +191,7 @@ If you need to rollback to Vercel cron:
 ## Next Steps
 
 Once migration is complete:
+
 1. Remove the old Vercel cron configuration
 2. Update any documentation to reference the new system
 3. Set up monitoring/alerting for the pg_cron jobs

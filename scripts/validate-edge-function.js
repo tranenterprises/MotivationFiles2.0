@@ -2,10 +2,10 @@
 
 /**
  * Edge Function Validation Script
- * 
+ *
  * Tests the deployed daily-quote-generator edge function with various scenarios
  * Usage: node scripts/validate-edge-function.js <project-ref> <cron-secret>
- * 
+ *
  * Or for code validation: node scripts/validate-edge-function.js --code-only
  */
 

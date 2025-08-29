@@ -61,42 +61,50 @@ export function findLeastUsedCategory(
  */
 export function selectCategoryWithDistribution(
   categoryCounts: CategoryCount,
-  options: { 
+  options: {
     randomizationFactor?: number;
     enforceBalance?: boolean;
   } = {}
 ): QuoteCategory {
   const { randomizationFactor = 0.2, enforceBalance = true } = options;
-  
-  const totalQuotes = Object.values(categoryCounts).reduce((sum, count) => sum + count, 0);
+
+  const totalQuotes = Object.values(categoryCounts).reduce(
+    (sum, count) => sum + count,
+    0
+  );
   const expectedPerCategory = totalQuotes / QUOTE_CATEGORIES.length;
-  
+
   // Calculate weights for each category (lower count = higher weight)
-  const categoryWeights: Array<{ category: QuoteCategory; weight: number }> = 
+  const categoryWeights: Array<{ category: QuoteCategory; weight: number }> =
     QUOTE_CATEGORIES.map(category => {
       const count = categoryCounts[category];
       const deficit = Math.max(0, expectedPerCategory - count);
-      
+
       // Base weight: categories with fewer quotes get higher weights
-      let weight = enforceBalance ? deficit + 1 : expectedPerCategory - count + 1;
-      
+      let weight = enforceBalance
+        ? deficit + 1
+        : expectedPerCategory - count + 1;
+
       // Add randomization to prevent predictable patterns
       weight += Math.random() * randomizationFactor * weight;
-      
+
       return { category, weight: Math.max(weight, 0.1) }; // Minimum weight to ensure all categories can be selected
     });
-  
+
   // Weighted random selection
-  const totalWeight = categoryWeights.reduce((sum, item) => sum + item.weight, 0);
+  const totalWeight = categoryWeights.reduce(
+    (sum, item) => sum + item.weight,
+    0
+  );
   let randomValue = Math.random() * totalWeight;
-  
+
   for (const { category, weight } of categoryWeights) {
     randomValue -= weight;
     if (randomValue <= 0) {
       return category;
     }
   }
-  
+
   // Fallback to least used category
   return findLeastUsedCategory(categoryCounts);
 }
@@ -110,14 +118,18 @@ export async function determineNextCategory(
   try {
     // Use getQuotesByDateRange for efficient single query
     const { getQuotesByDateRange } = await import('./supabase-utils.ts');
-    
+
     const endDate = new Date().toISOString().split('T')[0];
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - opts.daysBack);
     const startDateStr = startDate.toISOString().split('T')[0];
 
     // Single database query to get all quotes in date range
-    const quotes = await getQuotesByDateRange(supabaseClient, startDateStr, endDate);
+    const quotes = await getQuotesByDateRange(
+      supabaseClient,
+      startDateStr,
+      endDate
+    );
 
     const categoryCounts = initializeCategoryCounts();
 
@@ -138,7 +150,7 @@ export async function determineNextCategory(
       randomizationFactor: 0.3, // Add some randomness to prevent predictability
       enforceBalance: true, // Ensure even distribution over time
     });
-    
+
     console.log('Selected category:', selectedCategory);
 
     return selectedCategory;

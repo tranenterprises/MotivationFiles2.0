@@ -2,49 +2,49 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e6] [cursor=pointer]:
-    - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
-      - img [ref=e8] [cursor=pointer]
-    - generic [ref=e11] [cursor=pointer]:
-      - button "Open issues overlay" [ref=e12] [cursor=pointer]:
-        - generic [ref=e13] [cursor=pointer]:
-          - generic [ref=e14] [cursor=pointer]: "0"
-          - generic [ref=e15] [cursor=pointer]: "1"
-        - generic [ref=e16] [cursor=pointer]: Issue
-      - button "Collapse issues badge" [ref=e17] [cursor=pointer]:
-        - img [ref=e18] [cursor=pointer]
-  - alert [ref=e20]
-  - generic [ref=e21]:
-    - banner [ref=e22]:
-      - generic [ref=e24]:
-        - link "MOTIVE FILES" [ref=e26] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e29] [cursor=pointer]: MOTIVE FILES
-        - button "Toggle mobile menu" [ref=e30]:
-          - img [ref=e31]
-    - main [ref=e34]:
-      - generic [ref=e38]: grindset
-      - generic [ref=e39]:
-        - generic [ref=e41]: Tuesday, August 26, 2025
-        - blockquote [ref=e42]:
-          - generic [ref=e43]: DON'T
-          - generic [ref=e44]: WAIT
-          - generic [ref=e45]: FOR
-          - generic [ref=e46]: OPPORTUNITY.
-          - generic [ref=e47]: CREATE
-          - generic [ref=e48]: IT
-        - generic [ref=e50]: "#CK-004"
-      - generic [ref=e53]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e54]
-        - paragraph [ref=e55]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e56]:
-          - button "Check Again" [ref=e57]
-          - link "Browse Archive" [ref=e58] [cursor=pointer]:
-            - /url: /archive
-      - generic [ref=e59]:
-        - paragraph [ref=e60]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e61] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e62] [cursor=pointer]
+    - generic [ref=e6] [cursor=pointer]:
+        - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+            - img [ref=e8] [cursor=pointer]
+        - generic [ref=e11] [cursor=pointer]:
+            - button "Open issues overlay" [ref=e12] [cursor=pointer]:
+                - generic [ref=e13] [cursor=pointer]:
+                    - generic [ref=e14] [cursor=pointer]: '0'
+                    - generic [ref=e15] [cursor=pointer]: '1'
+                - generic [ref=e16] [cursor=pointer]: Issue
+            - button "Collapse issues badge" [ref=e17] [cursor=pointer]:
+                - img [ref=e18] [cursor=pointer]
+    - alert [ref=e20]
+    - generic [ref=e21]:
+        - banner [ref=e22]:
+            - generic [ref=e24]:
+                - link "MOTIVE FILES" [ref=e26] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e29] [cursor=pointer]: MOTIVE FILES
+                - button "Toggle mobile menu" [ref=e30]:
+                    - img [ref=e31]
+        - main [ref=e34]:
+            - generic [ref=e38]: grindset
+            - generic [ref=e39]:
+                - generic [ref=e41]: Tuesday, August 26, 2025
+                - blockquote [ref=e42]:
+                    - generic [ref=e43]: DON'T
+                    - generic [ref=e44]: WAIT
+                    - generic [ref=e45]: FOR
+                    - generic [ref=e46]: OPPORTUNITY.
+                    - generic [ref=e47]: CREATE
+                    - generic [ref=e48]: IT
+                - generic [ref=e50]: '#CK-004'
+            - generic [ref=e53]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e54]
+                - paragraph [ref=e55]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e56]:
+                    - button "Check Again" [ref=e57]
+                    - link "Browse Archive" [ref=e58] [cursor=pointer]:
+                        - /url: /archive
+            - generic [ref=e59]:
+                - paragraph [ref=e60]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e61] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e62] [cursor=pointer]
 ```

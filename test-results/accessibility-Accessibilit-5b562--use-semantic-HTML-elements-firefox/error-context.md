@@ -2,49 +2,49 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e2]:
-    - banner [ref=e3]:
-      - generic [ref=e5]:
-        - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
-        - navigation [ref=e11]:
-          - link "TODAY" [ref=e12] [cursor=pointer]:
-            - /url: /
-            - generic [ref=e13] [cursor=pointer]: TODAY
-          - link "ARCHIVE" [ref=e15] [cursor=pointer]:
-            - /url: /archive
-            - generic [ref=e16] [cursor=pointer]: ARCHIVE
-    - main [ref=e18]:
-      - generic [ref=e22]: wisdom
-      - generic [ref=e23]:
-        - generic [ref=e25]: Tuesday, August 26, 2025
-        - blockquote [ref=e26]:
-          - generic [ref=e27]: THE
-          - generic [ref=e28]: ONLY
-          - generic [ref=e29]: IMPOSSIBLE
-          - generic [ref=e30]: JOURNEY
-          - generic [ref=e31]: IS
-          - generic [ref=e32]: THE
-          - generic [ref=e33]: ONE
-          - generic [ref=e34]: YOU
-          - generic [ref=e35]: NEVER
-          - generic [ref=e36]: BEGIN
-        - generic [ref=e38]: "#CK-002"
-      - generic [ref=e41]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e42]
-        - paragraph [ref=e43]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e44]:
-          - button "Check Again" [ref=e45]
-          - link "Browse Archive" [ref=e46] [cursor=pointer]:
-            - /url: /archive
-      - generic [ref=e47]:
-        - paragraph [ref=e48]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e49] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e50] [cursor=pointer]
-  - button "Open Next.js Dev Tools" [ref=e57] [cursor=pointer]:
-    - img [ref=e58] [cursor=pointer]
-  - alert [ref=e62]
+    - generic [ref=e2]:
+        - banner [ref=e3]:
+            - generic [ref=e5]:
+                - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+                - navigation [ref=e11]:
+                    - link "TODAY" [ref=e12] [cursor=pointer]:
+                        - /url: /
+                        - generic [ref=e13] [cursor=pointer]: TODAY
+                    - link "ARCHIVE" [ref=e15] [cursor=pointer]:
+                        - /url: /archive
+                        - generic [ref=e16] [cursor=pointer]: ARCHIVE
+        - main [ref=e18]:
+            - generic [ref=e22]: wisdom
+            - generic [ref=e23]:
+                - generic [ref=e25]: Tuesday, August 26, 2025
+                - blockquote [ref=e26]:
+                    - generic [ref=e27]: THE
+                    - generic [ref=e28]: ONLY
+                    - generic [ref=e29]: IMPOSSIBLE
+                    - generic [ref=e30]: JOURNEY
+                    - generic [ref=e31]: IS
+                    - generic [ref=e32]: THE
+                    - generic [ref=e33]: ONE
+                    - generic [ref=e34]: YOU
+                    - generic [ref=e35]: NEVER
+                    - generic [ref=e36]: BEGIN
+                - generic [ref=e38]: '#CK-002'
+            - generic [ref=e41]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e42]
+                - paragraph [ref=e43]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e44]:
+                    - button "Check Again" [ref=e45]
+                    - link "Browse Archive" [ref=e46] [cursor=pointer]:
+                        - /url: /archive
+            - generic [ref=e47]:
+                - paragraph [ref=e48]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e49] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e50] [cursor=pointer]
+    - button "Open Next.js Dev Tools" [ref=e57] [cursor=pointer]:
+        - img [ref=e58] [cursor=pointer]
+    - alert [ref=e62]
 ```

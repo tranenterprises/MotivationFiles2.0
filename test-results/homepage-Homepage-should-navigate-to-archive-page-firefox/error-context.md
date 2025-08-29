@@ -2,56 +2,56 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e2]:
-    - banner [ref=e3]:
-      - generic [ref=e5]:
-        - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
-        - navigation [ref=e11]:
-          - link "TODAY" [ref=e12] [cursor=pointer]:
-            - /url: /
-            - generic [ref=e13] [cursor=pointer]: TODAY
-          - link "ARCHIVE" [ref=e15] [cursor=pointer]:
-            - /url: /archive
-            - generic [ref=e16] [cursor=pointer]: ARCHIVE
-    - main [ref=e18]:
-      - generic [ref=e22]: reflection
-      - generic [ref=e23]:
-        - generic [ref=e25]: Tuesday, August 26, 2025
-        - blockquote [ref=e26]:
-          - generic [ref=e27]: THE
-          - generic [ref=e28]: BEST
-          - generic [ref=e29]: TIME
-          - generic [ref=e30]: TO
-          - generic [ref=e31]: PLANT
-          - generic [ref=e32]: A
-          - generic [ref=e33]: TREE
-          - generic [ref=e34]: WAS
-          - generic [ref=e35]: "20"
-          - generic [ref=e36]: YEARS
-          - generic [ref=e37]: AGO.
-          - generic [ref=e38]: THE
-          - generic [ref=e39]: SECOND
-          - generic [ref=e40]: BEST
-          - generic [ref=e41]: TIME
-          - generic [ref=e42]: IS
-          - generic [ref=e43]: NOW
-        - generic [ref=e45]: "#CK-005"
-      - generic [ref=e48]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e49]
-        - paragraph [ref=e50]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e51]:
-          - button "Check Again" [ref=e52]
-          - link "Browse Archive" [ref=e53] [cursor=pointer]:
-            - /url: /archive
-      - generic [ref=e54]:
-        - paragraph [ref=e55]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e56] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e57] [cursor=pointer]
-  - button "Open Next.js Dev Tools" [ref=e64] [cursor=pointer]:
-    - img [ref=e65] [cursor=pointer]
-  - alert [ref=e69]
+    - generic [ref=e2]:
+        - banner [ref=e3]:
+            - generic [ref=e5]:
+                - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+                - navigation [ref=e11]:
+                    - link "TODAY" [ref=e12] [cursor=pointer]:
+                        - /url: /
+                        - generic [ref=e13] [cursor=pointer]: TODAY
+                    - link "ARCHIVE" [ref=e15] [cursor=pointer]:
+                        - /url: /archive
+                        - generic [ref=e16] [cursor=pointer]: ARCHIVE
+        - main [ref=e18]:
+            - generic [ref=e22]: reflection
+            - generic [ref=e23]:
+                - generic [ref=e25]: Tuesday, August 26, 2025
+                - blockquote [ref=e26]:
+                    - generic [ref=e27]: THE
+                    - generic [ref=e28]: BEST
+                    - generic [ref=e29]: TIME
+                    - generic [ref=e30]: TO
+                    - generic [ref=e31]: PLANT
+                    - generic [ref=e32]: A
+                    - generic [ref=e33]: TREE
+                    - generic [ref=e34]: WAS
+                    - generic [ref=e35]: '20'
+                    - generic [ref=e36]: YEARS
+                    - generic [ref=e37]: AGO.
+                    - generic [ref=e38]: THE
+                    - generic [ref=e39]: SECOND
+                    - generic [ref=e40]: BEST
+                    - generic [ref=e41]: TIME
+                    - generic [ref=e42]: IS
+                    - generic [ref=e43]: NOW
+                - generic [ref=e45]: '#CK-005'
+            - generic [ref=e48]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e49]
+                - paragraph [ref=e50]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e51]:
+                    - button "Check Again" [ref=e52]
+                    - link "Browse Archive" [ref=e53] [cursor=pointer]:
+                        - /url: /archive
+            - generic [ref=e54]:
+                - paragraph [ref=e55]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e56] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e57] [cursor=pointer]
+    - button "Open Next.js Dev Tools" [ref=e64] [cursor=pointer]:
+        - img [ref=e65] [cursor=pointer]
+    - alert [ref=e69]
 ```

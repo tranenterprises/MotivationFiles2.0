@@ -7,6 +7,7 @@ This guide covers the deployment and validation of the `daily-quote-generator` S
 ## Pre-Deployment Checklist
 
 ### ✅ Code Readiness
+
 - [x] Edge function uses shared utilities from `_shared/` folder
 - [x] Comprehensive retry logic and error handling implemented
 - [x] Environment variable compatibility for edge runtime
@@ -15,6 +16,7 @@ This guide covers the deployment and validation of the `daily-quote-generator` S
 - [x] CORS and security headers configured
 
 ### ✅ Testing Completed
+
 - [x] Integration tests passing (5/5)
 - [x] Retry mechanism tests passing (20/20)
 - [x] Shared utilities thoroughly tested
@@ -23,17 +25,20 @@ This guide covers the deployment and validation of the `daily-quote-generator` S
 ## Deployment Steps
 
 ### 1. Login to Supabase
+
 ```bash
 supabase login
 ```
 
 ### 2. Verify Project Connection
+
 ```bash
 supabase projects list
 supabase link --project-ref YOUR_PROJECT_REF
 ```
 
 ### 3. Set Environment Variables
+
 In your Supabase Dashboard → Project Settings → Edge Functions → Environment Variables:
 
 ```
@@ -47,17 +52,20 @@ CRON_SECRET=your_secure_random_string
 **Important**: Use `DATABASE_URL` and `SERVICE_ROLE_TOKEN` (not `SUPABASE_*` prefixed variables) as the edge runtime filters those out.
 
 ### 4. Deploy Edge Function
+
 ```bash
 supabase functions deploy daily-quote-generator
 ```
 
 ### 5. Verify Deployment
+
 ```bash
 curl -X GET "https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-generator/health" \
   -H "Authorization: Bearer YOUR_CRON_SECRET"
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -76,13 +84,17 @@ Expected response:
 ## Setting Up Automated Execution
 
 ### 1. Enable pg_cron Extension
+
 Run in Supabase SQL Editor:
+
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 ```
 
 ### 2. Create Daily Schedule
+
 Update the placeholders in `supabase/setup-pg-cron.sql` and run:
+
 - Replace `YOUR_PROJECT_REF_HERE` with your project reference
 - Replace `YOUR_CRON_SECRET_HERE` with your CRON_SECRET value
 
@@ -103,6 +115,7 @@ SELECT cron.schedule(
 ```
 
 ### 3. Verify Cron Job
+
 ```sql
 SELECT * FROM cron.job WHERE jobname = 'daily-quote-generation';
 ```
@@ -110,6 +123,7 @@ SELECT * FROM cron.job WHERE jobname = 'daily-quote-generation';
 ## Validation & Testing
 
 ### 1. Manual Test Quote Generation
+
 ```bash
 curl -X POST "https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-generator" \
   -H "Authorization: Bearer YOUR_CRON_SECRET" \
@@ -118,6 +132,7 @@ curl -X POST "https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-gene
 ```
 
 ### 2. Test with Different Options
+
 ```bash
 # Test with voice generation disabled (faster)
 curl -X POST "https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-generator" \
@@ -133,12 +148,15 @@ curl -X POST "https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-quote-gene
 ```
 
 ### 3. Verify Database Integration
+
 Check the `quotes` table for new entries:
+
 ```sql
 SELECT * FROM quotes ORDER BY created_at DESC LIMIT 5;
 ```
 
 ### 4. Test Manual Trigger Function
+
 ```sql
 SELECT trigger_daily_quote_generation();
 ```
@@ -146,16 +164,19 @@ SELECT trigger_daily_quote_generation();
 ## Monitoring & Logs
 
 ### 1. View Function Logs
+
 In Supabase Dashboard → Edge Functions → daily-quote-generator → Logs
 
 ### 2. Monitor Cron Job Execution
+
 ```sql
-SELECT * FROM cron.job_run_details 
-WHERE jobid = (SELECT jobid FROM cron.job WHERE jobname = 'daily-quote-generation') 
+SELECT * FROM cron.job_run_details
+WHERE jobid = (SELECT jobid FROM cron.job WHERE jobname = 'daily-quote-generation')
 ORDER BY start_time DESC LIMIT 10;
 ```
 
 ### 3. Check Function Performance
+
 Monitor in Dashboard → Edge Functions → daily-quote-generator → Invocations
 
 ## Error Handling & Troubleshooting
@@ -197,6 +218,7 @@ Monitor in Dashboard → Edge Functions → daily-quote-generator → Invocation
 If issues occur, quickly revert to the Vercel implementation:
 
 1. **Immediate**: Disable cron job
+
    ```sql
    SELECT cron.unschedule('daily-quote-generation');
    ```

@@ -24,7 +24,7 @@ describe('Environment Utilities', () => {
         (globalThis.Deno.env as any).set(key, undefined);
       });
     }
-    
+
     // Also clear process.env for Node.js environment
     if (typeof process !== 'undefined' && process.env) {
       [

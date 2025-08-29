@@ -2,45 +2,45 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e2]:
-    - banner [ref=e3]:
-      - generic [ref=e5]:
-        - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
-        - navigation [ref=e11]:
-          - link "TODAY" [ref=e12] [cursor=pointer]:
-            - /url: /
-            - generic [ref=e13] [cursor=pointer]: TODAY
-          - link "ARCHIVE" [ref=e15] [cursor=pointer]:
-            - /url: /archive
-            - generic [ref=e16] [cursor=pointer]: ARCHIVE
-    - main [ref=e18]:
-      - generic [ref=e22]: grindset
-      - generic [ref=e23]:
-        - generic [ref=e25]: Tuesday, August 26, 2025
-        - blockquote [ref=e26]:
-          - generic [ref=e27]: DON'T
-          - generic [ref=e28]: WAIT
-          - generic [ref=e29]: FOR
-          - generic [ref=e30]: OPPORTUNITY.
-          - generic [ref=e31]: CREATE
-          - generic [ref=e32]: IT
-        - generic [ref=e34]: "#CK-004"
-      - generic [ref=e37]:
-        - heading "Today's Quote is Coming" [level=3] [ref=e38]
-        - paragraph [ref=e39]: We're preparing today's daily motivation with full audio experience
-        - generic [ref=e40]:
-          - button "Check Again" [ref=e41]
-          - link "Browse Archive" [ref=e42] [cursor=pointer]:
-            - /url: /archive
-      - generic [ref=e43]:
-        - paragraph [ref=e44]: In the meantime, enjoy this inspirational quote
-        - link "View Archive" [ref=e45] [cursor=pointer]:
-          - /url: /archive
-          - text: View Archive
-          - img [ref=e46] [cursor=pointer]
-  - button "Open Next.js Dev Tools" [ref=e53] [cursor=pointer]:
-    - img [ref=e54] [cursor=pointer]
-  - alert [ref=e58]
+    - generic [ref=e2]:
+        - banner [ref=e3]:
+            - generic [ref=e5]:
+                - link "MOTIVE FILES" [ref=e7] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e10] [cursor=pointer]: MOTIVE FILES
+                - navigation [ref=e11]:
+                    - link "TODAY" [ref=e12] [cursor=pointer]:
+                        - /url: /
+                        - generic [ref=e13] [cursor=pointer]: TODAY
+                    - link "ARCHIVE" [ref=e15] [cursor=pointer]:
+                        - /url: /archive
+                        - generic [ref=e16] [cursor=pointer]: ARCHIVE
+        - main [ref=e18]:
+            - generic [ref=e22]: grindset
+            - generic [ref=e23]:
+                - generic [ref=e25]: Tuesday, August 26, 2025
+                - blockquote [ref=e26]:
+                    - generic [ref=e27]: DON'T
+                    - generic [ref=e28]: WAIT
+                    - generic [ref=e29]: FOR
+                    - generic [ref=e30]: OPPORTUNITY.
+                    - generic [ref=e31]: CREATE
+                    - generic [ref=e32]: IT
+                - generic [ref=e34]: '#CK-004'
+            - generic [ref=e37]:
+                - heading "Today's Quote is Coming" [level=3] [ref=e38]
+                - paragraph [ref=e39]: We're preparing today's daily motivation with full audio experience
+                - generic [ref=e40]:
+                    - button "Check Again" [ref=e41]
+                    - link "Browse Archive" [ref=e42] [cursor=pointer]:
+                        - /url: /archive
+            - generic [ref=e43]:
+                - paragraph [ref=e44]: In the meantime, enjoy this inspirational quote
+                - link "View Archive" [ref=e45] [cursor=pointer]:
+                    - /url: /archive
+                    - text: View Archive
+                    - img [ref=e46] [cursor=pointer]
+    - button "Open Next.js Dev Tools" [ref=e53] [cursor=pointer]:
+        - img [ref=e54] [cursor=pointer]
+    - alert [ref=e58]
 ```
