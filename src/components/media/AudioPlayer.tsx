@@ -220,18 +220,25 @@ export default function AudioPlayer({
         }
       };
 
-      // Wait for audio to be ready
+      // Wait for audio to be ready with 1500ms delay
       if (isPreloaded || loadProgress > 25) {
-        attemptAutoPlay();
-        return undefined;
+        const delayTimer = setTimeout(() => {
+          attemptAutoPlay();
+        }, 1500);
+        return () => clearTimeout(delayTimer);
       } else {
-        // Wait for enough audio to be loaded
+        // Wait for enough audio to be loaded with additional delay
         const timer = setTimeout(() => {
           if (audioRef.current) {
-            attemptAutoPlay();
+            const delayTimer = setTimeout(() => {
+              attemptAutoPlay();
+            }, 1500);
+            return delayTimer;
           }
         }, 1000);
-        return () => clearTimeout(timer);
+        return () => {
+          clearTimeout(timer);
+        };
       }
     }
     return undefined;

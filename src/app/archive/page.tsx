@@ -150,7 +150,7 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
       <Navigation title="ARCHIVE" subtitle="Archive" />
 
       {/* Hero Section */}
-      <section className="relative z-10 py-12 px-4">
+      <section className="relative z-10 py-12 px-4 critical-render">
         <div className="max-w-6xl mx-auto text-center mb-12 fade-in">
           <h2 className="text-2xl md:text-4xl font-bold text-white mb-6 leading-tight scale-in-bounce">
             EVERY WORD OF

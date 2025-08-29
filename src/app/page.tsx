@@ -17,7 +17,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black overflow-hidden">
       <Navigation />
-      <TodaysMotivation />
+      <div className="critical-render">
+        <TodaysMotivation />
+      </div>
     </div>
   );
 }
